@@ -1,4 +1,4 @@
-package com.example.posedetection;
+package com.example.fitnessapp;
 
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark;
 import java.util.List;

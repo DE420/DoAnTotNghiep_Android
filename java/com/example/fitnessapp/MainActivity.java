@@ -1,15 +1,12 @@
-package com.example.posedetection;
+package com.example.fitnessapp;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.Size;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,8 +37,6 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker;
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker.PoseLandmarkerOptions;
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult;
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark;
-
-import java.nio.ByteBuffer;
 
 public class MainActivity extends AppCompatActivity {
 

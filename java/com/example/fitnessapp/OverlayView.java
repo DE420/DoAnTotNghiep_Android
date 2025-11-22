@@ -1,4 +1,4 @@
-package com.example.posedetection;
+package com.example.fitnessapp;
 
 import android.content.Context;
 import android.graphics.Canvas;
