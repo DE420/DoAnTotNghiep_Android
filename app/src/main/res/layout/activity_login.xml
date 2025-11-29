@@ -33,20 +33,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email:"
+            android:text="Username:"
             android:textColor="@android:color/white"
             android:textSize="14sp"/>
 
         <EditText
-            android:id="@+id/editTextEmail"
+            android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Placeholder"
             android:textColorHint="#BDBDBD"
             android:textColor="@android:color/white"
             android:background="@drawable/shape_edittext_bg"
             android:padding="14dp"
-            android:inputType="textEmailAddress"
+            android:inputType="text"
             android:layout_marginTop="8dp"/>
 
         <TextView
@@ -61,7 +60,6 @@
             android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Placeholder"
             android:textColorHint="#BDBDBD"
             android:textColor="@android:color/white"
             android:background="@drawable/shape_edittext_bg"
@@ -76,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Forget password?"
-            android:textColor="#FFD600"
+            android:textColor="@color/yellow"
             android:gravity="end"
             android:textSize="12sp"
             android:layout_marginTop="8dp"/>
@@ -140,10 +138,10 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textViewSignUp"
+            android:id="@+id/textViewRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up_prompt"
+            android:text="@string/register_prompt"
             android:textColor="@android:color/white"
             android:gravity="center"
             android:layout_marginTop="24dp"

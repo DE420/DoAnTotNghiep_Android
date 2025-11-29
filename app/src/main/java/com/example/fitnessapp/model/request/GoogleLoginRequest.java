@@ -1,9 +1,16 @@
 package com.example.fitnessapp.model.request;
 
-public class GoogleLoginRequest {
-    private final String idToken;
+import com.google.gson.annotations.SerializedName;
 
-    public GoogleLoginRequest(String idToken) {
-        this.idToken = idToken;
+public class GoogleLoginRequest {
+
+    private String tokenId;
+
+    public GoogleLoginRequest(String tokenId) {
+        this.tokenId = tokenId;
+    }
+
+    public String getTokenId() {
+        return tokenId;
     }
 }

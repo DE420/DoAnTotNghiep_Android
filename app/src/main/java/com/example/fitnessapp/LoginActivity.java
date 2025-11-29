@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -25,8 +24,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson; // For parsing error bodies
-
-import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,34 +57,33 @@ public class LoginActivity extends AppCompatActivity {
 
         apiService = RetrofitClient.getApiService();
 
-//        setupGoogleSignIn();
+        setupGoogleSignIn();
         setupClickListeners();
     }
 
-//    private void setupGoogleSignIn() {
-//        // Configure Google Sign-In
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                // You must request an ID token for backend authentication.
-//                // Your web client ID from Google Cloud Console.
-//                .requestIdToken(getString(R.string.default_web_client_id))
-//                .requestEmail()
-//                .build();
-//
-//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-//    }
+    private void setupGoogleSignIn() {
+        // Configure Google Sign-In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                // Yêu cầu ID token để xác thực với backend.
+                // Sử dụng Web Client ID bạn đã lấy từ Google Cloud Console.
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
 
     private void setupClickListeners() {
         binding.buttonLogin.setOnClickListener(v -> handleEmailPasswordLogin());
         binding.buttonGoogle.setOnClickListener(v -> handleGoogleSignIn());
-        binding.textViewSignUp.setOnClickListener(v -> {
-            // Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            // startActivity(intent);
-            Toast.makeText(this, "Navigate to Sign Up Screen", Toast.LENGTH_SHORT).show();
+        binding.textViewRegister.setOnClickListener(v -> {
+            // Tạo Intent để mở RegisterActivity
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
         binding.textViewForgotPassword.setOnClickListener(v -> {
-            // Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-            // startActivity(intent);
-            Toast.makeText(this, "Navigate to Forgot Password Screen", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
         });
 
         // Password visibility toggle
@@ -117,16 +113,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void handleEmailPasswordLogin() {
-        String email = binding.editTextEmail.getText().toString().trim();
+        String username = binding.editTextUsername.getText().toString().trim();
         String password = binding.editTextPassword.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter both email and password.", Toast.LENGTH_SHORT).show();
+        if (username.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter both username and password.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         setLoading(true);
-        LoginRequest loginRequest = new LoginRequest(email, password);
+        LoginRequest loginRequest = new LoginRequest(username, password);
         apiService.login(loginRequest).enqueue(new Callback<ApiResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
@@ -166,7 +162,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
     private void handleGoogleSignIn() {
+        Log.d("GoogleSignIn", "Bắt đầu quá trình đăng nhập Google...");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         googleSignInLauncher.launch(signInIntent);
     }
@@ -174,18 +172,25 @@ public class LoginActivity extends AppCompatActivity {
     private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String idToken = account.getIdToken();
+            Log.d("GoogleSignIn", "Lấy tài khoản Google thành công!");
 
+            String idToken = account.getIdToken();
             if (idToken != null) {
-                // Send ID token to your backend
+                Log.d("GoogleSignIn", "Lấy được ID Token: " + idToken.substring(0, 30) + "..."); // Chỉ log một phần cho an toàn
                 sendGoogleTokenToBackend(idToken);
             } else {
+                // Đây là một lỗi nghiêm trọng
+                Log.e("GoogleSignIn", "Lỗi: ID Token bị null! Kiểm tra lại Web Client ID trong GSO.");
                 Toast.makeText(this, "Failed to get Google ID Token.", Toast.LENGTH_SHORT).show();
             }
 
         } catch (ApiException e) {
-            Log.w("LoginActivity", "signInResult:failed code=" + e.getStatusCode());
-            Toast.makeText(this, "Google Sign-In failed. Code: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+            // Lỗi này rất quan trọng!
+            Log.e("GoogleSignIn", "signInResult:failed code=" + e.getStatusCode());
+            // Mã 10: Lỗi cấu hình developer (thường là do sai SHA-1 hoặc package name).
+            // Mã 12501: Người dùng hủy đăng nhập.
+            // Mã 8: Lỗi mạng nội bộ.
+            Toast.makeText(this, "Google Sign-In failed. Error Code: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -237,10 +242,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToMainApp() {
-        // Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        // startActivity(intent);
-        Toast.makeText(this, "Login Successful! Navigating to main app...", Toast.LENGTH_SHORT).show();
-        finish(); // Finish LoginActivity so user can't go back to it
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+        // Các dòng này rất quan trọng để xóa các activity cũ khỏi stack
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

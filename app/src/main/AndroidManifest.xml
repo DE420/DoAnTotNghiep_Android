@@ -25,14 +25,24 @@
             </intent-filter>
         </activity>
 
-        <!-- 3. LoginActivity NO LONGER has the launcher intent-filter -->
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
 
-        <!-- 4. MainActivity also does not have the launcher intent-filter -->
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ExerciseCountActivity"
             android:exported="false" />
     </application>
 

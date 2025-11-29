@@ -52,13 +52,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Full name:"
+            android:text="Username:"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:layout_marginTop="16dp"/>
 
         <EditText
-            android:id="@+id/editTextFullName"
+            android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Placeholder"
