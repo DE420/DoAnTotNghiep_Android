@@ -12,7 +12,7 @@ import com.example.fitnessapp.fragment.CommunityFragment;
 import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
-import com.example.fitnessapp.ExerciseCountActivity;
+import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,11 +24,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Load Fragment mặc định là HomeFragment khi Activity khởi chạy
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment());
-            binding.toolbar.setTitle("Home"); // Đặt title mặc định
+            // Tải HomeFragment làm mặc định, không thêm vào back stack
+            loadFragment(new HomeFragment(), "Home", false);
         }
+
+        // Sự kiện click vào avatar sẽ mở ProfileFragment
+        binding.imageAvatar.setOnClickListener(v -> {
+            loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
+        });
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -39,23 +43,22 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment();
                 title = "Home";
             } else if (itemId == R.id.nav_plan) {
-                selectedFragment = new PlanFragment(); // Fragment bạn đã tạo
+                selectedFragment = new PlanFragment();
                 title = "Plan";
             } else if (itemId == R.id.nav_practice) {
-                // Mở PracticeActivity và không thay đổi fragment
                 startActivity(new Intent(this, ExerciseCountActivity.class));
-                return false; // Trả về false để item không được chọn, giữ nguyên tab hiện tại
+                return false;
             } else if (itemId == R.id.nav_community) {
-                selectedFragment = new CommunityFragment(); // Fragment bạn đã tạo
+                selectedFragment = new CommunityFragment();
                 title = "Community";
             } else if (itemId == R.id.nav_other) {
-                selectedFragment = new OtherFragment(); // Fragment bạn đã tạo
+                selectedFragment = new OtherFragment();
                 title = "Other";
             }
 
             if (selectedFragment != null) {
-                loadFragment(selectedFragment);
-                binding.toolbar.setTitle(title); // Cập nhật title của toolbar
+                // Các fragment từ bottom nav không cần thêm vào back stack
+                loadFragment(selectedFragment, title, false);
                 return true;
             }
 
@@ -63,10 +66,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadFragment(Fragment fragment) {
+    // Cập nhật hàm loadFragment để xử lý back stack
+    private void loadFragment(Fragment fragment, String title, boolean addToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
+
+        // Chỉ thêm vào back stack khi được yêu cầu (ví dụ: khi mở Profile)
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
+
         transaction.commit();
+
+        // Cập nhật title của toolbar
+        binding.toolbar.setTitle(title);
     }
 }

@@ -1,8 +1,6 @@
 package com.example.fitnessapp.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,27 +12,26 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.fitnessapp.LoginActivity;
-import com.example.fitnessapp.R;
-import com.example.fitnessapp.databinding.FragmentHomeBinding; // Import ViewBinding
+import com.example.fitnessapp.session.SessionManager;
+import com.example.fitnessapp.databinding.FragmentProfileBinding;
 import com.example.fitnessapp.model.request.LogoutRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
-import com.example.fitnessapp.session.SessionManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
-    private FragmentHomeBinding binding; // Sử dụng ViewBinding
+    private FragmentProfileBinding binding;
     private ApiService apiService;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -44,13 +41,31 @@ public class HomeFragment extends Fragment {
 
         apiService = RetrofitClient.getApiService();
 
+        // TODO: Load user data from API and set to views
+        // binding.textName.setText(...);
+        // Glide.with(this).load(user.getAvatarUrl()).into(binding.imageAvatar);
+
+        setupClickListeners();
+    }
+
+    private void setupClickListeners() {
+        binding.buttonEditProfile.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Edit Profile Clicked", Toast.LENGTH_SHORT).show();
+            // TODO: Navigate to EditProfileFragment or Activity
+        });
+
+        binding.buttonChangePassword.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "Change Password Clicked", Toast.LENGTH_SHORT).show();
+            // TODO: Navigate to ChangePasswordFragment or Activity
+        });
+
         binding.buttonLogout.setOnClickListener(v -> {
             handleLogout();
         });
     }
 
     private void handleLogout() {
-        // Lấy refresh token từ SessionManager
+        // Sử dụng requireActivity() để lấy Context một cách an toàn
         String refreshToken = SessionManager.getInstance(requireActivity()).getRefreshToken();
 
         if (refreshToken == null) {
@@ -59,9 +74,7 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        // Vô hiệu hóa nút để tránh click nhiều lần
         binding.buttonLogout.setEnabled(false);
-        binding.buttonLogout.setText("Logging out...");
 
         LogoutRequest logoutRequest = new LogoutRequest(refreshToken);
 
@@ -81,22 +94,21 @@ public class HomeFragment extends Fragment {
     }
 
     private void clearUserDataAndNavigateToLogin() {
-        // Chỉ cần gọi một dòng duy nhất để logout
         SessionManager.getInstance(requireActivity()).logout();
 
-        // Tạo Intent để quay về LoginActivity
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 
-        // Kết thúc MainActivity
-        getActivity().finish();
+        // Kết thúc Activity chứa Fragment này (MainActivity)
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
-
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Tránh memory leak
+        binding = null; // Quan trọng để tránh rò rỉ bộ nhớ
     }
 }

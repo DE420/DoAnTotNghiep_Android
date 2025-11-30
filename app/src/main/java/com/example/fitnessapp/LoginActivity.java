@@ -17,6 +17,7 @@ import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
+import com.example.fitnessapp.session.SessionManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -232,13 +233,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveTokens(String accessToken, String refreshToken) {
-        // Use SharedPreferences to store tokens securely
-        getSharedPreferences("APP_PREFS", MODE_PRIVATE)
-                .edit()
-                .putString("ACCESS_TOKEN", accessToken)
-                .putString("REFRESH_TOKEN", refreshToken)
-                .apply();
-        Log.d("LoginActivity", "Tokens saved successfully.");
+        // Sử dụng SessionManager để lưu tokens
+        SessionManager.getInstance(this).saveTokens(accessToken, refreshToken);
+        Log.d("LoginActivity", "Tokens saved successfully via SessionManager.");
     }
 
     private void navigateToMainApp() {

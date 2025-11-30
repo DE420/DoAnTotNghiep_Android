@@ -3,6 +3,8 @@
     <string name="register_prompt">Don\'t have account? <font color="#FFD600">Sign up now!</font></string>
     <string name="login_prompt">Already have an account? <font color="#FFD600">Login now</font></string>
 
-    <string name="default_web_client_id">513503235334-c3lv2j0ruri1mplaj5io4ss9g3b5el4a.apps.googleusercontent.com</string>
+<!--    <string name="default_web_client_id">513503235334-c3lv2j0ruri1mplaj5io4ss9g3b5el4a.apps.googleusercontent.com</string>-->
 <!--    <string name="default_web_client_id">513503235334-fu173kd03e9h3pd734m5rggau3efl64i.apps.googleusercontent.com</string>-->
+    <string name="default_web_client_id">883925265537-ukhcne4md2ndbke7o4d62ss79pep2nhd.apps.googleusercontent.com</string>
+
 </resources>
