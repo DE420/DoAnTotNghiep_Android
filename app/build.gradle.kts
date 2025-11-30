@@ -47,6 +47,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
 
     implementation("androidx.camera:camera-core:1.3.0")
