@@ -2,7 +2,9 @@ package com.example.fitnessapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,6 +27,10 @@ public class RegisterActivity extends AppCompatActivity {
     private ActivityRegisterBinding binding;
     private ApiService apiService;
 
+    // <-- THÊM CÁC BIẾN NÀY -->
+    private boolean isPasswordVisible = false;
+    private boolean isConfirmPasswordVisible = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +38,73 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         apiService = RetrofitClient.getApiService();
+        setupClickListeners();
+    }
 
+    private void setupClickListeners() {
         binding.buttonRegister.setOnClickListener(v -> handleRegister());
 
         binding.textViewLogin.setOnClickListener(v -> {
-            // Tạo Intent để mở LoginActivity
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
+
+        binding.editTextPassword.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (binding.editTextPassword.getRight() - binding.editTextPassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    togglePasswordVisibility();
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        binding.editTextConfirmPassword.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (binding.editTextConfirmPassword.getRight() - binding.editTextConfirmPassword.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    toggleConfirmPasswordVisibility();
+                    return true;
+                }
+            }
+            return false;
+        });
     }
+
+    // <-- THÊM PHƯƠNG THỨC NÀY -->
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Hide password
+            binding.editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            binding.editTextPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye_off, 0);
+        } else {
+            // Show password
+            binding.editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            binding.editTextPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye_on, 0);
+        }
+        // Move cursor to the end
+        binding.editTextPassword.setSelection(binding.editTextPassword.length());
+        isPasswordVisible = !isPasswordVisible;
+    }
+
+    // <-- THÊM PHƯƠNG THỨC NÀY -->
+    private void toggleConfirmPasswordVisibility() {
+        if (isConfirmPasswordVisible) {
+            // Hide password
+            binding.editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            binding.editTextConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye_off, 0);
+        } else {
+            // Show password
+            binding.editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            binding.editTextConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_eye_on, 0);
+        }
+        // Move cursor to the end
+        binding.editTextConfirmPassword.setSelection(binding.editTextConfirmPassword.length());
+        isConfirmPasswordVisible = !isConfirmPasswordVisible;
+    }
+
 
     private void handleRegister() {
         String email = binding.editTextEmail.getText().toString().trim();
@@ -58,7 +121,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         RegisterRequest registerRequest = new RegisterRequest(email, username, password, confirmPassword);
 
-        // --- The generic type here is now Call<ApiResponse<Object>> ---
         apiService.registerUser(registerRequest).enqueue(new Callback<ApiResponse<Object>>() {
             @Override
             public void onResponse(Call<ApiResponse<Object>> call, Response<ApiResponse<Object>> response) {
@@ -67,8 +129,6 @@ public class RegisterActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ApiResponse<Object> apiResponse = response.body();
                     if (apiResponse.isStatus()) {
-                        // --- SUCCESS ---
-                        // The data is an object (likely a LinkedTreeMap), so we convert it to our model
                         Gson gson = new Gson();
                         RegisterResponse registeredUser = gson.fromJson(gson.toJson(apiResponse.getData()), RegisterResponse.class);
 
@@ -76,18 +136,15 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this, successMessage, Toast.LENGTH_LONG).show();
 
                         // Navigate to Login screen
-                        // Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                        // startActivity(intent);
-                        // finish();
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
 
                     } else {
-                        // --- BACKEND VALIDATION ERROR ---
-                        // Here, we know the data is a String.
                         String errorMessage = apiResponse.getData().toString();
                         Toast.makeText(RegisterActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    // --- API ERROR (e.g., 400 Bad Request) ---
                     try {
                         String errorBody = response.errorBody().string();
                         ApiResponse<?> errorResponse = new Gson().fromJson(errorBody, ApiResponse.class);
@@ -100,7 +157,6 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponse<Object>> call, Throwable t) {
-                // --- NETWORK ERROR ---
                 resetButtonState();
                 Toast.makeText(RegisterActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -109,7 +165,6 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private boolean validateInput(String email, String username, String password, String confirmPassword) {
-        // (Validation logic remains the same as before)
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding.editTextEmail.setError("Please enter a valid email");
             binding.editTextEmail.requestFocus();
