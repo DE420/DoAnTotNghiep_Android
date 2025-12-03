@@ -4,13 +4,17 @@ import com.example.fitnessapp.model.request.ForgotPasswordRequest;
 import com.example.fitnessapp.model.request.GoogleLoginRequest;
 import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.request.LogoutRequest;
+import com.example.fitnessapp.model.request.RefreshTokenRequest;
 import com.example.fitnessapp.model.request.RegisterRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
 import com.example.fitnessapp.model.response.RegisterResponse;
+import com.example.fitnessapp.model.response.user.ProfileResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface ApiService {
@@ -29,4 +33,10 @@ public interface ApiService {
 
     @POST("auth/logout")
     Call<ApiResponse<String>> logout(@Body LogoutRequest logoutRequest);
+
+    @POST("auth/refresh-token")
+    Call<ApiResponse<LoginResponse>> refreshToken(@Body RefreshTokenRequest refreshTokenRequest);
+
+    @GET("user/profile")
+    Call<ApiResponse<ProfileResponse>> getUserProfile(@Header("Authorization") String authorization);
 }

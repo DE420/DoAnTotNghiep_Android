@@ -3,8 +3,49 @@
     <string name="register_prompt">Don\'t have account? <font color="#FFD600">Sign up now!</font></string>
     <string name="login_prompt">Already have an account? <font color="#FFD600">Login now</font></string>
 
-<!--    <string name="default_web_client_id">513503235334-c3lv2j0ruri1mplaj5io4ss9g3b5el4a.apps.googleusercontent.com</string>-->
-<!--    <string name="default_web_client_id">513503235334-fu173kd03e9h3pd734m5rggau3efl64i.apps.googleusercontent.com</string>-->
+    <!--    <string name="default_web_client_id">513503235334-c3lv2j0ruri1mplaj5io4ss9g3b5el4a.apps.googleusercontent.com</string>-->
+    <!--    <string name="default_web_client_id">513503235334-fu173kd03e9h3pd734m5rggau3efl64i.apps.googleusercontent.com</string>-->
     <string name="default_web_client_id">883925265537-ukhcne4md2ndbke7o4d62ss79pep2nhd.apps.googleusercontent.com</string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txt_full_name_en">Full name:</string>
+    <string name="txt_full_name_hint_en">Enter your name</string>
+    <string name="txt_email_en">Email:</string>
+    <string name="txt_email_hint_en">Enter your email</string>
+    <string name="txt_phone_number_en">Phone number:</string>
+    <string name="txt_phone_number_hint_en">Enter your phone number</string>
+    <string name="txt_date_of_birth_en">Date of birth:</string>
+    <string name="txt_birthday_hint_en">Enter your birthday</string>
+    <string name="txt_weight_kg_en">Weight (kg):</string>
+    <string name="txt_weight_pound_en">Weight (pound):</string>
+    <string name="txt_weight_hint_en">Enter your weight</string>
+    <string name="txt_height_m_en">Height (m):</string>
+    <string name="txt_height_i_en">Height (inch):</string>
+    <string name="txt_height_hint_en">Enter your height</string>
+    <string name="txt_change_password_en">Change password</string>
+    <string name="txt_current_password_en">Current password:</string>
+    <string name="txt_current_password_hint_en">Enter your current password</string>
+    <string name="txt_new_password_en">New password:</string>
+    <string name="txt_new_password_hint_en">Enter your new password</string>
+    <string name="txt_confirm_password_en">Confirm password:</string>
+    <string name="txt_confirm_new_password_hint_en">Re-enter your new password</string>
+    <string name="txt_no_internet_connection_en">No internet connection</string>
+    <string name="txt_connecting_en">Connecting...</string>
+    <string name="txt_my_statistics">My statistics</string>
+    <string name="txt_error_loading_data">Sorry, failed to load data</string>
+    <string name="txt_no_data">No Data</string>
+    <string name="txt_not_selected_goal">Not Selected Goal</string>
+    <string name="txt_not_selected_activity_level">Not Selected Activity Level</string>
+    <string name="fitness_goal_others">Others</string>
+    <string name="fitness_goal_shape_body">Shape body</string>
+    <string name="fitness_goal_gain_weight">Gain weight</string>
+    <string name="fitness_goal_lose_weight">Lose weight</string>
+    <string name="fitness_goal_muscle_gain">Muscle gain</string>
+    <string name="acitvity_level_sedentary">Sedentary</string>
+    <string name="acitvity_level_lightly_active">Lightly active</string>
+    <string name="acitvity_level_moderately_active">Moderately active</string>
+    <string name="acitvity_level_very_active">Very active</string>
+    <string name="acitvity_level_extra_active">Extra active</string>
+    <string name="txt_min">min</string>
+    <string name="txt_days">days</string>
 </resources>
