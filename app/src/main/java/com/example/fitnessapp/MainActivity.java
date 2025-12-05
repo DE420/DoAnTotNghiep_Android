@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //fake login
-        saveToken();
+//        saveToken();
     }
 
 
@@ -113,19 +113,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void saveToken() {
-        String accessToken =
-                "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI" +
-                        "6MywidXNlcm5hbWUiOiJ0dXllbnZ1MSIsInN1YiI6InR" +
-                        "1eWVudnUxIiwiZXhwIjoxNzY3MzY2MzI4fQ.aXv--tHa" +
-                        "guu_6-Ob8cIDPcePv_ljF2kWX7x3bTO-51Y";
-        String refressToken =
-                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMsInN1YiI6InR1eWV" +
-                        "udnUxIiwiZXhwIjoxNzY5OTU4MzI4fQ.sBLv8v8zPmDb" +
-                        "xjSl3PqoTXOOS0ECtAvtvgz9Krbd67U";
-        SessionManager sessionManager = SessionManager.getInstance(this);
-        sessionManager.saveTokens(accessToken, refressToken);
-    }
+//    private void saveToken() {
+//        String accessToken =
+//                "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6MywidXNlcm5hbWUiOiJ0dXl" +
+//                        "lbnZ1MSIsInN1YiI6InR1eWVudnUxIiwiZXhwIjoxNzY3NTQyMzY0fQ.6G833ryPWSQE" +
+//                        "0_PU14aWWjetiTiiItaqHc6fjzKRuFA";
+//        String refreshToken =
+//                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMsInN1YiI6InR1eWVudnUxIiwiZXhwIjoxNzcwMTM" +
+//                        "0MzY0fQ.UT1YocK6bni8sN408VjnTaLF2WlcKxM_VSWrT8kaIw0";
+//        SessionManager sessionManager = SessionManager.getInstance(this);
+//        sessionManager.saveTokens(accessToken, refreshToken);
+//    }
 
 
 

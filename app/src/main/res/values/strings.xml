@@ -31,7 +31,7 @@
     <string name="txt_confirm_new_password_hint_en">Re-enter your new password</string>
     <string name="txt_no_internet_connection_en">No internet connection</string>
     <string name="txt_connecting_en">Connecting...</string>
-    <string name="txt_my_statistics">My statistics</string>
+    <string name="txt_my_statistics">My Statistics</string>
     <string name="txt_error_loading_data">Sorry, failed to load data</string>
     <string name="txt_no_data">No Data</string>
     <string name="txt_not_selected_goal">Not Selected Goal</string>
@@ -48,4 +48,19 @@
     <string name="acitvity_level_extra_active">Extra active</string>
     <string name="txt_min">min</string>
     <string name="txt_days">days</string>
+    <string name="txt_birthday">Birthday:</string>
+    <string name="txt_weight">Weight</string>
+    <string name="txt_height">Height</string>
+    <string name="txt_goal">Goal</string>
+    <string name="txt_activity_level">Activity level</string>
+    <string name="txt_workouts">Workouts</string>
+    <string name="txt_calories">Calories</string>
+    <string name="txt_hours">Hours</string>
+    <string name="txt_monthly_statistics">Monthly statistics</string>
+    <string name="txt_total_workouts">Total workouts:</string>
+    <string name="txt_total_duration">Total Duration:</string>
+    <string name="txt_active_days">Active days:</string>
+    <string name="txt_avg_per_workout">Avg per Workout:</string>
+    <string name="txt_current_streak">Current streak:</string>
+    <string name="txt_total_calories">Total Calories:</string>
 </resources>

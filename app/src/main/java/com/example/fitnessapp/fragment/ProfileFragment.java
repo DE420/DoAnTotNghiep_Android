@@ -352,46 +352,60 @@ public class ProfileFragment extends Fragment {
             String dayStr = getString(R.string.txt_days);
 
             if (profileResponse.getMonthlyStats() == null) {
-                binding.tvCurrentMonth.setText(noDataStr);
-                binding.tvTotalWorkoutsMonthStats.setText(0);
-                binding.tvTotalDurationMonthStats.setText(
-                        String.format("0 %s", minStr)
-                );
-                binding.tvActiveDaysMonthStats.setText(0);
-                binding.tvAvgPerWorkoutMonthStats.setText(
-                        String.format("0 %s", minStr)
-                );
-                binding.tvCurrentStreakMonthStats.setText(
-                        String.format("0 %s", dayStr)
-                );
-                binding.tvUserTotalCaloriesMonth.setText(0);
+                setVisibilityForMonthlyStatistic(View.GONE);
+
             } else {
+                setVisibilityForMonthlyStatistic(View.VISIBLE);
                 ProfileResponse.MonthlyStats monthlyStats = profileResponse.getMonthlyStats();
                 binding.tvCurrentMonth.setText(
                         monthlyStats.getMonthName() != null
                                 ? monthlyStats.getMonthName()
                                 : noDataStr
                 );
-                binding.tvTotalWorkoutsMonthStats.setText(
-                        Integer.toString(monthlyStats.getTotalWorkouts())
+                binding.tvTotalWorkoutsMonth.setText(
+                        getString(R.string.txt_total_workouts)
+                        + " " + monthlyStats.getTotalWorkouts()
                 );
-                binding.tvTotalDurationMonthStats.setText(
-                        String.format("%.2f %s", monthlyStats.getTotalDurationMin(), minStr)
+                binding.tvTotalDurationMonth.setText(
+                        String.format("%s %.2f %s",
+                                getString(R.string.txt_total_duration),
+                                monthlyStats.getTotalDurationMin(),
+                                minStr)
                 );
-                binding.tvActiveDaysMonthStats.setText(
-                        Integer.toString(monthlyStats.getActiveDays())
+                binding.tvActiveDaysMonth.setText(
+                        getString(R.string.txt_active_days) + " " + monthlyStats.getActiveDays()
                 );
-                binding.tvAvgPerWorkoutMonthStats.setText(
-                        String.format("%.2f %s", monthlyStats.getAvgDurationMin(), minStr)
+                binding.tvAvgPerWorkoutMonth.setText(
+                        String.format("%s %.2f %s",
+                                getString(R.string.txt_avg_per_workout),
+                                monthlyStats.getAvgDurationMin(),
+                                minStr)
                 );
-                binding.tvCurrentStreakMonthStats.setText(
-                        String.format("%d %s", monthlyStats.getCurrentStreak(), dayStr)
+                binding.tvCurrentStreakMonth.setText(
+                        String.format("%s %d %s",
+                                getString(R.string.txt_current_streak),
+                                monthlyStats.getCurrentStreak(),
+                                dayStr)
                 );
-                binding.tvUserTotalCaloriesMonth.setText(
-                        String.format("%,3.2f", monthlyStats.getTotalCalories())
+                binding.tvTotalCaloriesMonth.setText(
+                        String.format("%s %,3.2f",
+                                getString(R.string.txt_total_calories),
+                                monthlyStats.getTotalCalories())
                 );
             }
         }
+    }
+
+    private void setVisibilityForMonthlyStatistic(int visibility) {
+        binding.tvMonthlyStats.setVisibility(visibility);
+        binding.tvCurrentMonth.setVisibility(visibility);
+        binding.tvTotalWorkoutsMonth.setVisibility(visibility);
+        binding.tvTotalDurationMonth.setVisibility(visibility);
+        binding.tvActiveDaysMonth.setVisibility(visibility);
+        binding.tvAvgPerWorkoutMonth.setVisibility(visibility);
+        binding.tvTotalCaloriesMonth.setVisibility(visibility);
+        binding.tvCurrentStreakMonth.setVisibility(visibility);
+
     }
 
     private void showErrorView(String error) {
@@ -444,7 +458,9 @@ public class ProfileFragment extends Fragment {
         });
 
         binding.buttonLogout.setOnClickListener(v -> {
-            handleLogout();
+//            handleLogout();
+
+            new ConfirmLogoutDialogFragment().show(getParentFragmentManager(), null);
         });
     }
 

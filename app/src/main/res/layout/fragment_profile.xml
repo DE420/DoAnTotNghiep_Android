@@ -5,56 +5,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1E1E23"
+    android:background="#292C32"
     tools:context=".fragment.ProfileFragment">
 
-    <ImageView
-        android:id="@+id/img_chevron_left"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_chevron_left"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        />
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Profile"
-        style="@style/TextAppearance.Material3.TitleLarge"
-        android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@id/img_chevron_left"
-        app:layout_constraintTop_toTopOf="@id/img_chevron_left"
-        app:layout_constraintBottom_toBottomOf="@id/img_chevron_left"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <ImageView
-        android:id="@+id/button_edit_profile"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/ic_edit_white_24"
-        app:layout_constraintEnd_toStartOf="@id/button_change_password"
-        app:layout_constraintTop_toTopOf="@id/button_change_password"
-        android:layout_marginEnd="12dp"
-        android:visibility="visible"/>
+        <ImageView
+            android:id="@+id/img_chevron_left"
+            android:layout_width="@dimen/icon_size_48"
+            android:layout_height="@dimen/icon_size_48"
+            android:padding="12dp"
+            android:src="@drawable/ic_chevron_left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/margin_4"
+            android:layout_marginTop="@dimen/margin_4"
+            android:layout_marginBottom="@dimen/margin_4"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:textSize="22dp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/img_chevron_left"
+            app:layout_constraintTop_toTopOf="@id/img_chevron_left"
+            app:layout_constraintBottom_toBottomOf="@id/img_chevron_left"
+            android:layout_marginStart="@dimen/margin_4"/>
 
-    <ImageView
-        android:id="@+id/button_change_password"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_change_password"
-        app:layout_constraintEnd_toStartOf="@id/button_logout"
-        app:layout_constraintTop_toTopOf="@id/button_logout"
-        android:layout_marginEnd="12dp"/>
+        <ImageView
+            android:id="@+id/button_edit_profile"
+            android:layout_width="@dimen/icon_size_48"
+            android:layout_height="@dimen/icon_size_48"
+            android:padding="12dp"
+            android:src="@drawable/ic_edit_white_24"
+            app:layout_constraintEnd_toStartOf="@id/button_change_password"
+            app:layout_constraintTop_toTopOf="@id/button_change_password"
+            android:visibility="visible"/>
 
-    <ImageView
-        android:id="@+id/button_logout"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_logout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/img_chevron_left"
-        android:layout_marginEnd="16dp"/>
+        <ImageView
+            android:id="@+id/button_change_password"
+            android:layout_width="@dimen/icon_size_48"
+            android:layout_height="@dimen/icon_size_48"
+            android:padding="12dp"
+            android:src="@drawable/ic_change_password"
+            app:layout_constraintEnd_toStartOf="@id/button_logout"
+            app:layout_constraintTop_toTopOf="@id/button_logout"
+            />
+
+        <ImageView
+            android:id="@+id/button_logout"
+            android:layout_width="@dimen/icon_size_48"
+            android:layout_height="@dimen/icon_size_48"
+            android:padding="12dp"
+            android:src="@drawable/ic_logout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/img_chevron_left"
+            android:layout_marginEnd="@dimen/margin_4"
+            />
+
+        <View
+            android:id="@+id/view_stroke_bottom_header"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintTop_toBottomOf="@id/button_logout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/margin_4"
+            android:background="@color/background_app_color"
+            android:translationZ="5dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:id="@+id/sv_content"
@@ -62,8 +87,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_chevron_left"
-        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/cl_header"
         android:background="@color/background_app_color"
         android:visibility="visible">
 
@@ -79,6 +103,19 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5"/>
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="@id/img_avatar"
+            app:layout_constraintBottom_toBottomOf="@id/tv_birthday"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="-16dp"
+            android:layout_marginBottom="-16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/background_item_profile"
+            />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_avatar"
@@ -88,7 +125,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="25dp"/>
+            android:layout_marginTop="32dp"/>
 
         <TextView
             android:id="@+id/tv_full_name"
@@ -97,19 +134,18 @@
             app:layout_constraintTop_toBottomOf="@id/img_avatar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="@string/app_name"
             android:textColor="@color/white"
-            android:textSize="25sp"
-
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
             />
 
         <TextView
             android:id="@+id/tv_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="janedoe@email.com"
-            android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textColor="#cfcfcf"
+            android:textSize="15sp"
             app:layout_constraintTop_toBottomOf="@id/tv_full_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -120,14 +156,16 @@
             android:id="@+id/tv_birthday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Birthday: January 1st"
-            android:textColor="@color/white"
-            android:textSize="16sp"
+            android:text="@string/txt_birthday"
+            android:textColor="#b6b6b6"
+            android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/tv_email"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="6dp"
             />
+
+
 
 <!--        <View-->
 <!--            android:id="@+id/view_border"-->
@@ -142,36 +180,49 @@
 <!--            android:layout_marginTop="-8dp"-->
 <!--            android:layout_marginBottom="-6dp"-->
 <!--            android:layout_marginEnd="-32dp"/>-->
+
         <View
-            android:layout_width="1dp"
+            android:id="@+id/view_container_weight_height"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@color/gray"
+            android:layout_marginTop="-16dp"
+            android:layout_marginBottom="-16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/background_item_profile"
             app:layout_constraintTop_toTopOf="@id/tv_user_weight"
             app:layout_constraintBottom_toBottomOf="@id/tv_weight"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="#32353B"
+            app:layout_constraintTop_toTopOf="@id/view_container_weight_height"
+            app:layout_constraintBottom_toBottomOf="@id/view_container_weight_height"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"/>
+            />
         <TextView
             android:id="@+id/tv_user_weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="50 Kg"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/tv_birthday"
             app:layout_constraintEnd_toEndOf="@id/guideline_vertical_50_percent"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="48dp"
             android:layout_marginEnd="48dp"
             />
         <TextView
             android:id="@+id/tv_weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Weight"
-            android:textColor="@color/white"
-            android:textSize="15sp"
+            android:text="@string/txt_weight"
+            android:textColor="#bfbfbf"
+            android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/tv_user_weight"
             app:layout_constraintStart_toStartOf="@id/tv_user_weight"
             app:layout_constraintEnd_toEndOf="@id/tv_user_weight"
@@ -181,9 +232,8 @@
             android:id="@+id/tv_user_height"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1.65 m"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="@id/tv_user_weight"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_50_percent"
@@ -193,71 +243,107 @@
             android:id="@+id/tv_height"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Height"
-            android:textColor="@color/white"
-            android:textSize="15sp"
+            android:text="@string/txt_height"
+            android:textColor="#bfbfbf"
+            android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/tv_user_height"
             app:layout_constraintStart_toStartOf="@id/tv_user_height"
             app:layout_constraintEnd_toEndOf="@id/tv_user_height"
             />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="0dp"
-            android:background="@color/gray"
-            app:layout_constraintTop_toTopOf="@id/img_fitness_goal"
-            app:layout_constraintBottom_toBottomOf="@id/tv_fitness_goal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"/>
-
-        <ImageView
-            android:id="@+id/img_fitness_goal"
+        <TextView
+            android:id="@+id/tv_goal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/img_goal_32"
-            app:layout_constraintStart_toStartOf="@id/tv_weight"
-            app:layout_constraintTop_toBottomOf="@id/tv_weight"
-            app:layout_constraintEnd_toEndOf="@id/tv_weight"
-            android:layout_marginTop="32dp"/>
+            android:text="@string/txt_goal"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/view_container_weight_height"
+            android:textColor="@color/white"
+            android:layout_marginTop="26dp"
+            app:layout_constraintStart_toStartOf="@id/view_container_weight_height"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_container_goal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_item_profile"
+            app:layout_constraintStart_toStartOf="@id/tv_goal"
+            app:layout_constraintTop_toBottomOf="@id/tv_goal"
+            app:layout_constraintEnd_toEndOf="@id/view_container_weight_height"
+            android:layout_marginTop="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <ImageView
+                android:id="@+id/img_fitness_goal"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/img_goal_32"
+                app:layout_constraintStart_toStartOf="@id/cl_container_goal"
+                app:layout_constraintTop_toTopOf="@id/cl_container_goal"
+                />
+
+            <TextView
+                android:id="@+id/tv_fitness_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:gravity="center_horizontal"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="@id/cl_container_goal"
+                app:layout_constraintBottom_toBottomOf="@id/cl_container_goal"
+                app:layout_constraintStart_toEndOf="@id/img_fitness_goal"
+                android:layout_marginStart="16dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/tv_fitness_goal"
+            android:id="@+id/tv_activity_level_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Loss weight"
+            android:text="@string/txt_activity_level"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/cl_container_goal"
             android:textColor="@color/white"
-            android:maxWidth="150dp"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/img_fitness_goal"
-            app:layout_constraintStart_toStartOf="@id/img_fitness_goal"
-            app:layout_constraintEnd_toEndOf="@id/img_fitness_goal"
-            android:layout_marginTop="2dp"/>
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="@id/view_container_weight_height"/>
 
-        <ImageView
-            android:id="@+id/img_activity_level"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_container_activity_level"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/img_levelup_32"
-            app:layout_constraintStart_toStartOf="@id/tv_user_height"
-            app:layout_constraintTop_toTopOf="@id/img_fitness_goal"
-            app:layout_constraintEnd_toEndOf="@id/tv_user_height"
-            />
+            android:background="@drawable/background_item_profile"
+            app:layout_constraintStart_toStartOf="@id/tv_goal"
+            app:layout_constraintTop_toBottomOf="@id/tv_activity_level_heading"
+            app:layout_constraintEnd_toEndOf="@id/view_container_weight_height"
+            android:layout_marginTop="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <ImageView
+                android:id="@+id/img_activity_level"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/img_levelup_32"
+                app:layout_constraintStart_toStartOf="@id/cl_container_activity_level"
+                app:layout_constraintTop_toTopOf="@id/cl_container_activity_level"
+                />
 
-        <TextView
-            android:id="@+id/tv_activity_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="extra active"
-            android:maxWidth="150dp"
-            android:gravity="center_horizontal"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:layout_constraintTop_toTopOf="@id/tv_fitness_goal"
-            app:layout_constraintStart_toStartOf="@id/img_activity_level"
-            app:layout_constraintEnd_toEndOf="@id/img_activity_level"/>
+            <TextView
+                android:id="@+id/tv_activity_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:gravity="center_horizontal"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="@id/cl_container_activity_level"
+                app:layout_constraintBottom_toBottomOf="@id/cl_container_activity_level"
+                app:layout_constraintStart_toEndOf="@id/img_activity_level"
+                android:layout_marginStart="16dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
@@ -267,113 +353,175 @@
             android:layout_height="wrap_content"
             android:text="@string/txt_my_statistics"
             android:textColor="@color/white"
-            android:textSize="24sp"
-            app:layout_constraintTop_toBottomOf="@id/tv_fitness_goal"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/cl_container_activity_level"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="26dp"
             android:layout_marginStart="16dp"
             />
 
-        <ImageView
-            android:id="@+id/img_total_workouts"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/img_bargraph_32"
-            app:layout_constraintTop_toBottomOf="@id/tv_my_statistics"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_50_percent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"/>
-        <TextView
-            android:id="@+id/tv_total_workouts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="149"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/img_total_workouts"
-            app:layout_constraintStart_toStartOf="@id/img_total_workouts"
-            app:layout_constraintEnd_toEndOf="@id/img_total_workouts"
-            android:layout_marginTop="12dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Workouts\ntotal"
-            android:gravity="center_horizontal"
-            android:textColor="#6D7776"
-            android:textSize="18dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_total_workouts"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts"/>
+            <LinearLayout
+                android:id="@+id/ll_container_total_stats"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tv_my_statistics"
+                app:layout_constraintStart_toStartOf="@id/tv_my_statistics"
+                app:layout_constraintEnd_toEndOf="@id/cl_container_goal"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/background_item_profile"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/cl_container_img_total_workouts"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/background_container_img_total_workouts"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+                            <ImageView
+                                android:id="@+id/img_total_workouts"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/img_bargraph_32"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/tv_total_workouts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            app:layout_constraintTop_toBottomOf="@id/cl_container_img_total_workouts"
+                            app:layout_constraintStart_toStartOf="@id/cl_container_img_total_workouts"
+                            app:layout_constraintEnd_toEndOf="@id/cl_container_img_total_workouts"
+                            android:layout_marginTop="6dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/txt_workouts"
+                            android:gravity="center_horizontal"
+                            android:textColor="#c0c0c0"
+                            android:textSize="14dp"
+                            app:layout_constraintTop_toBottomOf="@id/tv_total_workouts"
+                            app:layout_constraintStart_toStartOf="@id/tv_total_workouts"
+                            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts"/>
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/img_total_calories"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/img_calories_32"
-            app:layout_constraintTop_toBottomOf="@id/tv_my_statistics"
-            app:layout_constraintStart_toStartOf="@id/guideline_vertical_50_percent"
-            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_50_percent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"/>
-        <TextView
-            android:id="@+id/tv_total_calories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="149"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/tv_total_workouts"
-            app:layout_constraintStart_toStartOf="@id/img_total_calories"
-            app:layout_constraintEnd_toEndOf="@id/img_total_calories"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Calories\ntotal"
-            android:gravity="center_horizontal"
-            android:textColor="#6D7776"
-            android:textSize="18dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_total_workouts"
-            app:layout_constraintStart_toStartOf="@id/tv_total_calories"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_calories"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/background_item_profile"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_container_img_total_calories"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/background_container_img_total_calories"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+                        <ImageView
+                            android:id="@+id/img_total_calories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/img_calories_32"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tv_total_calories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/cl_container_img_total_calories"
+                        app:layout_constraintStart_toStartOf="@id/cl_container_img_total_calories"
+                        app:layout_constraintEnd_toEndOf="@id/cl_container_img_total_calories"
+                        android:layout_marginTop="6dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_calories"
+                        android:gravity="center_horizontal"
+                        android:textColor="#c0c0c0"
+                        android:textSize="14dp"
+                        app:layout_constraintTop_toBottomOf="@id/tv_total_calories"
+                        app:layout_constraintStart_toStartOf="@id/tv_total_calories"
+                        app:layout_constraintEnd_toEndOf="@id/tv_total_calories"/>
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/img_total_hours"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/img_clock_32"
-            app:layout_constraintTop_toBottomOf="@id/tv_my_statistics"
-            app:layout_constraintStart_toStartOf="@id/guideline_vertical_50_percent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"/>
-        <TextView
-            android:id="@+id/tv_total_hours"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="149"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/tv_total_workouts"
-            app:layout_constraintStart_toStartOf="@id/img_total_hours"
-            app:layout_constraintEnd_toEndOf="@id/img_total_hours"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hours\ntotal"
-            android:gravity="center_horizontal"
-            android:textColor="#6D7776"
-            android:textSize="18dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_total_hours"
-            app:layout_constraintStart_toStartOf="@id/tv_total_hours"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_hours"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_item_profile"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_container_img_total_hours"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/background_container_img_total_hours"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+                        <ImageView
+                            android:id="@+id/img_total_hours"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/img_clock_32"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tv_total_hours"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/cl_container_img_total_hours"
+                        app:layout_constraintStart_toStartOf="@id/cl_container_img_total_hours"
+                        app:layout_constraintEnd_toEndOf="@id/cl_container_img_total_hours"
+                        android:layout_marginTop="6dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_hours"
+                        android:gravity="center_horizontal"
+                        android:textColor="#c0c0c0"
+                        android:textSize="14dp"
+                        app:layout_constraintTop_toBottomOf="@id/tv_total_hours"
+                        app:layout_constraintStart_toStartOf="@id/tv_total_hours"
+                        app:layout_constraintEnd_toEndOf="@id/tv_total_hours"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
 
         <TextView
@@ -381,143 +529,139 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="Montly stats"
-            android:textSize="24sp"
-            app:layout_constraintTop_toBottomOf="@id/tv_total_workouts"
-            app:layout_constraintStart_toStartOf="@id/tv_my_statistics"
-            android:layout_marginTop="72dp"/>
+            android:text="@string/txt_monthly_statistics"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/ll_container_total_stats"
+            app:layout_constraintStart_toStartOf="@id/ll_container_total_stats"
+            android:layout_marginTop="26dp"/>
 
         <TextView
             android:id="@+id/tv_current_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="October 2025"
             android:textSize="16sp"
+            android:textColor="#d0d0d0"
+            app:layout_constraintBottom_toBottomOf="@id/tv_monthly_stats"
+            app:layout_constraintEnd_toEndOf="@id/ll_container_total_stats"
+            android:layout_marginTop="4dp"/>
+
+
+
+        <TextView
+            android:id="@+id/tv_total_workouts_month"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="@string/txt_total_workouts"
             android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/background_item_profile"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
             app:layout_constraintTop_toBottomOf="@id/tv_monthly_stats"
             app:layout_constraintStart_toStartOf="@id/tv_monthly_stats"
+            app:layout_constraintEnd_toEndOf="@id/tv_current_month"
+            android:layout_marginTop="12dp"/>
+
+
+        <TextView
+            android:id="@+id/tv_total_duration_month"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="@string/txt_total_duration"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/background_item_profile"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tv_total_workouts_month"
+            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
+            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
+            android:layout_marginTop="4dp"
+            />
+
+
+
+        <TextView
+            android:id="@+id/tv_active_days_month"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="@string/txt_active_days"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/background_item_profile"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tv_total_duration_month"
+            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
+            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
+            android:layout_marginTop="4dp"/>
+
+
+        <TextView
+            android:id="@+id/tv_avg_per_workout_month"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="@string/txt_avg_per_workout"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/background_item_profile"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tv_active_days_month"
+            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
+            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
+            android:layout_marginTop="4dp"/>
+
+
+        <TextView
+            android:id="@+id/tv_current_streak_month"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="@string/txt_current_streak"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:background="@drawable/background_item_profile"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tv_total_calories_month"
+            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
+            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
             android:layout_marginTop="4dp"/>
 
         <TextView
-            android:id="@+id/tv_user_total_workouts_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total workouts"
+            android:id="@+id/tv_total_calories_month"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="@string/txt_total_calories"
             android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/tv_current_month"
-            app:layout_constraintStart_toStartOf="@id/tv_current_month"
-            android:layout_marginTop="12dp"/>
+            android:textSize="16sp"
+            android:background="@drawable/background_item_profile"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tv_avg_per_workout_month"
+            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
+            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
+            android:layout_marginTop="4dp"/>
 
-        <TextView
-            android:id="@+id/tv_total_workouts_month_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="@id/tv_user_total_workouts_month"
-            app:layout_constraintStart_toStartOf="@id/guideline_vertical_50_percent"
-            />
-
-        <TextView
-            android:id="@+id/tv_user_total_duration_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total Duration"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_total_workouts_month"
-            app:layout_constraintStart_toStartOf="@id/tv_user_total_workouts_month"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/tv_total_duration_month_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18 min"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="@id/tv_user_total_duration_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month_stats"
-            />
-
-
-        <TextView
-            android:id="@+id/tv_user_active_days_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Active days"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_total_duration_month"
-            app:layout_constraintStart_toStartOf="@id/tv_current_month"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/tv_active_days_month_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="@id/tv_user_active_days_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month_stats"
-            />
-
-        <TextView
-            android:id="@+id/tv_user_avg_per_workout_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Avg per Workout"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_active_days_month"
-            app:layout_constraintStart_toStartOf="@id/tv_user_active_days_month"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/tv_avg_per_workout_month_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18 min"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="@id/tv_user_avg_per_workout_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_duration_month_stats"
-            />
-
-        <TextView
-            android:id="@+id/tv_user_current_streak_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Current streak"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_avg_per_workout_month"
-            app:layout_constraintStart_toStartOf="@id/tv_current_month"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/tv_current_streak_month_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18 days"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="@id/tv_user_current_streak_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month_stats"
-            />
-
-        <TextView
-            android:id="@+id/tv_user_total_calories_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total Calories"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_current_streak_month"
-            app:layout_constraintStart_toStartOf="@id/tv_user_current_streak_month"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/tv_total_calories_month_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="18"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="@id/tv_user_total_calories_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_duration_month_stats"
-            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -526,7 +670,7 @@
         android:id="@+id/rl_loading_data"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/img_chevron_left"
+        app:layout_constraintTop_toBottomOf="@id/cl_header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="#1E1E23"
@@ -543,7 +687,7 @@
         android:id="@+id/rl_error"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/img_chevron_left"
+        app:layout_constraintTop_toBottomOf="@id/cl_header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:background="#1E1E23"

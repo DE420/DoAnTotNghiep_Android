@@ -11,8 +11,14 @@
     <color name="red">#C42929</color>
     <color name="white30">#4DFFFFFF</color>
     <color name="gray">#808080</color>
+    <color name="gray_100">#E9DFE8</color>
     <color name="dark_gray">#404040</color>
     <color name="background_app_color">#121212</color>
     <color name="gray_text_color_hint">#BDBDBD</color>
     <color name="red_500">#FF9F0712</color>
+    <color name="red_400">#FE0025</color>
+    <color name="red_200">#3C0F1B</color>
+    <color name="black_400">#0E0B0F</color>
+    <color name="black_300">#17223D</color>
+
 </resources>

@@ -79,13 +79,25 @@ public class SessionManager {
     }
 
     /**
-     * Xóa toàn bộ dữ liệu session (dùng khi logout)
+     * Xóa dữ liệu session (dùng khi logout):
+     * - access token
+     * - refresh token
+     *
      */
+//    public void logout() {
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.clear();
+//        editor.apply();
+//    }
+
     public void logout() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
+        editor.remove(KEY_ACCESS_TOKEN);
+        editor.remove(KEY_REFRESH_TOKEN);
         editor.apply();
     }
+
+
 
     public boolean refreshToken() {
         String refreshToken = getRefreshToken();
