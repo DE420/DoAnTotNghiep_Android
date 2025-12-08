@@ -1,5 +1,7 @@
 package com.example.fitnessapp.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -28,8 +30,11 @@ import retrofit2.Response;
 
 public class ConfirmLogoutDialogFragment extends DialogFragment implements View.OnClickListener {
 
-    private Button btnConfirm;
+    private Button btnConfirm, btnCancel;
     private ApiService apiService;
+
+    private View viewLoading, viewContent;
+    private int shortAnimationDuration;
 
 
     @Nullable
@@ -40,7 +45,12 @@ public class ConfirmLogoutDialogFragment extends DialogFragment implements View.
 
         btnConfirm = view.findViewById(R.id.btn_confirm_logout);
         btnConfirm.setOnClickListener(this);
-        view.findViewById(R.id.btn_cancel_logout).setOnClickListener(this);
+        btnCancel = view.findViewById(R.id.btn_cancel_logout);
+        btnCancel.setOnClickListener(this);
+
+        viewLoading = view.findViewById(R.id.rl_loading);
+        viewContent = view.findViewById(R.id.cl_content);
+        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         apiService = RetrofitClient.getApiService();
         return view;
@@ -58,6 +68,7 @@ public class ConfirmLogoutDialogFragment extends DialogFragment implements View.
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_confirm_logout) {
+            crossfadeFromContentViewToLoadingView();
             String refreshToken = SessionManager.getInstance(requireActivity()).getRefreshToken();
 
             if (refreshToken == null) {
@@ -97,5 +108,40 @@ public class ConfirmLogoutDialogFragment extends DialogFragment implements View.
         if (getActivity() != null) {
             getActivity().finish();
         }
+    }
+
+    private void crossfadeFromContentViewToLoadingView() {
+
+        btnConfirm.setEnabled(false);
+        btnCancel.setEnabled(false);
+
+        // Set the content view to 0% opacity but visible, so that it is
+        // visible but fully transparent during the animation.
+        viewLoading.setAlpha(0f);
+        viewLoading.setVisibility(View.VISIBLE);
+
+
+        // Animate the content view to 100% opacity and clear any animation
+        // listener set on the view.
+        viewLoading.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+
+
+
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step so it doesn't
+        // participate in layout passes.
+        viewContent.animate()
+                .alpha(0f)
+                .setDuration(shortAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        viewContent.setVisibility(View.INVISIBLE);
+                    }
+                });
     }
 }

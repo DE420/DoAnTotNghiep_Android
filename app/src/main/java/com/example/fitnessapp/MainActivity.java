@@ -3,7 +3,9 @@ package com.example.fitnessapp;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -16,7 +18,17 @@ import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
 import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
+import com.example.fitnessapp.model.request.LoginRequest;
+import com.example.fitnessapp.model.response.ApiResponse;
+import com.example.fitnessapp.model.response.LoginResponse;
+import com.example.fitnessapp.network.ApiService;
+import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.session.SessionManager;
+import com.google.android.material.snackbar.Snackbar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,7 +83,39 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //fake login
-//        saveToken();
+        fakeLogin();
+    }
+
+    private void fakeLogin() {
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.login(new LoginRequest("tuyenvu1", "haih010b@"))
+                .enqueue(new Callback<ApiResponse<LoginResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            if (response.body().isStatus()) {
+                                Snackbar.make(binding.layoutContainer, "Login success", Snackbar.LENGTH_SHORT).show();
+                                Log.e("MainActivity", "accesstoken: " + response.body().getData().getAccessToken()
+                                + ", refreshtoken: " + response.body().getData().getRefreshToken());
+                                SessionManager.getInstance(getApplicationContext()).saveTokens(
+                                        response.body().getData().getAccessToken(),
+                                        response.body().getData().getRefreshToken()
+                                );
+                            } else {
+                                Snackbar.make(binding.layoutContainer, "Login failed (isStatus)", Snackbar.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Snackbar.make(binding.layoutContainer, "Login failed (isSuccessfull)", Snackbar.LENGTH_SHORT).show();
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
+                        Snackbar.make(binding.layoutContainer, "Login failed", Snackbar.LENGTH_SHORT).show();
+
+                    }
+                });
     }
 
 
@@ -113,17 +157,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    private void saveToken() {
-//        String accessToken =
-//                "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6MywidXNlcm5hbWUiOiJ0dXl" +
-//                        "lbnZ1MSIsInN1YiI6InR1eWVudnUxIiwiZXhwIjoxNzY3NTQyMzY0fQ.6G833ryPWSQE" +
-//                        "0_PU14aWWjetiTiiItaqHc6fjzKRuFA";
-//        String refreshToken =
-//                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjMsInN1YiI6InR1eWVudnUxIiwiZXhwIjoxNzcwMTM" +
-//                        "0MzY0fQ.UT1YocK6bni8sN408VjnTaLF2WlcKxM_VSWrT8kaIw0";
-//        SessionManager sessionManager = SessionManager.getInstance(this);
-//        sessionManager.saveTokens(accessToken, refreshToken);
-//    }
 
 
 

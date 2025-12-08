@@ -10,14 +10,27 @@ import java.util.Locale;
 public class DateUtil {
 
     public static final String DD_MM_YYYY_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String YYYY_MM_DD_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String MMMM_YYYY_DATE_FORMAT = "MMMM yyyy";
+    public static final String D_DATE_FORMAT = "d";
+    public static final String MMMM_D_DATE_FORMAT = "MMMM d";
 
-    public static String convertBirthday(String input, String format) throws ParseException {
+    public static boolean isValidDate(String input, String format) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        try {
+            Date date = inputFormat.parse(input);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    public static String convertToBirthday(String input, String format) throws ParseException {
 
         SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.ENGLISH);
         Date date = inputFormat.parse(input);
 
-        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
-        int day = Integer.parseInt(dayFormat.format(date));
+        int day = Integer.parseInt(getDateString(date, D_DATE_FORMAT));
 
         String suffix;
         if (day >= 11 && day <= 13) {
@@ -31,20 +44,26 @@ public class DateUtil {
             }
         }
 
-        SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM d", Locale.ENGLISH);
-        String base = monthDayFormat.format(date);
+        String base = getDateString(date, MMMM_D_DATE_FORMAT);
 
         return base + suffix;
     }
 
-    public static String getMonthAndYear(String input, String format) throws ParseException {
+    public static String getNewDateString(String input, String format, String newFormat) throws ParseException {
 
         SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.ENGLISH);
         Date date = inputFormat.parse(input);
 
-        SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
+        SimpleDateFormat monthDayFormat = new SimpleDateFormat(newFormat, Locale.ENGLISH);
 
         return monthDayFormat.format(date);
     }
+
+    public static String getDateString(Date input, String format) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        return inputFormat.format(input);
+    }
+
+
 
 }

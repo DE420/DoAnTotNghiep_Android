@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +22,11 @@ import androidx.fragment.app.FragmentManager;
 import com.bumptech.glide.Glide;
 import com.example.fitnessapp.LoginActivity;
 import com.example.fitnessapp.R;
+import com.example.fitnessapp.constants.Constants;
+import com.example.fitnessapp.enums.ActivityLevel;
+import com.example.fitnessapp.enums.FitnessGoal;
 import com.example.fitnessapp.model.request.RefreshTokenRequest;
+import com.example.fitnessapp.model.request.UpdateProfileRequest;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
 import com.example.fitnessapp.session.SessionManager;
 import com.example.fitnessapp.databinding.FragmentProfileBinding;
@@ -30,6 +35,7 @@ import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.utils.DateUtil;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 
@@ -39,7 +45,7 @@ import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
 
-    public static final String TAG = "com.example.fitnessapp.fragment." + ProfileFragment.class.getSimpleName();
+    public static final String TAG = ProfileFragment.class.getSimpleName();
 
     private FragmentProfileBinding binding;
     private ApiService apiService;
@@ -57,166 +63,79 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.svContent.setVisibility(View.GONE);
-        binding.buttonEditProfile.setVisibility(View.GONE);
-        binding.rlLoadingData.setVisibility(View.VISIBLE);
-        binding.rlError.setVisibility(View.GONE);
+
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         apiService = RetrofitClient.getApiService();
 
-        loadUserProfileData();
 
+        binding.buttonEditProfile.setVisibility(View.GONE);
+        binding.svContent.setVisibility(View.GONE);
+        binding.rlLoadingData.setVisibility(View.VISIBLE);
         setupClickListeners();
 
+        loadUserProfileData();
+
     }
 
-    private void crossfadeFromLoadingViewToContentView() {
 
-        // Set the content view to 0% opacity but visible, so that it is
-        // visible but fully transparent during the animation.
-        binding.svContent.setAlpha(0f);
-        binding.svContent.setVisibility(View.VISIBLE);
-
-
-        // Animate the content view to 100% opacity and clear any animation
-        // listener set on the view.
-        binding.svContent.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-
-        binding.buttonEditProfile.setAlpha(0f);
-        binding.buttonEditProfile.setVisibility(View.VISIBLE);
-        binding.buttonEditProfile.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step so it doesn't
-        // participate in layout passes.
-        binding.rlLoadingData.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        binding.rlLoadingData.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    private void hideEditProfileButton() {
-        binding.buttonEditProfile.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        binding.buttonEditProfile.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    private void crossfadeFromLoadingViewToErrorView() {
-
-        // Set the content view to 0% opacity but visible, so that it is
-        // visible but fully transparent during the animation.
-        binding.rlError.setAlpha(0f);
-        binding.rlError.setVisibility(View.VISIBLE);
-
-        // Animate the content view to 100% opacity and clear any animation
-        // listener set on the view.
-        binding.rlError.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-
-
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step so it doesn't
-        // participate in layout passes.
-        binding.rlLoadingData.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        binding.rlLoadingData.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    private void crossfadeFromErrorViewToLoadingView() {
-
-        // Set the content view to 0% opacity but visible, so that it is
-        // visible but fully transparent during the animation.
-        binding.rlLoadingData.setAlpha(0f);
-        binding.rlLoadingData.setVisibility(View.VISIBLE);
-
-        // Animate the content view to 100% opacity and clear any animation
-        // listener set on the view.
-        binding.rlLoadingData.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-
-
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step so it doesn't
-        // participate in layout passes.
-        binding.rlError.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        binding.rlError.setVisibility(View.GONE);
-                    }
-                });
-    }
 
     private void loadUserProfileData() {
         SessionManager sessionManager = SessionManager.getInstance(getActivity());
         String accessToken = sessionManager.getAccessToken();
         if (accessToken == null) {
-            if (sessionManager.refreshToken()) {
-                accessToken = sessionManager.getAccessToken();
-            } else {
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-
-                // Kết thúc Activity chứa Fragment này (MainActivity)
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
-                return;
-            }
+            Snackbar.make(binding.fragmentProfile, "Redirect to login", Snackbar.LENGTH_SHORT).show();
+            Log.e(TAG, "accessToken null");
+            return;
+//            Log.e(TAG, "access tokens null");
+//            if (sessionManager.refreshToken()) {
+//                accessToken = sessionManager.getAccessToken();
+//            } else {
+//                Intent intent = new Intent(getActivity(), LoginActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                startActivity(intent);
+//
+//                // Kết thúc Activity chứa Fragment này (MainActivity)
+//                if (getActivity() != null) {
+//                    getActivity().finish();
+//                }
+//                return;
+//            }
         }
 
-        apiService.getUserProfile("Bearer " + accessToken).enqueue(new Callback<ApiResponse<ProfileResponse>>() {
+        Log.e(TAG, accessToken);
+
+        apiService.getUserProfile(Constants.PREFIX_JWT + " " + accessToken).enqueue(new Callback<ApiResponse<ProfileResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<ProfileResponse>> call, Response<ApiResponse<ProfileResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isStatus()) {
                         profileResponse = response.body().getData();
                         Log.e(TAG, profileResponse.toString());
-                        showContentView();
+                        if (binding != null) {
+                            showContentView(binding.rlLoadingData);
+                        }
                     } else {
                         String error = response.body().getData().toString();
-                        showErrorView(error);
+                        showErrorView(binding.rlLoadingData, error);
                         Log.e(TAG, error);
                     }
                 } else {
-                    String error = response.body() != null ? response.body().getData().toString() : getString(R.string.txt_error_loading_data);
-                    showErrorView(error);
-                    Log.e(TAG, "code: " + response.code() + "message: +" + (response.errorBody() != null ? response.errorBody().toString() : "error loading data unknown."));
+                    if (response.code() == 401) {
+                        if (binding != null) {
+                            Snackbar.make(binding.fragmentProfile, "Redirect to login", Snackbar.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        String error = response.body() != null ? response.body().getData().toString() : getString(R.string.txt_error_loading_data);
+                        if (binding != null) {
+                            showErrorView(binding.rlLoadingData, error);
+                        }
+                        try {
+                            Log.e(TAG, "code: " + response.code() + "message: +" + (response.errorBody() != null ? response.errorBody().string() : "error loading data unknown."));
+                        } catch (IOException e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
 
                 }
             }
@@ -224,25 +143,23 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onFailure(Call<ApiResponse<ProfileResponse>> call, Throwable t) {
                 String error = "Sorry, something went wrong.\nPlease check your network.";
-                showErrorView(error);
+                if (binding != null) {
+                    showErrorView(binding.rlLoadingData, error);
+                }
                 Log.e(TAG, "error cant loading data: " + t.getMessage());
             }
         });
     }
 
 
-    private void showContentView() {
-        setProfileDataToContentView();
-        crossfadeFromLoadingViewToContentView();
-    }
 
     @SuppressLint("DefaultLocale")
     private void setProfileDataToContentView() {
         if (profileResponse == null) {
-            showErrorView("No data found.\nPlease retry.");
+            showErrorView(binding.svContent, "No data found.\nPlease retry.");
         } else {
             String noDataStr = getString(R.string.txt_no_data);
-            Glide.with(binding.imgAvatar)
+            Glide.with(requireActivity())
                     .load(profileResponse.getAvatar())
                     .error(R.drawable.img_user_default_128)
                     .into(binding.imgAvatar);
@@ -256,7 +173,7 @@ public class ProfileFragment extends Fragment {
             String birthdayStr = noDataStr;
             if (profileResponse.getDateOfBirth() != null) {
                 try {
-                    birthdayStr = DateUtil.convertBirthday(
+                    birthdayStr = DateUtil.convertToBirthday(
                             profileResponse.getDateOfBirth(),
                             DateUtil.DD_MM_YYYY_DATE_FORMAT
                     );
@@ -267,73 +184,24 @@ public class ProfileFragment extends Fragment {
             binding.tvBirthday.setText(birthdayStr);
             binding.tvUserWeight.setText(
                     profileResponse.getWeight() != null
-                            ? String.format("$.2f", profileResponse.getWeight())
+                            ? String.format("%.2f kg", profileResponse.getWeight())
                             : noDataStr
             );
             binding.tvUserHeight.setText(
                     profileResponse.getHeight() != null
-                            ? String.format("$.2f", profileResponse.getHeight())
+                            ? String.format("%.2f m", profileResponse.getHeight())
                             : noDataStr
             );
 
-            String fitnessGoalStr = getString(R.string.txt_not_selected_goal);
-            if (profileResponse.getFitnessGoal() != null) {
-                switch (profileResponse.getFitnessGoal()) {
-                    case OTHERS: {
-                        fitnessGoalStr = getString(R.string.fitness_goal_others);
-                        break;
-                    }
-                    case SHAPE_BODY: {
-                        fitnessGoalStr = getString(R.string.fitness_goal_shape_body);
-                        break;
-                    }
-                    case GAIN_WEIGHT: {
-                        fitnessGoalStr = getString(R.string.fitness_goal_gain_weight);
-                        break;
-                    }
-                    case LOSE_WEIGHT: {
-                        fitnessGoalStr = getString(R.string.fitness_goal_lose_weight);
-                        break;
-                    }
-                    case MUSCLE_GAIN: {
-                        fitnessGoalStr = getString(R.string.fitness_goal_muscle_gain);
-                        break;
-                    }
-                    default:
-                        fitnessGoalStr = getString(R.string.txt_not_selected_goal);
+            String fitnessGoalStr = profileResponse.getFitnessGoal() != null
+                    ? getString(profileResponse.getFitnessGoal().getResId())
+                    :getString(R.string.txt_not_selected_goal);
 
-                }
-            }
             binding.tvFitnessGoal.setText(fitnessGoalStr);
 
-            String activityLevelStr = getString(R.string.txt_not_selected_activity_level);
-            if (profileResponse.getActivityLevel() != null) {
-                switch (profileResponse.getActivityLevel()) {
-                    case SEDENTARY: {
-                        activityLevelStr = getString(R.string.acitvity_level_sedentary);
-                        break;
-                    }
-                    case LIGHTLY_ACTIVE: {
-                        activityLevelStr = getString(R.string.acitvity_level_lightly_active);
-                        break;
-                    }
-                    case MODERATELY_ACTIVE: {
-                        activityLevelStr = getString(R.string.acitvity_level_moderately_active);
-                        break;
-                    }
-                    case VERY_ACTIVE: {
-                        activityLevelStr = getString(R.string.acitvity_level_very_active);
-                        break;
-                    }
-                    case EXTRA_ACTIVE: {
-                        activityLevelStr = getString(R.string.acitvity_level_extra_active);
-                        break;
-                    }
-                    default:
-                        activityLevelStr = getString(R.string.txt_not_selected_goal);
-
-                }
-            }
+            String activityLevelStr = profileResponse.getActivityLevel() != null
+                    ? getString(profileResponse.getActivityLevel().getResId())
+                    : getString(R.string.txt_not_selected_activity_level);
             binding.tvActivityLevel.setText(activityLevelStr);
 
             binding.tvTotalWorkouts.setText(
@@ -408,21 +276,28 @@ public class ProfileFragment extends Fragment {
 
     }
 
-    private void showErrorView(String error) {
-        hideEditProfileButton();
-        binding.tvError.setText(error);
-        crossfadeFromLoadingViewToErrorView();
-    }
 
     private void setupClickListeners() {
         binding.btnReloadData.setOnClickListener(view -> {
-            crossfadeFromErrorViewToLoadingView();
+//            crossfadeFromErrorViewToLoadingView();
+            showLoadingView(binding.rlError);
             loadUserProfileData();
         });
 
         binding.buttonEditProfile.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Edit Profile Clicked", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to EditProfileFragment or Activity
+            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest.Builder()
+                    .avatar(profileResponse.getAvatar())
+                    .name(profileResponse.getName())
+                    .height(profileResponse.getHeight())
+                    .weight(profileResponse.getWeight())
+                    .activityLevel(profileResponse.getActivityLevel())
+                    .fitnessGoal(profileResponse.getFitnessGoal())
+                    .dateOfBirth(profileResponse.getDateOfBirth())
+                    .build();
+
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(UpdateProfileRequest.KEY_UPDATE_PROFILE_REQUEST, updateProfileRequest);
             getParentFragmentManager().beginTransaction()
                     .setCustomAnimations(
                             R.anim.slide_in, // enter
@@ -430,7 +305,7 @@ public class ProfileFragment extends Fragment {
                             R.anim.fade_in, // popEnter
                             R.anim.slide_out // popExit
                     )
-                    .replace(R.id.fragment_container, EditProfileFragment.class, null)
+                    .replace(R.id.fragment_container, EditProfileFragment.class, bundle)
                     .setReorderingAllowed(true)
                     .addToBackStack(null)
                     .commit();
@@ -438,8 +313,6 @@ public class ProfileFragment extends Fragment {
         });
 
         binding.buttonChangePassword.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Change Password Clicked", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to ChangePasswordFragment or Activity
             getParentFragmentManager().beginTransaction()
                     .setCustomAnimations(
                             R.anim.slide_in, // enter
@@ -512,5 +385,58 @@ public class ProfileFragment extends Fragment {
         binding = null; // Quan trọng để tránh rò rỉ bộ nhớ
     }
 
+    private void showLoadingView(View from) {
+        if (binding != null) {
+            binding.buttonEditProfile.setVisibility(View.GONE);
+            fade(from, binding.rlLoadingData);
+        }
+    }
+
+    private void showContentView(View from) {
+        if (binding != null) {
+            setProfileDataToContentView();
+            fade(from, binding.svContent);
+            binding.buttonEditProfile.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showErrorView(View from, String error) {
+        if (binding != null) {
+            binding.buttonEditProfile.setVisibility(View.GONE);
+            binding.tvError.setText(error);
+            fade(from, binding.rlError);
+        }
+    }
+
+
+
+    private void fade(final View from, final View to) {
+
+        // Set the content view to 0% opacity but visible, so that it is
+        // visible but fully transparent during the animation.
+        to.setAlpha(0f);
+        to.setVisibility(View.VISIBLE);
+
+        // Animate the content view to 100% opacity and clear any animation
+        // listener set on the view.
+        to.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step so it doesn't
+        // participate in layout passes.
+        from.animate()
+                .alpha(0f)
+                .setDuration(shortAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        from.setVisibility(View.GONE);
+                    }
+                });
+
+    }
 
 }

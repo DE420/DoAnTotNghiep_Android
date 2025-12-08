@@ -5,15 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#292C32"
-    tools:context=".fragment.ProfileFragment">
+    android:background="@color/background_app_color"
+    tools:context=".fragment.ProfileFragment"
+    android:id="@+id/fragment_profile">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/white_4"
+        >
 
         <ImageView
             android:id="@+id/img_chevron_left"
@@ -121,7 +124,7 @@
             android:id="@+id/img_avatar"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/default_avatar"
+            android:src="@drawable/img_user_default_128"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -198,7 +201,7 @@
         <View
             android:layout_width="1dp"
             android:layout_height="0dp"
-            android:background="#32353B"
+            android:background="@color/white_38"
             app:layout_constraintTop_toTopOf="@id/view_container_weight_height"
             app:layout_constraintBottom_toBottomOf="@id/view_container_weight_height"
             app:layout_constraintStart_toStartOf="parent"

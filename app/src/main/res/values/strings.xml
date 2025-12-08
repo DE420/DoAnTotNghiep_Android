@@ -8,26 +8,26 @@
     <string name="default_web_client_id">883925265537-ukhcne4md2ndbke7o4d62ss79pep2nhd.apps.googleusercontent.com</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="txt_full_name_en">Full name:</string>
+    <string name="txt_full_name_en">Full name</string>
     <string name="txt_full_name_hint_en">Enter your name</string>
     <string name="txt_email_en">Email:</string>
     <string name="txt_email_hint_en">Enter your email</string>
-    <string name="txt_phone_number_en">Phone number:</string>
+    <string name="txt_phone_number_en">Phone number</string>
     <string name="txt_phone_number_hint_en">Enter your phone number</string>
-    <string name="txt_date_of_birth_en">Date of birth:</string>
+    <string name="txt_date_of_birth_en">Date of birth</string>
     <string name="txt_birthday_hint_en">Enter your birthday</string>
-    <string name="txt_weight_kg_en">Weight (kg):</string>
-    <string name="txt_weight_pound_en">Weight (pound):</string>
+    <string name="txt_weight_kg_en">Weight (kg)</string>
+    <string name="txt_weight_pound_en">Weight (pound)</string>
     <string name="txt_weight_hint_en">Enter your weight</string>
-    <string name="txt_height_m_en">Height (m):</string>
-    <string name="txt_height_i_en">Height (inch):</string>
+    <string name="txt_height_m_en">Height (m)</string>
+    <string name="txt_height_i_en">Height (inch)</string>
     <string name="txt_height_hint_en">Enter your height</string>
     <string name="txt_change_password_en">Change password</string>
-    <string name="txt_current_password_en">Current password:</string>
+    <string name="txt_current_password_en">Current password</string>
     <string name="txt_current_password_hint_en">Enter your current password</string>
-    <string name="txt_new_password_en">New password:</string>
+    <string name="txt_new_password_en">New password</string>
     <string name="txt_new_password_hint_en">Enter your new password</string>
-    <string name="txt_confirm_password_en">Confirm password:</string>
+    <string name="txt_confirm_password_en">Confirm password</string>
     <string name="txt_confirm_new_password_hint_en">Re-enter your new password</string>
     <string name="txt_no_internet_connection_en">No internet connection</string>
     <string name="txt_connecting_en">Connecting...</string>
@@ -48,7 +48,7 @@
     <string name="acitvity_level_extra_active">Extra active</string>
     <string name="txt_min">min</string>
     <string name="txt_days">days</string>
-    <string name="txt_birthday">Birthday:</string>
+    <string name="txt_birthday">Birthday</string>
     <string name="txt_weight">Weight</string>
     <string name="txt_height">Height</string>
     <string name="txt_goal">Goal</string>
@@ -63,4 +63,8 @@
     <string name="txt_avg_per_workout">Avg per Workout:</string>
     <string name="txt_current_streak">Current streak:</string>
     <string name="txt_total_calories">Total Calories:</string>
+    <string name="ok">Ok</string>
+    <string name="read_external_storage_required">Allow P-FIT to access photos on your device?</string>
+    <string name="read_external_storage_granted">Access photos permission on device is granted.</string>
+    <string name="read_external_storage_denied">Access photos permission on device is denied.</string>
 </resources>
