@@ -170,12 +170,12 @@ public class MainActivity extends AppCompatActivity {
             binding.appBarLayout.setVisibility(View.VISIBLE);
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
         }
-
-        if (fm.getBackStackEntryCount() > 0) {
-            fm.popBackStack();
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
+//        if (fm.getBackStackEntryCount() > 0) {
+//            fm.popBackStack();
+//        } else {
+//            super.onBackPressed();
+//        }
     }
 
 

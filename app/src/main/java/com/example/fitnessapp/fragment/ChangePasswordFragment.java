@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -51,8 +52,22 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private int colorPurple400, colorWhite200, colorPink200;
     private int shortAnimationDuration;
 
-    private boolean isLoading = false;
+    private OnBackPressedCallback backPressedCallback;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        backPressedCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                // Do nothing → back button disabled
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,14 +80,6 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if (!isLoading) {
-                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
-                }
-            }
-        });
 
         apiService = RetrofitClient.getApiService();
 
@@ -125,7 +132,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
             getParentFragmentManager().popBackStack();
         } else if (view.getId() == R.id.btn_change_password) {
             if (isValidCurrentPassword() && isValidNewPassword() && isValidConfirmPassword()) {
-                isLoading = true;
+                backPressedCallback.setEnabled(true);
                 view.setEnabled(false);
                 binding.imgChevronLeft.setEnabled(false);
 
@@ -373,7 +380,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                 .enqueue(new Callback<ApiResponse<String>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
-                        isLoading = false;
+                        backPressedCallback.setEnabled(false);
                         fadeGone(binding.rlLoadingData);
                         binding.btnChangePassword.setEnabled(true);
                         binding.imgChevronLeft.setEnabled(true);
@@ -388,6 +395,9 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
                                 binding.etCurrentPassword.setText("");
                                 binding.etNewPassword.setText("");
                                 binding.etConfirmPassword.setText("");
+                                new Handler().postDelayed(() -> {
+                                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                                }, 2000);
                             } else {
                                 Snackbar.make(binding.getRoot(), response.body().getData(), Snackbar.LENGTH_SHORT)
                                         .setBackgroundTint(
@@ -415,7 +425,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
                     @Override
                     public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                        isLoading = false;
+                        backPressedCallback.setEnabled(false);
                         fadeGone(binding.rlLoadingData);
                         binding.btnChangePassword.setEnabled(true);
                         binding.imgChevronLeft.setEnabled(true);

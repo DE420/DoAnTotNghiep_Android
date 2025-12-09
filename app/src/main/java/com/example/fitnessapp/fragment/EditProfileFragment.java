@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -22,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -80,10 +82,13 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
     private Uri mUri;
     private boolean isEdit = false;
 
-    private int colorPurple400, colorWhite200, colorPink200;
+    private int colorPurple400, colorWhite200, colorPink200, colorGreen500, colorRed400;
     private ApiService apiService;
 
     private int shortAnimationDuration;
+
+    private OnBackPressedCallback backPressedCallback;
+
 
 
     private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(
@@ -132,7 +137,21 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                     });
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        backPressedCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                // Do nothing → back button disabled
+
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -147,6 +166,8 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         updateProfileRequest = (UpdateProfileRequest) requireArguments()
                 .getSerializable(UpdateProfileRequest.KEY_UPDATE_PROFILE_REQUEST);
 
+
+
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         initViews();
@@ -156,6 +177,8 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         colorPurple400 = getResources().getColor(R.color.purple_400, null);
         colorWhite200 = getResources().getColor(R.color.white_200, null);
         colorPink200 = getResources().getColor(R.color.pink_200, null);
+        colorGreen500 = getResources().getColor(R.color.green_500, null);
+        colorRed400 = getResources().getColor(R.color.red_400, null);
 
 
         checkEditTextFullName(colorWhite200, View.GONE);
@@ -186,12 +209,18 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         } else if (view.getId() == R.id.btn_update) {
             if (isValidFullName() && isValidDateOfBirth()
                 && isValidWeight() && isValidHeight()) {
+                backPressedCallback.setEnabled(true);
                 view.setEnabled(false);
                 binding.imgChevronLeft.setEnabled(false);
                 callApiUpdateProfile();
             } else {
 //                Toast.makeText(requireContext(), "Invalid input", Toast.LENGTH_SHORT).show();
-                Snackbar.make(binding.fragmentEditProfile, "Invalid input", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(
+                        binding.fragmentEditProfile,
+                        "Invalid input",
+                        Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(colorRed400)
+                        .show();
             }
         }
     }
@@ -744,6 +773,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
 
         @Override
         public void onResponse(Call<ApiResponse<Boolean>> call, Response<ApiResponse<Boolean>> response) {
+            backPressedCallback.setEnabled(false);
             binding.btnUpdate.setEnabled(true);
             binding.imgChevronLeft.setEnabled(true);
             fadeGone(binding.rlLoadingData);
@@ -751,11 +781,24 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                 if (response.body().isStatus()) {
 //                    Toast.makeText(requireContext(), "Update profile successes", Toast.LENGTH_SHORT).show();
 
-                    Snackbar.make(binding.fragmentEditProfile, "Update profile success", Snackbar.LENGTH_SHORT).show();
-                    getParentFragmentManager().popBackStack();
+                    Snackbar.make(
+                            binding.fragmentEditProfile,
+                            "Update profile success",
+                            Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(colorGreen500)
+                            .show();
+                    new Handler().postDelayed(() -> {
+                        requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                    }, 2000);
+
                 } else {
 //                    Toast.makeText(requireContext(), "Update profile fail", Toast.LENGTH_SHORT).show();
-                    Snackbar.make(binding.fragmentEditProfile, "Update profile fail", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(
+                            binding.fragmentEditProfile,
+                            "Update profile fail",
+                            Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(colorRed400)
+                            .show();
 
                     Log.e(TAG, "onResponse, isSuccessfull but isStatus false, code: " +
                             response.code() + ", data: " + response.body().getData());
@@ -763,7 +806,11 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             } else {
 //                Toast.makeText(requireContext(), "Update profile fail", Toast.LENGTH_SHORT).show();
                 if (response.code() == 401 ) {
-                    Snackbar.make(binding.fragmentEditProfile, "Redirect to login", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(
+                            binding.fragmentEditProfile,
+                            "Redirect to login",
+                            Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 try {
                     Log.e(TAG, "onResponse but isn't successful, code: " + response.code()
@@ -777,11 +824,17 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
 
         @Override
         public void onFailure(Call<ApiResponse<Boolean>> call, Throwable t) {
+            backPressedCallback.setEnabled(false);
             binding.btnUpdate.setEnabled(true);
             binding.imgChevronLeft.setEnabled(true);
             fadeGone(binding.rlLoadingData);
-            Snackbar.make(binding.fragmentEditProfile, "Update profile fail", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(binding.fragmentEditProfile,
+                    "Update profile fail",
+                    Snackbar.LENGTH_SHORT)
+                    .setBackgroundTint(colorRed400)
+                    .show();
             Log.e(TAG, "onFailure: " + t.getMessage());
+
         }
     }
 
