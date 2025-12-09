@@ -1,6 +1,7 @@
 package com.example.fitnessapp.network;
 
 import com.example.fitnessapp.constants.Constants;
+import com.example.fitnessapp.model.request.ChangePasswordRequest;
 import com.example.fitnessapp.model.request.ForgotPasswordRequest;
 import com.example.fitnessapp.model.request.GoogleLoginRequest;
 import com.example.fitnessapp.model.request.LoginRequest;
@@ -74,4 +75,9 @@ public interface ApiService {
             @Part(UpdateProfileRequest.KEY_FITNESS_GOAL) RequestBody fitnessGoal,
             @Part(UpdateProfileRequest.KEY_DATE_OF_BIRTH) RequestBody dateOfBirth
             );
+
+    @POST("user/change-password")
+    Call<ApiResponse<String>> changePassword(
+            @Header(Constants.KEY_AUTHORIZATION) String authorization,
+            @Body ChangePasswordRequest request);
 }

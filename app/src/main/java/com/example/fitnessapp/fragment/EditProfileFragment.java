@@ -43,6 +43,7 @@ import com.example.fitnessapp.constants.Constants;
 import com.example.fitnessapp.databinding.FragmentEditProfileBinding;
 import com.example.fitnessapp.enums.ActivityLevel;
 import com.example.fitnessapp.enums.FitnessGoal;
+import com.example.fitnessapp.model.WrapperEditTextState;
 import com.example.fitnessapp.model.request.UpdateProfileRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.network.ApiService;
@@ -70,9 +71,6 @@ import retrofit2.Response;
 public class EditProfileFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener, View.OnKeyListener {
 
     public static final String TAG = EditProfileFragment.class.getName();
-    private static final int MY_REQUEST_CODE = 10;
-    public static final int IS_VALID_EDIT_TEXT = 1;
-
     private FragmentEditProfileBinding binding;
     private UpdateProfileRequest updateProfileRequest;
     private List<ActivityLevel> activityLevelList;
@@ -430,99 +428,99 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
     }
 
     private void checkEditTextFullName(int isValidColor, int isValidVisibility) {
-        WrapperEditTextState wrapperEditTextState = new WrapperEditTextState();
-        wrapperEditTextState.setEditText(binding.etFullName);
-        wrapperEditTextState.setTvLabel(binding.tvFullName);
-        wrapperEditTextState.setTvSupport(binding.tvFullNameSupport);
+        WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
+                .editText(binding.etFullName)
+                .tvLabel(binding.tvFullName)
+                .tvSupport(binding.tvFullNameSupport);
         if (!isValidFullName()) {
-            wrapperEditTextState.setColor(colorPink200);
-            wrapperEditTextState.setVisibilityOfTvSupport(View.VISIBLE);
+            builder.color(colorPink200);
+            builder.visibilityOfTvSupport(View.VISIBLE);
 //            wrapperEditTextState.setTag(false);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.error_filled_black_text_field,
                     null));
 
         } else {
-            wrapperEditTextState.setColor(isValidColor);
-            wrapperEditTextState.setVisibilityOfTvSupport(isValidVisibility);
+            builder.color(isValidColor);
+            builder.visibilityOfTvSupport(isValidVisibility);
 //            wrapperEditTextState.setTag(true);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.filled_black_text_field,
                     null));
         }
-        setStateForEditText(wrapperEditTextState);
+        setStateForEditText(builder.build());
     }
 
     private void checkEditTextDateOfBirth(int isValidColor, int isValidVisibility) {
-        WrapperEditTextState wrapperEditTextState = new WrapperEditTextState();
-        wrapperEditTextState.setEditText(binding.etDateOfBirth);
-        wrapperEditTextState.setTvLabel(binding.tvDateOfBirth);
-        wrapperEditTextState.setTvSupport(binding.tvDateOfBirthSupport);
-        if (!isValidDateOfBirth()) {
-            wrapperEditTextState.setColor(colorPink200);
-            wrapperEditTextState.setVisibilityOfTvSupport(View.VISIBLE);
+        WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
+                .editText(binding.etDateOfBirth)
+                .tvLabel(binding.tvDateOfBirth)
+                .tvSupport(binding.tvDateOfBirthSupport);
+        if (!isValidFullName()) {
+            builder.color(colorPink200);
+            builder.visibilityOfTvSupport(View.VISIBLE);
 //            wrapperEditTextState.setTag(false);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.error_filled_black_text_field,
                     null));
 
         } else {
-            wrapperEditTextState.setColor(isValidColor);
-            wrapperEditTextState.setVisibilityOfTvSupport(isValidVisibility);
+            builder.color(isValidColor);
+            builder.visibilityOfTvSupport(isValidVisibility);
 //            wrapperEditTextState.setTag(true);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.filled_black_text_field,
                     null));
         }
-        setStateForEditText(wrapperEditTextState);
+        setStateForEditText(builder.build());
     }
 
     private void checkEditTextWeight(int isValidColor, int isValidVisibility) {
-        WrapperEditTextState wrapperEditTextState = new WrapperEditTextState();
-        wrapperEditTextState.setEditText(binding.etWeight);
-        wrapperEditTextState.setTvLabel(binding.tvWeight);
-        wrapperEditTextState.setTvSupport(binding.tvWeightSupport);
-        if (!isValidWeight()) {
-            wrapperEditTextState.setColor(colorPink200);
-            wrapperEditTextState.setVisibilityOfTvSupport(View.VISIBLE);
+        WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
+                .editText(binding.etWeight)
+                .tvLabel(binding.tvWeight)
+                .tvSupport(binding.tvWeightSupport);
+        if (!isValidFullName()) {
+            builder.color(colorPink200);
+            builder.visibilityOfTvSupport(View.VISIBLE);
 //            wrapperEditTextState.setTag(false);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.error_filled_black_text_field,
                     null));
 
         } else {
-            wrapperEditTextState.setColor(isValidColor);
-            wrapperEditTextState.setVisibilityOfTvSupport(isValidVisibility);
+            builder.color(isValidColor);
+            builder.visibilityOfTvSupport(isValidVisibility);
 //            wrapperEditTextState.setTag(true);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.filled_black_text_field,
                     null));
         }
-        setStateForEditText(wrapperEditTextState);
+        setStateForEditText(builder.build());
     }
 
     private void checkEditTextHeight(int isValidColor, int isValidVisibility) {
-        WrapperEditTextState wrapperEditTextState = new WrapperEditTextState();
-        wrapperEditTextState.setEditText(binding.etHeight);
-        wrapperEditTextState.setTvLabel(binding.tvHeight);
-        wrapperEditTextState.setTvSupport(binding.tvHeightSupport);
-        if (!isValidHeight()) {
-            wrapperEditTextState.setColor(colorPink200);
-            wrapperEditTextState.setVisibilityOfTvSupport(View.VISIBLE);
+        WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
+                .editText(binding.etHeight)
+                .tvLabel(binding.tvHeight)
+                .tvSupport(binding.tvHeightSupport);
+        if (!isValidFullName()) {
+            builder.color(colorPink200);
+            builder.visibilityOfTvSupport(View.VISIBLE);
 //            wrapperEditTextState.setTag(false);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.error_filled_black_text_field,
                     null));
 
         } else {
-            wrapperEditTextState.setColor(isValidColor);
-            wrapperEditTextState.setVisibilityOfTvSupport(isValidVisibility);
+            builder.color(isValidColor);
+            builder.visibilityOfTvSupport(isValidVisibility);
 //            wrapperEditTextState.setTag(true);
-            wrapperEditTextState.setBackground(getResources().getDrawable(
+            builder.background(getResources().getDrawable(
                     R.drawable.filled_black_text_field,
                     null));
         }
-        setStateForEditText(wrapperEditTextState);
+        setStateForEditText(builder.build());
     }
 
 
@@ -787,69 +785,5 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private static class WrapperEditTextState {
-        private EditText editText;
-        private boolean tag;
-        private Drawable background;
-        private TextView tvLabel;
-        private TextView tvSupport;
-        private int color;
-        private int visibilityOfTvSupport;
 
-        public void setEditText(EditText editText) {
-            this.editText = editText;
-        }
-
-        public void setTag(boolean tag) {
-            this.tag = tag;
-        }
-
-        public void setBackground(Drawable background) {
-            this.background = background;
-        }
-
-        public void setTvLabel(TextView tvLabel) {
-            this.tvLabel = tvLabel;
-        }
-
-        public void setTvSupport(TextView tvSupport) {
-            this.tvSupport = tvSupport;
-        }
-
-        public void setColor(int color) {
-            this.color = color;
-        }
-
-        public void setVisibilityOfTvSupport(int visibilityOfTvSupport) {
-            this.visibilityOfTvSupport = visibilityOfTvSupport;
-        }
-
-        public EditText getEditText() {
-            return editText;
-        }
-
-        public boolean isTag() {
-            return tag;
-        }
-
-        public Drawable getBackground() {
-            return background;
-        }
-
-        public TextView getTvLabel() {
-            return tvLabel;
-        }
-
-        public TextView getTvSupport() {
-            return tvSupport;
-        }
-
-        public int getColor() {
-            return color;
-        }
-
-        public int getVisibilityOfTvSupport() {
-            return visibilityOfTvSupport;
-        }
-    }
 }

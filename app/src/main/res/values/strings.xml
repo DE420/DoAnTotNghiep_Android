@@ -67,4 +67,7 @@
     <string name="read_external_storage_required">Allow P-FIT to access photos on your device?</string>
     <string name="read_external_storage_granted">Access photos permission on device is granted.</string>
     <string name="read_external_storage_denied">Access photos permission on device is denied.</string>
+    <string name="txt_cant_blank_current_password_support">Current password can\'t blank</string>
+    <string name="txt_password_support">Password must be at least 8 characters, including letters, numbers and special characters</string>
+    <string name="txt_new_password_support">Confirm password don\'t match new password</string>
 </resources>

@@ -41,4 +41,5 @@
     <color name="grey_200">#CAC4D0</color>
     <color name="red_300">#B3261E</color>
     <color name="red_600">#8C1D18</color>
+    <color name="green_500">#00BC1B</color>
 </resources>
