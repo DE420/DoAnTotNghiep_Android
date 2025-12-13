@@ -9,6 +9,8 @@ public class ApiResponse<T> {
     @SerializedName("data")
     private T data;
 
+    private Pagination meta;
+
     public boolean isStatus() {
         return status;
     }
@@ -16,4 +18,6 @@ public class ApiResponse<T> {
     public T getData() {
         return data;
     }
+
+    public Pagination getMeta() { return meta; }
 }

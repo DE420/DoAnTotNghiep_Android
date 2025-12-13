@@ -12,7 +12,8 @@ import com.example.fitnessapp.fragment.CommunityFragment;
 import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
-import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
+import com.example.fitnessapp.fragment.ProfileFragment;
+import com.example.fitnessapp.network.RetrofitClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,12 +25,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+//        RetrofitClient.initialize(this.getApplicationContext());
+
         if (savedInstanceState == null) {
-            // Tải HomeFragment làm mặc định, không thêm vào back stack
+            // load default home fragment
             loadFragment(new HomeFragment(), "Home", false);
         }
 
-        // Sự kiện click vào avatar sẽ mở ProfileFragment
         binding.imageAvatar.setOnClickListener(v -> {
             loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
         });
