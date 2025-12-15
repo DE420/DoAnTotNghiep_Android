@@ -42,11 +42,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         if (savedInstanceState == null) {
-            // Tải HomeFragment làm mặc định, không thêm vào back stack
+            // load default home fragment
             loadFragment(new HomeFragment(), "Home", false);
         }
 
-        // Sự kiện click vào avatar sẽ mở ProfileFragment
         binding.imageAvatar.setOnClickListener(v -> {
             loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
         });
@@ -81,43 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         });
-
-        //fake login
-        fakeLogin();
     }
-
-    private void fakeLogin() {
-        ApiService apiService = RetrofitClient.getApiService();
-        apiService.login(new LoginRequest("tuyenvu1", "haih010b@"))
-                .enqueue(new Callback<ApiResponse<LoginResponse>>() {
-                    @Override
-                    public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            if (response.body().isStatus()) {
-                                Snackbar.make(binding.layoutContainer, "Login success", Snackbar.LENGTH_SHORT).show();
-                                Log.e("MainActivity", "accesstoken: " + response.body().getData().getAccessToken()
-                                + ", refreshtoken: " + response.body().getData().getRefreshToken());
-                                SessionManager.getInstance(getApplicationContext()).saveTokens(
-                                        response.body().getData().getAccessToken(),
-                                        response.body().getData().getRefreshToken()
-                                );
-                            } else {
-                                Snackbar.make(binding.layoutContainer, "Login failed (isStatus)", Snackbar.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Snackbar.make(binding.layoutContainer, "Login failed (isSuccessfull)", Snackbar.LENGTH_SHORT).show();
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
-                        Snackbar.make(binding.layoutContainer, "Login failed", Snackbar.LENGTH_SHORT).show();
-
-                    }
-                });
-    }
-
 
     // Cập nhật hàm loadFragment để xử lý back stack
     private void loadFragment(Fragment fragment, String title, boolean addToBackStack) {

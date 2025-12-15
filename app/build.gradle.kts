@@ -61,4 +61,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    implementation("com.github.bumptech.glide:glide:4.13.2")
+
+    implementation("com.google.android.exoplayer:exoplayer-core:2.19.1")
+    implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
 }
