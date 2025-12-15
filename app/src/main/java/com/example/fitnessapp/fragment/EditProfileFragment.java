@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,8 +57,11 @@ import com.example.fitnessapp.utils.DateUtil;
 import com.example.fitnessapp.utils.RealPathUtil;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +71,7 @@ import java.util.List;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okio.Okio;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,62 +86,45 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
     private DatePickerDialog datePickerDialog;
 
     private Uri mUri;
+
+    private static final long MAX_UPLOAD_SIZE = 50L * 1024 * 1024; // 50MB
+
     private boolean isEdit = false;
 
     private int colorPurple400, colorWhite200, colorPink200, colorGreen500, colorRed400;
     private ApiService apiService;
 
-    private int shortAnimationDuration;
 
     private OnBackPressedCallback backPressedCallback;
 
+    private final ActivityResultLauncher<Intent> imagePickerLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK
+                                && result.getData() != null) {
 
+                            Uri uri = result.getData().getData();
+                            if (uri == null) return;
 
-    private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    Log.e(TAG, "onActivityResult");
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data == null) {
-                            return;
-                        }
-                        Uri uri = data.getData();
-                        mUri = uri;
-
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
-                            binding.imgAvatar.setImageBitmap(bitmap);
-                            isEdit = true;
-                        } catch (IOException e) {
-                            Glide.with(binding.fragmentEditProfile)
-                                    .load(updateProfileRequest.getAvatar())
+                            // Persist permission for API < 33
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                                requireContext().getContentResolver()
+                                        .takePersistableUriPermission(
+                                                uri,
+                                                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                        );
+                            }
+                            mUri = uri;
+                            Log.e(TAG, "get image ok");
+                            Glide.with(this)
+                                    .load(mUri)
                                     .error(R.drawable.img_user_default_128)
                                     .into(binding.imgAvatar);
-                            Log.e(TAG, "Error when set bitmap img: " + e.getMessage());
                         }
-
+                        binding.viewEditImageAvatar.setEnabled(true);
                     }
-                    binding.viewEditImageAvatar.setEnabled(true);
-                }
-            }
-    );
-
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
-                    isGranted -> {
-                        if (isGranted) {
-                            Snackbar.make(binding.fragmentEditProfile, R.string.read_external_storage_granted,
-                                    Snackbar.LENGTH_SHORT).show();
-                            openGallery();
-                        } else {
-                            Snackbar.make(binding.fragmentEditProfile, R.string.read_external_storage_denied,
-                                    Snackbar.LENGTH_SHORT).show();
-                        }
-                    });
-
+            );
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,7 +134,6 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             @Override
             public void handleOnBackPressed() {
                 // Do nothing → back button disabled
-
             }
         };
 
@@ -168,7 +156,6 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
 
 
 
-        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         initViews();
         setupClickListeners();
@@ -194,6 +181,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         binding.imgCalendar.setOnClickListener(this);
         binding.btnUpdate.setOnClickListener(this);
         binding.viewEditImageAvatar.setOnClickListener(this);
+        binding.rlLoadingData.setOnClickListener(this);
     }
 
 
@@ -205,14 +193,32 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             datePickerDialog.show();
         } else if (view.getId() == R.id.view_edit_image_avatar) {
             view.setEnabled(false);
-            onClickRequestPermission();
+            openImagePicker();
         } else if (view.getId() == R.id.btn_update) {
             if (isValidFullName() && isValidDateOfBirth()
-                && isValidWeight() && isValidHeight()) {
+                && isValidWeight() && isValidHeight()
+                && isValidSpinnerSelection(binding.spnActivityLevel)
+                && isValidSpinnerSelection(binding.spnFitnessGoal)) {
                 backPressedCallback.setEnabled(true);
                 view.setEnabled(false);
                 binding.imgChevronLeft.setEnabled(false);
-                callApiUpdateProfile();
+                try {
+                    callApiUpdateProfile();
+                } catch (FileNotFoundException ex) {
+                    Snackbar.make(
+                            binding.fragmentEditProfile,
+                                    "Image not found",
+                                    Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(colorRed400)
+                            .show();
+                } catch (IOException e) {
+                    Snackbar.make(
+                            binding.fragmentEditProfile,
+                                    "Fail to read image",
+                                    Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(colorRed400)
+                            .show();
+                }
             } else {
 //                Toast.makeText(requireContext(), "Invalid input", Toast.LENGTH_SHORT).show();
                 Snackbar.make(
@@ -222,6 +228,8 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                         .setBackgroundTint(colorRed400)
                         .show();
             }
+        } else if (view.getId() == R.id.rl_loading_data) {
+
         }
     }
 
@@ -245,14 +253,29 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                 if (position > 0 && activityLevelAdapter.getSelectedPosition() != position) {
                     isEdit = true;
                 }
+                checkSpinner(
+                        binding.spnActivityLevel,
+                        binding.tvActivityLevel,
+                        binding.tvActivityLevelSupport,
+                        colorWhite200,
+                        View.GONE
+                );
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {
+                checkSpinner(
+                        binding.spnActivityLevel,
+                        binding.tvActivityLevel,
+                        binding.tvActivityLevelSupport,
+                        colorWhite200,
+                        View.GONE
+                );
+            }
         });
 
 
-        fitnessGoalList = new ArrayList<FitnessGoal>(Arrays.asList(FitnessGoal.values()));
+        fitnessGoalList = new ArrayList<>(Arrays.asList(FitnessGoal.values()));
         FitnessGoalAdapter fitnessGoalAdapter =
                 new FitnessGoalAdapter(requireContext(), fitnessGoalList);
 //        fitnessGoalAdapter.setDropDownViewResource(R.drawable.background_item_profile);
@@ -265,10 +288,25 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                 if (position > 0 && fitnessGoalAdapter.getSelectedPosition() != position) {
                     isEdit = true;
                 }
+                checkSpinner(
+                        binding.spnFitnessGoal,
+                        binding.tvGoal,
+                        binding.tvGoalSupport,
+                        colorWhite200,
+                        View.GONE
+                );
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {
+                checkSpinner(
+                        binding.spnFitnessGoal,
+                        binding.tvGoal,
+                        binding.tvGoalSupport,
+                        colorWhite200,
+                        View.GONE
+                );
+            }
         });
 
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener()
@@ -324,6 +362,8 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         binding.etDateOfBirth.setOnFocusChangeListener(this);
         binding.etWeight.setOnFocusChangeListener(this);
         binding.etHeight.setOnFocusChangeListener(this);
+        binding.spnActivityLevel.setOnFocusChangeListener(this);
+        binding.spnFitnessGoal.setOnFocusChangeListener(this);
 
 
         binding.etFullName.setOnKeyListener(this);
@@ -331,22 +371,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         binding.etWeight.setOnKeyListener(this);
         binding.etHeight.setOnKeyListener(this);
 
-    }
 
-    private List<String> getFitnessGoalList() {
-        List<String> fitnessGoalList = new ArrayList<>();
-        for (FitnessGoal fitnessGoal : FitnessGoal.values()) {
-            fitnessGoalList.add(getString(fitnessGoal.getResId()));
-        }
-        return fitnessGoalList;
-    }
-
-    private List<String> getActivityLevelList() {
-        List<String> activityLevelList = new ArrayList<>();
-        for (ActivityLevel activityLevel : ActivityLevel.values()) {
-            activityLevelList.add(getString(activityLevel.getResId()));
-        }
-        return activityLevelList;
     }
 
     private void setDataToContentView() {
@@ -368,6 +393,14 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                     break;
                 }
             }
+        } else {
+            checkSpinner(
+                    binding.spnActivityLevel,
+                    binding.tvActivityLevel,
+                    binding.tvActivityLevelSupport,
+                    colorWhite200,
+                    View.GONE
+            );
         }
 
         if (updateProfileRequest.getFitnessGoal() != null) {
@@ -375,10 +408,17 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             for (int i = 0; i < fitnessGoalList.size(); i++) {
                 if (strCurrentGoal.equals(getString(fitnessGoalList.get(i).getResId()))) {
                     binding.spnFitnessGoal.setSelection(i+1);
-
                     break;
                 }
             }
+        } else {
+            checkSpinner(
+                    binding.spnFitnessGoal,
+                    binding.tvGoal,
+                    binding.tvGoalSupport,
+                    colorWhite200,
+                    View.GONE
+            );
         }
 
         if (updateProfileRequest.getDateOfBirth() != null) {
@@ -392,40 +432,27 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         if (updateProfileRequest.getHeight() != null) {
             binding.etHeight.setText(String.valueOf(updateProfileRequest.getHeight()));
         }
+
+        Log.e(TAG, "Selected position fitness goal: " + binding.spnFitnessGoal.getSelectedItemPosition());
     }
 
-    private void onClickRequestPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            openGallery();
-            return;
-        }
-        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            openGallery();
+    private void openImagePicker() {
+        Intent intent;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         } else {
-            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Snackbar.make(binding.fragmentEditProfile, R.string.read_external_storage_required,
-                        Snackbar.LENGTH_INDEFINITE
-                ).setAction(
-                        R.string.ok, view -> {
-                            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-                        }
-                ).show();
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-            }
-
+            // Android 4.4 – 12
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
         }
+
+        imagePickerLauncher.launch(intent);
     }
 
 
-    private void openGallery() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        mActivityResultLauncher.launch(Intent.createChooser(intent, "Select Picture"));
-        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
-    }
 
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
@@ -453,6 +480,29 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             } else {
                 checkEditTextHeight(colorWhite200, View.GONE);
             }
+        }
+    }
+
+    private void checkSpinner(
+            Spinner spinner,
+            TextView tvLabel,
+            TextView tvSupport,
+            int isValidColor,
+            int isValidVisibility) {
+        if (isValidSpinnerSelection(spinner)) {
+            setStateForTextViewLabelAndTextViewSupport(
+                    tvLabel,
+                    tvSupport,
+                    isValidColor,
+                    isValidVisibility
+            );
+        } else {
+            setStateForTextViewLabelAndTextViewSupport(
+                    tvLabel,
+                    tvSupport,
+                    colorPink200,
+                    View.VISIBLE
+            );
         }
     }
 
@@ -560,9 +610,9 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                 wrapperEditTextState.getColor(),
                 wrapperEditTextState.getVisibilityOfTvSupport()
         );
-        wrapperEditTextState.getEditText().setTag(
-                wrapperEditTextState.isTag()
-        );
+//        wrapperEditTextState.getEditText().setTag(
+//                wrapperEditTextState.isTag()
+//        );
         wrapperEditTextState.getEditText().setBackground(
                 wrapperEditTextState.getBackground()
         );
@@ -581,13 +631,11 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             tvSupport.setVisibility(visibilityOfTvSupport);
     }
 
-    private void setTextColor(TextView textView, int color) {
-        textView.setTextColor(color);
+    private boolean isValidSpinnerSelection(Spinner spinner) {
+        return spinner.getSelectedItem() != null;
     }
 
-    private void setViewVisibility(View view, int visibility) {
-        view.setVisibility(visibility);
-    }
+
 
     private boolean isValidFullName() {
         return !binding.etFullName.getText().toString().trim().isEmpty();
@@ -617,8 +665,8 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void callApiUpdateProfile() {
-        fadeShow(binding.rlLoadingData);
+    private void callApiUpdateProfile() throws FileNotFoundException, IOException {
+        binding.rlLoadingData.setVisibility(View.VISIBLE);
         SessionManager sessionManager = SessionManager.getInstance(requireContext());
         String accessToken = sessionManager.getAccessToken();
         if (accessToken == null) {
@@ -680,11 +728,37 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
 
 
         if (mUri != null) {
-            String strRealPath = RealPathUtil.getRealPath(requireContext(), mUri);
-            File file = new File(strRealPath);
-            RequestBody requestBodyAvt = RequestBody.create(mediaType, file);
-            MultipartBody.Part multipartBodyAvt = MultipartBody.Part.createFormData(
-                    UpdateProfileRequest.KEY_AVATAR_FILE, file.getName(), requestBodyAvt);
+
+            byte[] imageBytes = compressImage(mUri);
+
+            if (imageBytes.length > MAX_UPLOAD_SIZE) {
+                Snackbar.make(
+                        binding.fragmentEditProfile,
+                        "Image too large (max 50MB)",
+                        Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(colorRed400)
+                        .show();
+                return;
+            }
+
+            RequestBody requestBodyAvt =
+                    RequestBody.create(MediaType.parse("image/jpeg"), imageBytes);
+
+            MultipartBody.Part multipartBodyAvt =
+                    MultipartBody.Part.createFormData(
+                            UpdateProfileRequest.KEY_AVATAR_FILE,
+                            "avatar.jpg",
+                            requestBodyAvt
+                    );
+
+
+//            String strRealPath = RealPathUtil.getRealPath(requireContext(), mUri);
+//            File file = new File(strRealPath);
+//            RequestBody requestBodyAvt = RequestBody.create(mediaType, file);
+//            MultipartBody.Part multipartBodyAvt = MultipartBody.Part.createFormData(
+//                    UpdateProfileRequest.KEY_AVATAR_FILE, file.getName(), requestBodyAvt);
+
+
             apiService.updateUserProfile(
                     authorizationHeader,
                     multipartBodyAvt,
@@ -695,7 +769,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                     requestBodyFitnessGoal,
                     requestBodyDateOfBirth
             ).enqueue(new UpdateProfileCallback());
-        } else {
+        } else if (updateProfileRequest.getAvatar() != null) {
             RequestBody requestBodyAvatar = RequestBody.create(
                     mediaType,
                     updateProfileRequest.getAvatar()
@@ -713,9 +787,39 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                     requestBodyFitnessGoal,
                     requestBodyDateOfBirth
             ).enqueue(new UpdateProfileCallback());
+        } else {
+            apiService.updateUserProfile(
+                    authorizationHeader,
+                    requestBodyName,
+                    requestBodyWeight,
+                    requestBodyHeight,
+                    requestBodyActivityLevel,
+                    requestBodyFitnessGoal,
+                    requestBodyDateOfBirth
+            ).enqueue(new UpdateProfileCallback());
         }
 
     }
+
+    private byte[] compressImage(Uri uri) throws IOException {
+        Bitmap bitmap = BitmapFactory.decodeStream(
+                requireContext().getContentResolver().openInputStream(uri)
+        );
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        int quality = 90;
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
+
+        while (out.size() > MAX_UPLOAD_SIZE && quality > 30) {
+            out.reset();
+            quality -= 10;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
+        }
+
+        return out.toByteArray();
+    }
+
 
 
     @Override
@@ -738,37 +842,6 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         return false;
     }
 
-    private void fadeShow(final View view) {
-
-        // Set the content view to 0% opacity but visible, so that it is
-        // visible but fully transparent during the animation.
-        view.setAlpha(0f);
-        view.setVisibility(View.VISIBLE);
-
-        // Animate the content view to 100% opacity and clear any animation
-        // listener set on the view.
-        view.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-    }
-
-    private void fadeGone(final View view) {
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step so it doesn't
-        // participate in layout passes.
-        view.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        view.setVisibility(View.GONE);
-                    }
-                });
-
-    }
-
     private class UpdateProfileCallback implements Callback<ApiResponse<Boolean>> {
 
         @Override
@@ -776,20 +849,19 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             backPressedCallback.setEnabled(false);
             binding.btnUpdate.setEnabled(true);
             binding.imgChevronLeft.setEnabled(true);
-            fadeGone(binding.rlLoadingData);
+            binding.rlLoadingData.setVisibility(View.GONE);
             if (response.isSuccessful() && response.body() != null) {
                 if (response.body().isStatus()) {
 //                    Toast.makeText(requireContext(), "Update profile successes", Toast.LENGTH_SHORT).show();
-
                     Snackbar.make(
                             binding.fragmentEditProfile,
-                            "Update profile success",
+                            "Update profile success\nRedirect to profile",
                             Snackbar.LENGTH_SHORT)
                             .setBackgroundTint(colorGreen500)
                             .show();
                     new Handler().postDelayed(() -> {
                         requireActivity().getOnBackPressedDispatcher().onBackPressed();
-                    }, 2000);
+                    }, 1500);
 
                 } else {
 //                    Toast.makeText(requireContext(), "Update profile fail", Toast.LENGTH_SHORT).show();
@@ -812,6 +884,13 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                             Snackbar.LENGTH_SHORT)
                             .show();
                 }
+
+                Snackbar.make(
+                        binding.fragmentEditProfile,
+                                "Update profile fail",
+                                Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(colorRed400)
+                        .show();
                 try {
                     Log.e(TAG, "onResponse but isn't successful, code: " + response.code()
                           + ", errorBody: " + response.errorBody().string());
@@ -827,7 +906,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             backPressedCallback.setEnabled(false);
             binding.btnUpdate.setEnabled(true);
             binding.imgChevronLeft.setEnabled(true);
-            fadeGone(binding.rlLoadingData);
+            binding.rlLoadingData.setVisibility(View.GONE);
             Snackbar.make(binding.fragmentEditProfile,
                     "Update profile fail",
                     Snackbar.LENGTH_SHORT)

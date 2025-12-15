@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
     private ApiService apiService;
-    private int shortAnimationDuration;
+    private int shortAnimationDuration = 100;
     private ProfileResponse profileResponse;
 
     @Nullable
@@ -64,7 +64,9 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+//        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+
 
         apiService = RetrofitClient.getApiService();
 
@@ -75,6 +77,8 @@ public class ProfileFragment extends Fragment {
         setupClickListeners();
 
         loadUserProfileData();
+
+        binding.swipeRefreshLayout.setOnRefreshListener(this::loadUserProfileData);
 
     }
 
@@ -108,6 +112,9 @@ public class ProfileFragment extends Fragment {
         apiService.getUserProfile(Constants.PREFIX_JWT + " " + accessToken).enqueue(new Callback<ApiResponse<ProfileResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<ProfileResponse>> call, Response<ApiResponse<ProfileResponse>> response) {
+                if (binding != null) {
+                    binding.swipeRefreshLayout.setRefreshing(false);
+                }
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isStatus()) {
                         profileResponse = response.body().getData();
@@ -142,6 +149,9 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ApiResponse<ProfileResponse>> call, Throwable t) {
+                if (binding != null) {
+                    binding.swipeRefreshLayout.setRefreshing(false);
+                }
                 String error = "Sorry, something went wrong.\nPlease check your network.";
                 if (binding != null) {
                     showErrorView(binding.rlLoadingData, error);
@@ -388,14 +398,16 @@ public class ProfileFragment extends Fragment {
     private void showLoadingView(View from) {
         if (binding != null) {
             binding.buttonEditProfile.setVisibility(View.GONE);
-            fade(from, binding.rlLoadingData);
+            from.setVisibility(View.GONE);
+            binding.rlLoadingData.setVisibility(View.VISIBLE);
         }
     }
 
     private void showContentView(View from) {
         if (binding != null) {
             setProfileDataToContentView();
-            fade(from, binding.svContent);
+            from.setVisibility(View.GONE);
+            binding.svContent.setVisibility(View.VISIBLE);
             binding.buttonEditProfile.setVisibility(View.VISIBLE);
         }
     }
@@ -404,39 +416,12 @@ public class ProfileFragment extends Fragment {
         if (binding != null) {
             binding.buttonEditProfile.setVisibility(View.GONE);
             binding.tvError.setText(error);
-            fade(from, binding.rlError);
+            from.setVisibility(View.GONE);
+            binding.rlError.setVisibility(View.VISIBLE);
         }
     }
 
 
 
-    private void fade(final View from, final View to) {
-
-        // Set the content view to 0% opacity but visible, so that it is
-        // visible but fully transparent during the animation.
-        to.setAlpha(0f);
-        to.setVisibility(View.VISIBLE);
-
-        // Animate the content view to 100% opacity and clear any animation
-        // listener set on the view.
-        to.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step so it doesn't
-        // participate in layout passes.
-        from.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        from.setVisibility(View.GONE);
-                    }
-                });
-
-    }
 
 }

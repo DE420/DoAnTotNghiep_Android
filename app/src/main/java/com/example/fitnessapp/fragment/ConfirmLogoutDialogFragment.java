@@ -37,6 +37,7 @@ public class ConfirmLogoutDialogFragment extends DialogFragment implements View.
     private int shortAnimationDuration;
 
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
