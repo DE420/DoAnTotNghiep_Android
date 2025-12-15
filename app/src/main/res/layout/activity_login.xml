@@ -83,15 +83,15 @@
                     android:textColor="@android:color/white"
                     android:textColorHint="#BDBDBD" />
 
-                <TextView
-                    android:id="@+id/textViewForgotPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="end"
-                    android:text="Forget password?"
-                    android:textColor="@color/yellow"
-                    android:textSize="12sp" />
+        <TextView
+            android:id="@+id/textViewForgotPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Forget password?"
+            android:textColor="@color/yellow_500"
+            android:gravity="end"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/buttonLogin"

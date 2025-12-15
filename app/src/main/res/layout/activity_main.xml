@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
+    android:id="@+id/layout_container"
     tools:context=".MainActivity"
     android:fitsSystemWindows="true">
 
@@ -51,14 +52,17 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Container để hiển thị các Fragment -->
+
+    <!-- Thanh điều hướng dưới cùng -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/bottom_navigation"
         android:layout_below="@id/app_bar_layout"
-        android:layout_above="@id/bottom_navigation" />
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="-3dp" />
 
-    <!-- Thanh điều hướng dưới cùng -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
