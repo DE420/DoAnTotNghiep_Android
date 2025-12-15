@@ -1,28 +1,40 @@
 package com.example.fitnessapp.model.response;
 
-import com.example.fitnessapp.model.constants.AuthProvider;
-
+import com.example.fitnessapp.constants.AuthProvider;
+import com.google.gson.annotations.SerializedName;
 public class RegisterResponse {
+
+    @SerializedName("id")
     private Long id;
 
+    @SerializedName("name")
     private String name;
 
+    @SerializedName("email")
     private String email;
 
+    @SerializedName("username")
     private String username;
 
+    @SerializedName("avatar")
     private String avatar;
 
+    @SerializedName("height")
     private Double height;
 
+    @SerializedName("weight")
     private Double weight;
 
+    @SerializedName("provider")
     private AuthProvider provider;
 
+    @SerializedName("isLocked")
     private boolean isLocked;
 
+    @SerializedName("currentStreak")
     private Integer currentStreak;
 
+    @SerializedName("longestStreak")
     private Integer longestStreak;
 
     public RegisterResponse() {
@@ -48,104 +60,43 @@ public class RegisterResponse {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
     public Double getHeight() {
         return height;
-    }
-
-    public void setHeight(Double height) {
-        this.height = height;
     }
 
     public Double getWeight() {
         return weight;
     }
 
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
     public AuthProvider getProvider() {
         return provider;
-    }
-
-    public void setProvider(AuthProvider provider) {
-        this.provider = provider;
     }
 
     public boolean isLocked() {
         return isLocked;
     }
 
-    public void setLocked(boolean locked) {
-        isLocked = locked;
-    }
-
     public Integer getCurrentStreak() {
         return currentStreak;
     }
 
-    public void setCurrentStreak(Integer currentStreak) {
-        this.currentStreak = currentStreak;
-    }
-
     public Integer getLongestStreak() {
         return longestStreak;
-    }
-
-    public void setLongestStreak(Integer longestStreak) {
-        this.longestStreak = longestStreak;
-    }
-
-    @Override
-    public String toString() {
-        return "RegisterResponse{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", height=" + height +
-                ", weight=" + weight +
-                ", provider=" + provider +
-                ", isLocked=" + isLocked +
-                ", currentStreak=" + currentStreak +
-                ", longestStreak=" + longestStreak +
-                '}';
     }
 }

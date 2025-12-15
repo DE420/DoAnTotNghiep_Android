@@ -1,11 +1,11 @@
 package com.example.fitnessapp.model.request;
 
 public class LoginRequest {
-    private final String email;
-    private final String password;
+    private String username;
+    private String password;
 
-    public LoginRequest(String email, String password) {
-        this.email = email;
+    public LoginRequest(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 }

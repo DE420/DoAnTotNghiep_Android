@@ -9,6 +9,8 @@ import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fitnessapp.session.SessionManager;
+
 // Using SuppressLint for a known visual lint issue with splash screens in recent IDEs.
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
@@ -25,12 +27,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void decideNextActivity() {
-        // Check if the user is logged in by looking for the saved access token
-        SharedPreferences sharedPreferences = getSharedPreferences("APP_PREFS", MODE_PRIVATE);
-        String accessToken = sharedPreferences.getString("ACCESS_TOKEN", null);
+        // Lấy instance của SessionManager
+        SessionManager sessionManager = SessionManager.getInstance(this);
 
         Intent intent;
-        if (accessToken != null && !accessToken.isEmpty()) {
+        if (sessionManager.isLoggedIn()) { // <-- Logic kiểm tra đơn giản hơn nhiều
             // User has a token, so they are logged in. Go to MainActivity.
             intent = new Intent(SplashActivity.this, MainActivity.class);
         } else {
@@ -38,10 +39,7 @@ public class SplashActivity extends AppCompatActivity {
             intent = new Intent(SplashActivity.this, LoginActivity.class);
         }
 
-        // Start the determined activity
         startActivity(intent);
-
-        // Close this activity so the user can't navigate back to it
         finish();
     }
 }
