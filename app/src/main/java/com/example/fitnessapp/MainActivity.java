@@ -1,7 +1,12 @@
 package com.example.fitnessapp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -12,11 +17,23 @@ import com.example.fitnessapp.fragment.CommunityFragment;
 import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
-import com.example.fitnessapp.ExerciseCountActivity;
+import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
+import com.example.fitnessapp.model.request.LoginRequest;
+import com.example.fitnessapp.model.response.ApiResponse;
+import com.example.fitnessapp.model.response.LoginResponse;
+import com.example.fitnessapp.network.ApiService;
+import com.example.fitnessapp.network.RetrofitClient;
+import com.example.fitnessapp.session.SessionManager;
+import com.google.android.material.snackbar.Snackbar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private int preSelectedItemIditem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +41,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Load Fragment mặc định là HomeFragment khi Activity khởi chạy
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment());
-            binding.toolbar.setTitle("Home"); // Đặt title mặc định
+            // Tải HomeFragment làm mặc định, không thêm vào back stack
+            loadFragment(new HomeFragment(), "Home", false);
         }
+
+        // Sự kiện click vào avatar sẽ mở ProfileFragment
+        binding.imageAvatar.setOnClickListener(v -> {
+            loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
+        });
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -39,34 +60,123 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment();
                 title = "Home";
             } else if (itemId == R.id.nav_plan) {
-                selectedFragment = new PlanFragment(); // Fragment bạn đã tạo
+                selectedFragment = new PlanFragment();
                 title = "Plan";
             } else if (itemId == R.id.nav_practice) {
-                // Mở PracticeActivity và không thay đổi fragment
                 startActivity(new Intent(this, ExerciseCountActivity.class));
-                return false; // Trả về false để item không được chọn, giữ nguyên tab hiện tại
+                return false;
             } else if (itemId == R.id.nav_community) {
-                selectedFragment = new CommunityFragment(); // Fragment bạn đã tạo
+                selectedFragment = new CommunityFragment();
                 title = "Community";
             } else if (itemId == R.id.nav_other) {
-                selectedFragment = new OtherFragment(); // Fragment bạn đã tạo
+                selectedFragment = new OtherFragment();
                 title = "Other";
             }
 
             if (selectedFragment != null) {
-                loadFragment(selectedFragment);
-                binding.toolbar.setTitle(title); // Cập nhật title của toolbar
+                // Các fragment từ bottom nav không cần thêm vào back stack
+                loadFragment(selectedFragment, title, false);
                 return true;
             }
 
             return false;
         });
+
+        //fake login
+        fakeLogin();
     }
 
-    private void loadFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
+    private void fakeLogin() {
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.login(new LoginRequest("tuyenvu1", "haih010b@"))
+                .enqueue(new Callback<ApiResponse<LoginResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            if (response.body().isStatus()) {
+                                Snackbar.make(binding.layoutContainer, "Login success", Snackbar.LENGTH_SHORT).show();
+                                Log.e("MainActivity", "accesstoken: " + response.body().getData().getAccessToken()
+                                + ", refreshtoken: " + response.body().getData().getRefreshToken());
+                                SessionManager.getInstance(getApplicationContext()).saveTokens(
+                                        response.body().getData().getAccessToken(),
+                                        response.body().getData().getRefreshToken()
+                                );
+                            } else {
+                                Snackbar.make(binding.layoutContainer, "Login failed (isStatus)", Snackbar.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Snackbar.make(binding.layoutContainer, "Login failed (isSuccessfull)", Snackbar.LENGTH_SHORT).show();
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
+                        Snackbar.make(binding.layoutContainer, "Login failed", Snackbar.LENGTH_SHORT).show();
+
+                    }
+                });
     }
+
+
+    // Cập nhật hàm loadFragment để xử lý back stack
+    private void loadFragment(Fragment fragment, String title, boolean addToBackStack) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (!addToBackStack) {
+            fragmentManager.popBackStack("Profile", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(
+                R.anim.slide_in, // enter
+                R.anim.fade_out, // exit
+                R.anim.fade_in, // popEnter
+                R.anim.slide_out // popExit
+        );
+        transaction.replace(R.id.fragment_container, fragment);
+
+        // Chỉ thêm vào back stack khi được yêu cầu (ví dụ: khi mở Profile)
+        if (addToBackStack) {
+            transaction.addToBackStack(title);
+        }
+
+        transaction.commit();
+
+        preSelectedItemIditem = binding.bottomNavigation.getSelectedItemId();
+        if (title.equals("Profile")) {
+            binding.appBarLayout.setVisibility(View.GONE);
+            binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(false);
+        } else {
+            binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
+            binding.appBarLayout.setVisibility(View.VISIBLE);
+            binding.toolbar.setTitle(title);
+        }
+        // Cập nhật title của toolbar
+        if (!title.equals("Profile")) {
+            binding.toolbar.setTitle(title);
+        }
+    }
+
+
+
+
+    @SuppressLint("GestureBackNavigation")
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getSupportFragmentManager();
+
+        Fragment current = fm.findFragmentById(R.id.fragment_container);
+        if (current instanceof ProfileFragment) {
+            binding.appBarLayout.setVisibility(View.VISIBLE);
+            binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
+        }
+        super.onBackPressed();
+//        if (fm.getBackStackEntryCount() > 0) {
+//            fm.popBackStack();
+//        } else {
+//            super.onBackPressed();
+//        }
+    }
+
+
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:drawable="@drawable/error_focus_filled_black_text_field_background"/>
+    <item android:state_enabled="true" android:drawable="@drawable/error_filled_black_text_field_background"/>
+    <item android:state_enabled="false" android:drawable="@drawable/disable_filled_black_text_field_background"/>
+</selector>
