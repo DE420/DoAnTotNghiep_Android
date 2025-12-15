@@ -31,6 +31,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,16 +40,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.Color;
+
 public class ExerciseDetailFragment extends Fragment {
 
     private static final String TAG = "ExerciseDetailFragment";
     private static final String ARG_EXERCISE_ID = "exercise_id";
 
     private Long exerciseId;
-    private String currentVideoUrl; // To store video URL for play button
+    private String currentVideoUrl;
 
     private ImageView backButton;
     private TextView tvExerciseName, tvExerciseLevel, tvTrainingType;
+    private MaterialButtonToggleGroup toggleGroup;
     private Button btnGuideline, btnNote;
     private LinearLayout layoutGuidelineContent, layoutNoteContent;
     private LinearLayout llEquipmentList, llStepsList;
@@ -84,6 +89,7 @@ public class ExerciseDetailFragment extends Fragment {
         backButton = view.findViewById(R.id.back_button_detail);
         tvExerciseName = view.findViewById(R.id.tv_exercise_name);
         tvExerciseLevel = view.findViewById(R.id.tv_exercise_level);
+        toggleGroup = view.findViewById(R.id.toggle_group);
         tvTrainingType = view.findViewById(R.id.tv_training_type);
         btnGuideline = view.findViewById(R.id.btn_guideline);
         btnNote = view.findViewById(R.id.btn_note);
@@ -106,10 +112,18 @@ public class ExerciseDetailFragment extends Fragment {
             }
         });
 
-        btnGuideline.setOnClickListener(v -> showContent(true));
-        btnNote.setOnClickListener(v -> showContent(false));
+        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.btn_guideline) {
+                    showContent(true);
+                } else if (checkedId == R.id.btn_note) {
+                    showContent(false);
+                }
+            }
+        });
 
-        // Initial state: show Guideline
+        // Initial state: check Guideline button
+        toggleGroup.check(R.id.btn_guideline);
         showContent(true);
 
         if (exerciseId != null) {
@@ -208,6 +222,7 @@ public class ExerciseDetailFragment extends Fragment {
             tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.white85));
             llMuscleGroupList.addView(tv);
         }
+        // Tips, mistakes, benefits
         addListItemsToLayout(llTipsList, detail.getTips(), "• ");
         addListItemsToLayout(llMistakesList, detail.getMistakes(), "• ");
         addListItemsToLayout(llHealthBenefitsList, detail.getBenefits(), "• ");
@@ -217,17 +232,9 @@ public class ExerciseDetailFragment extends Fragment {
         if (showGuideline) {
             layoutGuidelineContent.setVisibility(View.VISIBLE);
             layoutNoteContent.setVisibility(View.GONE);
-            btnGuideline.setSelected(true);
-            btnNote.setSelected(false);
-            btnGuideline.setTextColor(getResources().getColor(R.color.black, null)); // Active color
-            btnNote.setTextColor(getResources().getColor(R.color.white85, null));   // Inactive color
         } else {
             layoutGuidelineContent.setVisibility(View.GONE);
             layoutNoteContent.setVisibility(View.VISIBLE);
-            btnGuideline.setSelected(false);
-            btnNote.setSelected(true);
-            btnGuideline.setTextColor(getResources().getColor(R.color.white85, null)); // Inactive color
-            btnNote.setTextColor(getResources().getColor(R.color.black, null));       // Active color
         }
     }
 
@@ -241,14 +248,14 @@ public class ExerciseDetailFragment extends Fragment {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT));
                 tv.setText(prefix + item);
-                tv.setTextColor(getResources().getColor(R.color.white85, null));
+                tv.setTextColor(getResources().getColor(R.color.white, null));
                 tv.setTextSize(16);
                 parentLayout.addView(tv);
             }
         } else {
             TextView tv = new TextView(requireContext());
             tv.setText("N/A");
-            tv.setTextColor(getResources().getColor(R.color.white85, null));
+            tv.setTextColor(getResources().getColor(R.color.white, null));
             parentLayout.addView(tv);
         }
     }
@@ -258,19 +265,55 @@ public class ExerciseDetailFragment extends Fragment {
         parentLayout.removeAllViews();
         if (items != null && !items.isEmpty()) {
             for (int i = 0; i < items.size(); i++) {
-                TextView tv = new TextView(requireContext());
-                tv.setLayoutParams(new LinearLayout.LayoutParams(
+                String stepText = items.get(i);
+
+                // Create horizontal layout for circle + text
+                LinearLayout stepRow = new LinearLayout(requireContext());
+                stepRow.setOrientation(LinearLayout.HORIZONTAL);
+                stepRow.setGravity(Gravity.CENTER_VERTICAL);
+                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                tv.setText((i + 1) + ". " + items.get(i));
-                tv.setTextColor(getResources().getColor(R.color.white85, null));
-                tv.setTextSize(16);
-                parentLayout.addView(tv);
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                rowParams.setMargins(0, 0, 0, dpToPx(12)); // Spacing between steps
+                stepRow.setLayoutParams(rowParams);
+
+                // Circle background for number
+                TextView numberTv = new TextView(requireContext());
+                numberTv.setText(String.valueOf(i + 1));
+                numberTv.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black));
+                numberTv.setTextSize(16);
+                numberTv.setGravity(Gravity.CENTER);
+                numberTv.setTypeface(null, android.graphics.Typeface.BOLD);
+
+                // Circle drawable
+                GradientDrawable circleDrawable = new GradientDrawable();
+                circleDrawable.setShape(GradientDrawable.OVAL);
+                circleDrawable.setColor(Color.parseColor("#D9D9D9")); // Dark gray circle
+                circleDrawable.setSize(dpToPx(32), dpToPx(32));
+
+                numberTv.setBackground(circleDrawable);
+
+                LinearLayout.LayoutParams numberParams = new LinearLayout.LayoutParams(
+                        dpToPx(45), dpToPx(45));
+                numberParams.setMarginEnd(dpToPx(16)); // Space between circle and text
+                numberTv.setLayoutParams(numberParams);
+
+                // Step description text
+                TextView descTv = new TextView(requireContext());
+                descTv.setText(stepText);
+                descTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                descTv.setTextSize(16);
+                descTv.setLayoutParams(new LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)); // Take remaining space
+
+                stepRow.addView(numberTv);
+                stepRow.addView(descTv);
+                parentLayout.addView(stepRow);
             }
         } else {
             TextView tv = new TextView(requireContext());
             tv.setText("N/A");
-            tv.setTextColor(getResources().getColor(R.color.white85, null));
+            tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
             parentLayout.addView(tv);
         }
     }
@@ -313,7 +356,7 @@ public class ExerciseDetailFragment extends Fragment {
             // Join muscle names with a comma and space
             String names = String.join(", ", muscleGroups);
             muscleNamesTv.setText(names);
-            muscleNamesTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.white85));
+            muscleNamesTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
             muscleNamesTv.setTextSize(16);
             muscleNamesTv.setGravity(Gravity.START); // Ensure text is left-aligned
 
@@ -343,7 +386,7 @@ public class ExerciseDetailFragment extends Fragment {
                 @Override
                 public void onPlayerError(@NonNull com.google.android.exoplayer2.PlaybackException error) {
                     Player.Listener.super.onPlayerError(error);
-                    Toast.makeText(getContext(), "Lỗi phát video: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "ExoPlayer Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "ExoPlayer Error: " + error.getMessage(), error);
                 }
             });
@@ -353,9 +396,9 @@ public class ExerciseDetailFragment extends Fragment {
             MediaItem mediaItem = MediaItem.fromUri(currentVideoUrl);
             player.setMediaItem(mediaItem);
             player.prepare();
-            player.setPlayWhenReady(true); // Start playing automatically
+            player.setPlayWhenReady(false);
         } else {
-            Toast.makeText(getContext(), "Không có đường dẫn video để phát.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Link unavailable.", Toast.LENGTH_SHORT).show();
             videoPlayerView.setControllerAutoShow(false); // Hide controls if no video
         }
     }

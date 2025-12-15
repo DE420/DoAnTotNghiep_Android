@@ -116,38 +116,39 @@
                 app:surface_type="surface_view" />
 
             <!-- Toggle Buttons for Guideline/Note -->
-            <LinearLayout
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@drawable/bg_toggle_group_rounded"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_guideline"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Guideline"
-                    android:textColor="@color/white85"
-                    android:background="@drawable/bg_toggle_button_selector"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@drawable/bg_toggle_button_selector"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Note"
-                    android:textColor="#BDBDBD"
-                    android:background="@drawable/bg_toggle_button_selector"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@drawable/bg_toggle_button_selector"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <!-- Guideline Content (initially visible) -->
             <LinearLayout

@@ -42,8 +42,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
     private static final String TAG = "ExercisesFragment";
 
     private EditText etSearchName;
-    // Thay thế EditText bằng Spinner cho Level
-    private Spinner spinnerLevel; // <--- Level Spinner
+    private Spinner spinnerLevel;
     private Spinner spinnerMuscleType;
     private Spinner spinnerTrainingType;
     private Button btnSearch;
@@ -53,12 +52,12 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
     private ImageView backButton;
 
     // Adapters for Spinners
-    private ArrayAdapter<String> levelAdapter; // <--- Adapter cho Level (String)
+    private ArrayAdapter<String> levelAdapter;
     private ArrayAdapter<SelectOptions> muscleTypeAdapter;
     private ArrayAdapter<SelectOptions> trainingTypeAdapter;
 
     // Selected values for search
-    private String selectedLevel = null; // <--- Lưu giá trị Level đã chọn
+    private String selectedLevel = null;
     private Long selectedMuscleTypeId = null;
     private Long selectedTrainingTypeId = null;
 
@@ -68,10 +67,8 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
     private boolean isLoading = false;
     private boolean hasMorePages = true;
 
-    // Current search parameters to maintain state across pagination
     private String currentSearchName = null;
-    private String currentSearchLevel = null; // <--- Cập nhật thành currentSearchLevel
-    // currentSearchMuscleId và currentSearchTypeId sẽ được cập nhật từ spinner
+    private String currentSearchLevel = null;
 
     private SessionManager sessionManager;
 
@@ -82,51 +79,47 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
 
         sessionManager = SessionManager.getInstance(requireContext());
 
-        // Initialize Views
         backButton = view.findViewById(R.id.back_button);
         etSearchName = view.findViewById(R.id.et_search_name);
-        spinnerLevel = view.findViewById(R.id.spinner_level); // <--- Lấy Level Spinner
+        spinnerLevel = view.findViewById(R.id.spinner_level);
         spinnerMuscleType = view.findViewById(R.id.spinner_muscle_type);
         spinnerTrainingType = view.findViewById(R.id.spinner_training_type);
         btnSearch = view.findViewById(R.id.btn_search);
         recyclerView = view.findViewById(R.id.recycler_view_exercises);
         progressBar = view.findViewById(R.id.progress_bar);
 
-        // Configure RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         exerciseAdapter = new ExerciseAdapter(this);
         recyclerView.setAdapter(exerciseAdapter);
 
-        // Initialize Spinners and their Adapters
         // Level Spinner
         List<String> levelOptions = new ArrayList<>(Arrays.asList("(Choose one)", "Beginner", "Intermediate", "Advanced"));
         levelAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, levelOptions);
         levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLevel.setAdapter(levelAdapter);
 
-        // Muscle Type Spinner (Code from previous step, ensure it's still correct)
+        // Muscle Type Spinner
         List<SelectOptions> initialMuscleOptions = new ArrayList<>();
         initialMuscleOptions.add(new SelectOptions(null, "(Choose one)"));
         muscleTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, initialMuscleOptions);
         muscleTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMuscleType.setAdapter(muscleTypeAdapter);
 
-        // Training Type Spinner (Code from previous step, ensure it's still correct)
+        // Training Type Spinner
         List<SelectOptions> initialTrainingOptions = new ArrayList<>();
         initialTrainingOptions.add(new SelectOptions(null, "(Choose one)"));
         trainingTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, initialTrainingOptions);
         trainingTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTrainingType.setAdapter(trainingTypeAdapter);
 
-        // Set up Spinner listeners
         // Level Spinner Listener
         spinnerLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedLevelString = (String) parent.getItemAtPosition(position);
                 if (selectedLevelString.equals("(Choose one)")) {
-                    selectedLevel = null; // Gửi null nếu chọn "All"
+                    selectedLevel = null;
                 } else {
                     selectedLevel = selectedLevelString;
                 }
@@ -139,7 +132,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             }
         });
 
-        // Muscle Type Spinner Listener (Code from previous step)
+        // Muscle Type Spinner Listener
         spinnerMuscleType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -154,7 +147,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             }
         });
 
-        // Training Type Spinner Listener (Code from previous step)
+        // Training Type Spinner Listener
         spinnerTrainingType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -169,54 +162,46 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             }
         });
 
-        // Event listener for the back button
         backButton.setOnClickListener(v -> {
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
             } else {
-                Toast.makeText(getContext(), "Không có trang trước đó.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Previous page unavailable.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Event listener for the Search button
         btnSearch.setOnClickListener(v -> {
-            // Reset pagination and perform a new search
             currentPage = 0;
             hasMorePages = true;
             isLoading = false;
 
-            // Get search parameters from EditTexts and Spinners
             currentSearchName = etSearchName.getText().toString().trim();
-            currentSearchLevel = selectedLevel; // <--- Lấy giá trị từ Level Spinner
-            // selectedMuscleTypeId and selectedTrainingTypeId are already updated by spinner listeners
+            currentSearchLevel = selectedLevel;
 
-            // Call API to search (true to clear existing data)
             fetchExercises(true);
         });
 
-        // Listen for RecyclerView scroll events for pagination (load more data)
+        // Load more exercises at the end of a page
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == exerciseAdapter.getItemCount() - 1 && hasMorePages && !isLoading) {
-                    currentPage++; // Increment page number to load the next page
-                    fetchExercises(false); // false to append data to the existing list
+                    currentPage++;
+                    fetchExercises(false);
                 }
             }
         });
 
-        // Load initial data when the fragment is created
         fetchExercises(true);
-        // Load options for the spinners (Muscle Type and Training Type)
         fetchMuscleGroupOptions();
         fetchTrainingTypeOptions();
 
         return view;
     }
 
-    // region API Calls for Spinners (unchanged)
+    // region API Calls for Spinners
     private void fetchMuscleGroupOptions() {
         String accessToken = sessionManager.getAccessToken();
         String authorizationHeader = null;
@@ -224,7 +209,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Không có token xác thực để tải danh sách nhóm cơ. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token expired.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -245,19 +230,19 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                             muscleTypeAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Lỗi từ API nhóm cơ: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "API Error Muscle Types: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "API Error Muscle Types: " + apiResponse.getData());
                     }
                 } else {
-                    Toast.makeText(getContext(), "Lỗi phản hồi từ server khi tải nhóm cơ: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Server error Muscle Types: " + response.code(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Server error Muscle Types: " + response.code() + " " + response.message());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<List<SelectOptions>>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Lỗi kết nối khi tải nhóm cơ: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Lỗi mạng nhóm cơ: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Connection error Muscle Types: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Connection error Muscle Types: " + t.getMessage(), t);
             }
         });
     }
@@ -269,7 +254,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Không có token xác thực để tải danh sách loại hình tập. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token expired.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -290,23 +275,22 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                             trainingTypeAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Lỗi từ API loại hình tập: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "API Error Training Types: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "API Error Training Types: " + apiResponse.getData());
                     }
                 } else {
-                    Toast.makeText(getContext(), "Lỗi phản hồi từ server khi tải loại hình tập: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Server error Training Types: " + response.code(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Server error Training Types: " + response.code() + " " + response.message());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<List<SelectOptions>>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Lỗi kết nối khi tải loại hình tập: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Lỗi mạng loại hình tập: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Connection error Training Types: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Connection error Training Types: " + t.getMessage(), t);
             }
         });
     }
-    // endregion API Calls for Spinners
 
     private void fetchExercises(boolean clearExisting) {
         if (isLoading) return;
@@ -319,7 +303,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Không có token xác thực. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token expired.", Toast.LENGTH_LONG).show();
             isLoading = false;
             progressBar.setVisibility(View.GONE);
             return;
@@ -362,18 +346,18 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                         }
 
                         if (exercises == null || exercises.isEmpty() && clearExisting) {
-                            Toast.makeText(getContext(), "Không tìm thấy bài tập nào.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "No exercise found.", Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
-                        Toast.makeText(getContext(), "Lỗi từ API: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "API Error: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "API Error: " + apiResponse.getData());
                     }
                 } else {
                     if (response.code() == 401) {
-                        Toast.makeText(getContext(), "Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getContext(), "Lỗi phản hồi từ server: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
                     Log.e(TAG, "Server error: " + response.code() + " " + response.message());
                 }
@@ -383,8 +367,8 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             public void onFailure(@NonNull Call<ApiResponse<List<ExerciseResponse>>> call, @NonNull Throwable t) {
                 isLoading = false;
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Lỗi mạng: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Connection error: " + t.getMessage(), t);
             }
         });
     }
@@ -395,10 +379,10 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             ExerciseDetailFragment detailFragment = ExerciseDetailFragment.newInstance(exercise.getId());
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, detailFragment)
-                    .addToBackStack(null) // Cho phép quay lại ExercisesFragment
+                    .addToBackStack(null)
                     .commit();
         } else {
-            Toast.makeText(getContext(), "Không thể xem chi tiết bài tập này.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Exercise detail unavailable.", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -4,105 +4,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
+    android:layout_marginHorizontal="16dp"
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
+    app:cardElevation="0dp"
     app:cardBackgroundColor="@color/white85">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
         <!-- Exercise Name -->
         <TextView
-            android:id="@+id/exercise_name"
+            android:id="@+id/tv_exercise_item_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:textColor="@android:color/white"
+            tools:text="Push Up"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/exercise_thumbnail"
+            app:layout_constraintEnd_toStartOf="@id/iv_exercise_item_image"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Name" />
-
-        <!-- Exercise Level -->
-        <TextView
-            android:id="@+id/exercise_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/bg_level_beginner"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/exercise_name"
-            tools:text="Beginner" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Training Type -->
         <TextView
-            android:id="@+id/exercise_training_type"
+            android:id="@+id/tv_exercise_item_training_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
-            android:textColor="#BDBDBD"
+            tools:text="Strength Training"
+            android:textColor="#555555"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/exercise_level"
-            app:layout_constraintEnd_toStartOf="@id/exercise_thumbnail"
-            app:layout_constraintStart_toEndOf="@id/exercise_level"
-            app:layout_constraintTop_toTopOf="@id/exercise_level"
-            tools:text="Type" />
+            app:layout_constraintEnd_toStartOf="@id/iv_exercise_item_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_exercise_item_name" />
 
-        <!-- Muscle Groups Container -->
-        <LinearLayout
-            android:id="@+id/muscle_groups_container"
-            android:layout_width="0dp"
+        <!-- Level -->
+        <TextView
+            android:id="@+id/tv_exercise_item_level"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/exercise_thumbnail"
+            tools:text="Beginner"
+            android:background="@drawable/bg_level_beginner"
+            android:textColor="@android:color/black"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/exercise_level"
-            tools:ignore="RtlSymmetry">
-            <!-- Dynamic TextViews for muscle groups will be added here -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chest"
-                android:background="@drawable/bg_chip_muscle_group"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_marginEnd="8dp"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@id/tv_exercise_item_training_type" />
 
-        <!-- Exercise Thumbnail -->
+        <!-- Exercise Image -->
         <ImageView
-            android:id="@+id/exercise_thumbnail"
-            android:layout_width="80dp"
+            android:id="@+id/iv_exercise_item_image"
+            android:layout_width="120dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
-            android:background="@drawable/bg_image_rounded"
-            android:clipToOutline="true"
+            tools:src="@drawable/ic_placeholder_exercise"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

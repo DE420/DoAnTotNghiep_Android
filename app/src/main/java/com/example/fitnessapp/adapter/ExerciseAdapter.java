@@ -72,15 +72,13 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
         TextView nameTextView;
         TextView levelTextView;
         TextView trainingTypeTextView;
-        LinearLayout muscleGroupsContainer; // Container để chứa các Chip/TextView nhóm cơ
 
         public ExerciseViewHolder(@NonNull View itemView) {
             super(itemView);
-            thumbnailImageView = itemView.findViewById(R.id.exercise_thumbnail);
-            nameTextView = itemView.findViewById(R.id.exercise_name);
-            levelTextView = itemView.findViewById(R.id.exercise_level);
-            trainingTypeTextView = itemView.findViewById(R.id.exercise_training_type);
-            muscleGroupsContainer = itemView.findViewById(R.id.muscle_groups_container);
+            thumbnailImageView = itemView.findViewById(R.id.iv_exercise_item_image);
+            nameTextView = itemView.findViewById(R.id.tv_exercise_item_name);
+            levelTextView = itemView.findViewById(R.id.tv_exercise_item_level);
+            trainingTypeTextView = itemView.findViewById(R.id.tv_exercise_item_training_type);
         }
 
         public void bind(ExerciseResponse exercise, OnItemClickListener listener) {
@@ -119,30 +117,6 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
             } else {
                 // Hiển thị icon placeholder nếu không có URL ảnh
                 Glide.with(itemView.getContext()).load(R.drawable.ic_placeholder_exercise).into(thumbnailImageView);
-            }
-
-            // Thêm các TextView (như chip) cho nhóm cơ một cách động
-            muscleGroupsContainer.removeAllViews(); // Xóa các view cũ trước khi thêm mới
-            if (exercise.getMuscleGroups() != null) {
-                for (String muscle : exercise.getMuscleGroups()) {
-                    TextView chip = new TextView(itemView.getContext());
-                    chip.setText(muscle);
-                    chip.setBackgroundResource(R.drawable.bg_chip_muscle_group);
-                    chip.setTextColor(itemView.getContext().getResources().getColor(android.R.color.white));
-                    // Đặt padding và margin động
-                    int paddingHorizontal = itemView.getContext().getResources().getDimensionPixelSize(R.dimen.chip_padding_horizontal);
-                    int paddingVertical = itemView.getContext().getResources().getDimensionPixelSize(R.dimen.chip_padding_vertical);
-                    chip.setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
-
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                    );
-                    int marginEnd = itemView.getContext().getResources().getDimensionPixelSize(R.dimen.chip_margin_end);
-                    params.setMarginEnd(marginEnd); // Khoảng cách giữa các chip
-                    chip.setLayoutParams(params);
-                    muscleGroupsContainer.addView(chip);
-                }
             }
 
             // Đặt sự kiện click cho toàn bộ item

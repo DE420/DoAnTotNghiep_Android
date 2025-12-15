@@ -46,152 +46,162 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
-        app:cardBackgroundColor="#2C2C2C"
+        app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_exercises">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_search_box"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Search by Name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:text="Name:"
+                    android:textColor="#BDBDBD"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/et_search_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:background="@drawable/bg_search_box"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="#8A8A8A"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Search by Level (Spinner) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:text="Level:"
+                    android:textColor="#BDBDBD"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/spinner_level"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:background="@drawable/bg_search_box"
+                    android:padding="8dp"
+                    android:spinnerMode="dropdown"
+                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            </LinearLayout>
+
+            <!-- Search by Muscle Type (Spinner) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:text="Muscle Type:"
+                    android:textColor="#BDBDBD"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/spinner_muscle_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:background="@drawable/bg_search_box"
+                    android:padding="8dp"
+                    android:spinnerMode="dropdown"
+                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            </LinearLayout>
+
+            <!-- Search by Training Type (Spinner) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:text="Training Type:"
+                    android:textColor="#BDBDBD"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/spinner_training_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:background="@drawable/bg_search_box"
+                    android:padding="8dp"
+                    android:spinnerMode="dropdown"
+                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFD700"
+                android:text="SEARCH"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="70dp"
+                app:cornerRadius="4dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+        <!-- RecyclerView for Exercises -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_exercises"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_card_view"
+        tools:listitem="@layout/item_exercise" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- Search by Name -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:text="Name:"
-                android:textColor="#BDBDBD"
-                android:textSize="16sp" />
-            <EditText
-                android:id="@+id/et_search_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:background="@drawable/bg_edittext_rounded"
-                android:textColorHint="#8A8A8A"
-                android:textColor="@android:color/white"
-                android:padding="8dp"
-                android:singleLine="true"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <!-- Search by Level (Spinner) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:text="Level:"
-                android:textColor="#BDBDBD"
-                android:textSize="16sp" />
-            <Spinner
-                android:id="@+id/spinner_level"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:background="@drawable/bg_edittext_rounded"
-                android:padding="4dp"
-                android:spinnerMode="dropdown"
-                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
-        </LinearLayout>
-
-        <!-- Search by Muscle Type (Spinner) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:text="Muscle Type:"
-                android:textColor="#BDBDBD"
-                android:textSize="16sp" />
-            <Spinner
-                android:id="@+id/spinner_muscle_type"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:background="@drawable/bg_edittext_rounded"
-                android:padding="4dp"
-                android:spinnerMode="dropdown"
-                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
-        </LinearLayout>
-
-        <!-- Search by Training Type (Spinner) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:text="Training Type:"
-                android:textColor="#BDBDBD"
-                android:textSize="16sp" />
-            <Spinner
-                android:id="@+id/spinner_training_type"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:background="@drawable/bg_edittext_rounded"
-                android:padding="4dp"
-                android:spinnerMode="dropdown"
-                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btn_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFD700"
-            android:text="SEARCH"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
-
-    <!-- RecyclerView for Exercises -->
-<androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/recycler_view_exercises"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_marginTop="16dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/search_card_view"
-    tools:listitem="@layout/item_exercise" />
-
-    <!-- Progress Bar for loading more data -->
-<ProgressBar
-    android:id="@+id/progress_bar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:visibility="gone"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/search_card_view" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_card_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
