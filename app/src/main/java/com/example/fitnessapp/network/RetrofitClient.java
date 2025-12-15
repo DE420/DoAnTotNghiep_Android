@@ -5,10 +5,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     // ip address emulator
-//    private static final String BASE_URL = "http://10.0.2.2:8080/api/";
+//    private static final String BASE_URL = "http://10.0.2.2:8080/api/v1/";
 
     // ip address real device
-    private static final String BASE_URL = "http://192.168.1.42:8080/api/";
+    private static final String BASE_URL = "http://192.168.1.61:8080/api/v1/";
 
 
     private static Retrofit retrofit = null;

@@ -39,8 +39,9 @@ public interface ApiService {
     @POST("auth/google")
     Call<ApiResponse<LoginResponse>> loginWithGoogle(@Body GoogleLoginRequest googleLoginRequest);
 
+
     @POST("auth/register")
-    Call<ApiResponse<Object>> registerUser(@Body RegisterRequest registerRequest);
+    Call<ApiResponse<RegisterResponse>> register(@Body RegisterRequest registerRequest);
 
     @POST("auth/forgot-password")
     Call<ApiResponse<String>> forgotPassword(@Body ForgotPasswordRequest forgotPasswordRequest);
