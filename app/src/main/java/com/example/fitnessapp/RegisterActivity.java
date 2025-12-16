@@ -21,6 +21,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.fitnessapp.model.constants.Constants;
 import com.example.fitnessapp.model.request.RegisterRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
@@ -40,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String TAG = RegisterActivity.class.getSimpleName();
 
     private ImageView imageViewShowPassword, imageViewShowConfirmPassword;
-    private RelativeLayout relativeLayoutLoading;
+    private View relativeLayoutLoading;
     private TextView textViewLoginNow;
     private EditText editTextEmail;
     private EditText editTextUsername;
@@ -56,17 +57,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private ApiService apiService;
 
+    private ImageView imgBackground;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
         initViews();
         apiService = RetrofitClient.getApiService();
     }
@@ -77,6 +73,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         textViewPasswordWarning = findViewById(R.id.tv_password_warning);
         textViewConfirmPasswordWarning = findViewById(R.id.tv_confirm_password_warning);
         textViewErrorRegister = findViewById(R.id.tv_error_register);
+        imgBackground = findViewById(R.id.img_background);
+
+        Glide.with(this)
+                .load(R.drawable.login_register_background_compress)
+                .into(imgBackground);
 
         imageViewShowPassword = findViewById(R.id.img_show_password);
         imageViewShowConfirmPassword = findViewById(R.id.img_show_confirm_password);
