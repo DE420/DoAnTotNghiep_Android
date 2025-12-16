@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fakeLogin() {
         ApiService apiService = RetrofitClient.getApiService();
-        apiService.login(new LoginRequest("tuyenvu1", "haih010ba@"))
+        apiService.login(new LoginRequest("tuyenvu3", "haih010b@"))
                 .enqueue(new Callback<ApiResponse<LoginResponse>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {

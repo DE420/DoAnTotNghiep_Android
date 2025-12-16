@@ -316,7 +316,6 @@ public class ProfileFragment extends Fragment {
                             R.anim.slide_out // popExit
                     )
                     .replace(R.id.fragment_container, EditProfileFragment.class, bundle)
-                    .setReorderingAllowed(true)
                     .addToBackStack(null)
                     .commit();
 
@@ -331,7 +330,6 @@ public class ProfileFragment extends Fragment {
                             R.anim.slide_out // popExit
                     )
                     .replace(R.id.fragment_container, ChangePasswordFragment.class, null)
-                    .setReorderingAllowed(true)
                     .addToBackStack(null)
                     .commit();
         });

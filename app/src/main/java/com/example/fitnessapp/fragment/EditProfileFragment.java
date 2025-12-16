@@ -3,6 +3,7 @@ package com.example.fitnessapp.fragment;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -134,6 +135,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             @Override
             public void handleOnBackPressed() {
                 // Do nothing → back button disabled
+                Toast.makeText(requireActivity(), "Please wait...", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -309,27 +311,23 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             }
         });
 
-        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener()
-        {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day)
-            {
-                month = month + 1;
-                String dateStr = "";
-                if (day < 10) {
-                    dateStr += "0" + day;
-                } else {
-                    dateStr += day;
-                }
-                dateStr += "/";
-                if (month < 10) {
-                    dateStr += "0" + month;
-                } else {
-                    dateStr += month;
-                }
-                dateStr += "/" + year;
-                binding.etDateOfBirth.setText(dateStr);
+        DatePickerDialog.OnDateSetListener dateSetListener = (datePicker, year, month, day) -> {
+            month = month + 1;
+            String dateStr = "";
+            if (day < 10) {
+                dateStr += "0" + day;
+            } else {
+                dateStr += day;
             }
+            dateStr += "/";
+            if (month < 10) {
+                dateStr += "0" + month;
+            } else {
+                dateStr += month;
+            }
+            dateStr += "/" + year;
+            binding.etDateOfBirth.setText(dateStr);
+            checkEditTextDateOfBirth(colorWhite200, View.GONE);
         };
 
         int year, month, day;
@@ -506,6 +504,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void checkEditTextFullName(int isValidColor, int isValidVisibility) {
         WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
                 .editText(binding.etFullName)
@@ -530,12 +529,13 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         setStateForEditText(builder.build());
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void checkEditTextDateOfBirth(int isValidColor, int isValidVisibility) {
         WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
                 .editText(binding.etDateOfBirth)
                 .tvLabel(binding.tvDateOfBirth)
                 .tvSupport(binding.tvDateOfBirthSupport);
-        if (!isValidFullName()) {
+        if (!isValidDateOfBirth()) {
             builder.color(colorPink200);
             builder.visibilityOfTvSupport(View.VISIBLE);
 //            wrapperEditTextState.setTag(false);
@@ -554,12 +554,13 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         setStateForEditText(builder.build());
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void checkEditTextWeight(int isValidColor, int isValidVisibility) {
         WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
                 .editText(binding.etWeight)
                 .tvLabel(binding.tvWeight)
                 .tvSupport(binding.tvWeightSupport);
-        if (!isValidFullName()) {
+        if (!isValidWeight()) {
             builder.color(colorPink200);
             builder.visibilityOfTvSupport(View.VISIBLE);
 //            wrapperEditTextState.setTag(false);
@@ -578,12 +579,13 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         setStateForEditText(builder.build());
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void checkEditTextHeight(int isValidColor, int isValidVisibility) {
         WrapperEditTextState.Builder builder = new WrapperEditTextState.Builder()
                 .editText(binding.etHeight)
                 .tvLabel(binding.tvHeight)
                 .tvSupport(binding.tvHeightSupport);
-        if (!isValidFullName()) {
+        if (!isValidHeight()) {
             builder.color(colorPink200);
             builder.visibilityOfTvSupport(View.VISIBLE);
 //            wrapperEditTextState.setTag(false);
@@ -610,9 +612,9 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                 wrapperEditTextState.getColor(),
                 wrapperEditTextState.getVisibilityOfTvSupport()
         );
-//        wrapperEditTextState.getEditText().setTag(
-//                wrapperEditTextState.isTag()
-//        );
+        wrapperEditTextState.getEditText().setTag(
+                wrapperEditTextState.isTag()
+        );
         wrapperEditTextState.getEditText().setBackground(
                 wrapperEditTextState.getBackground()
         );
@@ -861,7 +863,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
                             .show();
                     new Handler().postDelayed(() -> {
                         requireActivity().getOnBackPressedDispatcher().onBackPressed();
-                    }, 1500);
+                    }, 1250);
 
                 } else {
 //                    Toast.makeText(requireContext(), "Update profile fail", Toast.LENGTH_SHORT).show();
