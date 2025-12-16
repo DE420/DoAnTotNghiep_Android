@@ -24,6 +24,7 @@ import com.example.fitnessapp.model.response.LoginResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.session.SessionManager;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
 import retrofit2.Call;
@@ -35,11 +36,14 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private int preSelectedItemIditem = 0;
 
+    private AppBarLayout appBarLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        appBarLayout = findViewById(R.id.app_bar_layout);
 
         if (savedInstanceState == null) {
             // load default home fragment
@@ -120,8 +124,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void setAppBarVisible(boolean visible) {
 
-
+        if (appBarLayout != null) {
+            appBarLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
 
     @SuppressLint("GestureBackNavigation")
     @Override

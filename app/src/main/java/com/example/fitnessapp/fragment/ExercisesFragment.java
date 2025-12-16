@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fitnessapp.MainActivity;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.adapter.ExerciseAdapter;
 import com.example.fitnessapp.model.response.ApiResponse;
@@ -383,6 +384,33 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                     .commit();
         } else {
             Toast.makeText(getContext(), "Exercise detail unavailable.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Hide AppBar when this fragment is visible
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(false);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Show AppBar when leaving this fragment
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(true);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Ensure AppBar is visible when fragment is destroyed
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(true);
         }
     }
 }

@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.fitnessapp.MainActivity;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.ExerciseResponse;
@@ -421,16 +422,28 @@ public class ExerciseDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Hide AppBar when this fragment is visible
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(false);
+        }
+
+        // Resume video playback
         if (player != null) {
-            player.setPlayWhenReady(true); // Resume playback
+            player.setPlayWhenReady(true);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        // Show AppBar when leaving this fragment
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(true);
+        }
+
+        // Pause video playback
         if (player != null) {
-            player.setPlayWhenReady(false); // Pause playback when fragment is not in foreground
+            player.setPlayWhenReady(false);
         }
     }
 
@@ -445,6 +458,9 @@ public class ExerciseDetailFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(true);
+        }
         releasePlayer(); // Release the player when the view is destroyed
     }
 }
