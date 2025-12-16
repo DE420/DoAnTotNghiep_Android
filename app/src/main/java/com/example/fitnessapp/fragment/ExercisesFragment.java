@@ -96,22 +96,22 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
 
         // Level Spinner
         List<String> levelOptions = new ArrayList<>(Arrays.asList("(Choose one)", "Beginner", "Intermediate", "Advanced"));
-        levelAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, levelOptions);
-        levelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        levelAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_white_text, levelOptions);
+        levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_white_text);
         spinnerLevel.setAdapter(levelAdapter);
 
         // Muscle Type Spinner
         List<SelectOptions> initialMuscleOptions = new ArrayList<>();
         initialMuscleOptions.add(new SelectOptions(null, "(Choose one)"));
-        muscleTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, initialMuscleOptions);
-        muscleTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        muscleTypeAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_white_text, initialMuscleOptions);
+        muscleTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_white_text);
         spinnerMuscleType.setAdapter(muscleTypeAdapter);
 
         // Training Type Spinner
         List<SelectOptions> initialTrainingOptions = new ArrayList<>();
         initialTrainingOptions.add(new SelectOptions(null, "(Choose one)"));
-        trainingTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, initialTrainingOptions);
-        trainingTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        trainingTypeAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_white_text, initialTrainingOptions);
+        trainingTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_white_text);
         spinnerTrainingType.setAdapter(trainingTypeAdapter);
 
         // Level Spinner Listener
