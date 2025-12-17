@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:id="@+id/layout_container"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:fitsSystemWindows="true">
 
     <!-- Top App Bar -->
     <com.google.android.material.appbar.AppBarLayout
@@ -71,6 +72,5 @@
         app:itemIconTint="@color/bottom_nav_color"
         app:itemTextColor="@color/bottom_nav_color"
         app:menu="@menu/bottom_nav_menu" />
-
 
 </RelativeLayout>

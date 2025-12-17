@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:singleLine="true"
+    android:textColor="@color/white85"
+    android:textSize="16sp"
+    android:drawablePadding="8dp"
+    app:drawableEndCompat="@drawable/baseline_keyboard_arrow_down_24"
+    app:drawableTint="@color/white85" />

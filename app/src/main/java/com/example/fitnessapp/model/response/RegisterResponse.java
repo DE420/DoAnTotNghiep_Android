@@ -24,6 +24,7 @@ public class RegisterResponse {
 
     @SerializedName("weight")
     private Double weight;
+
     @SerializedName("provider")
     private AuthProvider provider;
 
@@ -35,6 +36,25 @@ public class RegisterResponse {
 
     @SerializedName("longestStreak")
     private Integer longestStreak;
+
+    public RegisterResponse() {
+    }
+
+    public RegisterResponse(Long id, String name, String email, String username,
+                            String avatar, Double height, Double weight, AuthProvider provider,
+                            boolean isLocked, Integer currentStreak, Integer longestStreak) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.username = username;
+        this.avatar = avatar;
+        this.height = height;
+        this.weight = weight;
+        this.provider = provider;
+        this.isLocked = isLocked;
+        this.currentStreak = currentStreak;
+        this.longestStreak = longestStreak;
+    }
 
     public Long getId() {
         return id;
