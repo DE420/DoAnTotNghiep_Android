@@ -81,6 +81,8 @@
                     android:layout_weight="0.7"
                     android:background="@drawable/bg_search_box"
                     android:padding="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:singleLine="true"
                     android:textColor="@android:color/white"
                     android:textColorHint="#8A8A8A"
