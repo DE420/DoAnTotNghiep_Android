@@ -145,7 +145,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             @Override
             public void handleOnBackPressed() {
                 // Do nothing → back button disabled
-
+                Toast.makeText(getContext(), "Please wait...", Toast.LENGTH_SHORT).show();
             }
         };
 
