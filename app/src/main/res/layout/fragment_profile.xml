@@ -83,15 +83,18 @@
             android:background="@color/background_app_color"
             android:translationZ="5dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <ScrollView
-        android:id="@+id/sv_content"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_header"
-        android:background="@color/background_app_color"
+        android:background="@color/background_app_color">
+    <ScrollView
+        android:id="@+id/sv_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -669,6 +672,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <RelativeLayout
         android:id="@+id/rl_loading_data"
         android:layout_width="match_parent"

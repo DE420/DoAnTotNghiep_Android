@@ -171,7 +171,7 @@
                     android:id="@+id/tv_activity_level_support"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:text="Please select activity level"
                     android:textSize="12sp"
                     android:visibility="gone"
                     android:paddingStart="16dp"
@@ -215,7 +215,7 @@
                     android:id="@+id/tv_goal_support"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:text="Please select goal"
                     android:textSize="12sp"
                     android:visibility="gone"
                     android:paddingStart="16dp"
@@ -257,15 +257,36 @@
                     android:inputType="date"
                     android:textCursorDrawable="@drawable/custom_cursor"/>
 
-                <ImageView
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/img_calendar"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_calendar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/normal_purple_circle"
                     app:layout_constraintTop_toTopOf="@id/et_date_of_birth"
                     app:layout_constraintBottom_toBottomOf="@id/et_date_of_birth"
                     app:layout_constraintEnd_toEndOf="@id/et_date_of_birth"
-                    android:layout_marginEnd="12dp"/>
+                    android:layout_marginEnd="4dp"
+                    android:clickable="true">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_calendar"
+                        android:clickable="false"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/img_calendar"-->
+<!--                    android:layout_width="24dp"-->
+<!--                    android:layout_height="24dp"-->
+<!--                    android:src="@drawable/ic_calendar"-->
+<!--                    app:layout_constraintTop_toTopOf="@id/et_date_of_birth"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@id/et_date_of_birth"-->
+<!--                    app:layout_constraintEnd_toEndOf="@id/et_date_of_birth"-->
+<!--                    android:layout_marginEnd="12dp"/>-->
 
                 <TextView
                     android:id="@+id/tv_date_of_birth_support"

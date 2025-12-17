@@ -110,6 +110,18 @@ public interface ApiService {
             @Part(UpdateProfileRequest.KEY_DATE_OF_BIRTH) RequestBody dateOfBirth
             );
 
+    @Multipart
+    @PUT("user/profile")
+    Call<ApiResponse<Boolean>> updateUserProfile(
+            @Header(Constants.KEY_AUTHORIZATION) String authorization,
+            @Part(UpdateProfileRequest.KEY_NAME) RequestBody name,
+            @Part(UpdateProfileRequest.KEY_WEIGHT) RequestBody weight,
+            @Part(UpdateProfileRequest.KEY_HEIGHT) RequestBody height,
+            @Part(UpdateProfileRequest.KEY_ACTIVITY_LEVEL) RequestBody activityLevel,
+            @Part(UpdateProfileRequest.KEY_FITNESS_GOAL) RequestBody fitnessGoal,
+            @Part(UpdateProfileRequest.KEY_DATE_OF_BIRTH) RequestBody dateOfBirth
+    );
+
     @POST("user/change-password")
     Call<ApiResponse<String>> changePassword(
             @Header(Constants.KEY_AUTHORIZATION) String authorization,

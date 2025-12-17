@@ -17,7 +17,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:gravity="center_vertical"
-        android:text="@string/app_name"
+        android:text="Select Option"
         android:background="@drawable/selected_item_spinner_background"
         />
 

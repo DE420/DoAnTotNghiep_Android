@@ -50,6 +50,8 @@ dependencies {
 
     implementation(libs.glide)
     implementation(libs.circleimageview)
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
 
     implementation("androidx.camera:camera-core:1.3.0")
