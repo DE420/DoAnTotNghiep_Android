@@ -70,4 +70,7 @@
     <string name="txt_cant_blank_current_password_support">Current password can\'t blank</string>
     <string name="txt_password_support">Password must be at least 8 characters, including letters, numbers and special characters</string>
     <string name="txt_new_password_support">Confirm password don\'t match new password</string>
+    <string name="text_super_long">Từ ngày 1/1/2026, khi hộ kinh doanh chuyển sang kê khai thuế theo doanh thu, yêu cầu thông báo và giám sát tài khoản ngân hàng trở thành nội dung được quan tâm. Theo chuyên gia, đây là bước đi cần thiết để minh bạch dòng tiền kinh doanh.
+</string>
+
 </resources>
