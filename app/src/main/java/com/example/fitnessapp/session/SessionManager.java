@@ -98,41 +98,4 @@ public class SessionManager {
     }
 
 
-
-    public boolean refreshToken() {
-        String refreshToken = getRefreshToken();
-        if (refreshToken == null) {
-            return false;
-        }
-        final boolean[] isSuccess = {false};
-        ApiService apiService = RetrofitClient.getApiService();
-        RefreshTokenRequest request = new RefreshTokenRequest(refreshToken);
-        apiService.refreshToken(request).enqueue(new Callback<ApiResponse<LoginResponse>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
-                if (response.isSuccessful() && response.body() != null ) {
-                    ApiResponse<LoginResponse> apiResponse = response.body();
-                    saveTokens(apiResponse.getData().getAccessToken(),
-                            apiResponse.getData().getRefreshToken());
-                    isSuccess[0] = true;
-                } else {
-                    int codeError = response.code();
-                    String strError = null;
-                    try {
-                        strError = response.errorBody().string();
-                    } catch (IOException e) {
-                        Log.e(TAG, Objects.requireNonNull(e.getMessage()));
-                    }
-                    Log.e(TAG, "error code: " + codeError + ", error message: " + strError);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
-                Log.e(TAG, Objects.requireNonNull(t.getMessage()));
-
-            }
-        });
-        return isSuccess[0];
-    }
 }

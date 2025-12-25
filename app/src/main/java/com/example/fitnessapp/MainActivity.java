@@ -22,7 +22,9 @@ import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
 import com.example.fitnessapp.network.ApiService;
+import com.example.fitnessapp.network.AuthApi;
 import com.example.fitnessapp.network.RetrofitClient;
+import com.example.fitnessapp.repository.AuthRepository;
 import com.example.fitnessapp.session.SessionManager;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
@@ -84,6 +86,55 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         });
+
+        fakeLogin();
+    }
+
+    private void fakeLogin() {
+
+        String username = "tuyenvu1";
+        String password = "haih010b@";
+
+
+        AuthRepository authRepository = new AuthRepository(this);
+        authRepository.login(new LoginRequest(username, password),
+                new Callback<ApiResponse<LoginResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<LoginResponse>> call, Response<ApiResponse<LoginResponse>> response) {
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().isStatus()) {
+                            SessionManager.getInstance(getApplicationContext()).saveTokens(
+                                    response.body().getData().getAccessToken(),
+                                    response.body().getData().getRefreshToken()
+                            );
+                            Snackbar.make(
+                                    binding.getRoot(),
+                                    "Login success",
+                                    Snackbar.LENGTH_SHORT
+                            ).setBackgroundTint(getColor(R.color.green_500))
+                                    .show();
+                        } else {
+                            Snackbar.make(
+                                            binding.getRoot(),
+                                            "Login fail (onResponse)",
+                                            Snackbar.LENGTH_SHORT
+                                    ).setBackgroundTint(getColor(R.color.red_400))
+                                    .show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
+                        Snackbar.make(
+                                        binding.getRoot(),
+                                        "Login fail (onFailure)",
+                                        Snackbar.LENGTH_SHORT
+                                ).setBackgroundTint(getColor(R.color.red_400))
+                                .show();
+                    }
+                });
+
     }
 
     // Cập nhật hàm loadFragment để xử lý back stack
