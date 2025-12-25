@@ -1,8 +1,9 @@
 package com.example.fitnessapp.model.response.community;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class PostResponse {
+public class PostResponse implements Serializable {
 
     private Long id;
     private String title;
@@ -85,6 +86,18 @@ public class PostResponse {
 
     public String getCreateAt() {
         return createAt;
+    }
+
+    public void setLiked(Boolean liked) {
+        this.liked = liked;
+    }
+
+    public void setLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
     }
 
     @Override

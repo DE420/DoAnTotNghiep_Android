@@ -54,8 +54,8 @@ public class RetrofitClient {
                     .create();
 
             OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(new AuthInterceptor(ctx))
-                    .authenticator(new TokenAuthenticator(ctx))
+                    .addInterceptor(new AuthInterceptor(ctx.getApplicationContext()))
+                    .authenticator(new TokenAuthenticator(ctx.getApplicationContext()))
                     .build();
 
             retrofitAuth = new Retrofit.Builder()
@@ -73,7 +73,13 @@ public class RetrofitClient {
     }
 
     public static PostApi getPostApi(Context ctx) {
-        return getAuthRetrofit(ctx).create(PostApi.class);
+        return getAuthRetrofit(ctx.getApplicationContext())
+                .create(PostApi.class);
+    }
+
+    public static CommentApi getCommentApi(Context ctx) {
+        return getAuthRetrofit(ctx.getApplicationContext())
+                .create(CommentApi.class);
     }
 
 }

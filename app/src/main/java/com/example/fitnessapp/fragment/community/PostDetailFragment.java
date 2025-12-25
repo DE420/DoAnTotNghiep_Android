@@ -1,6 +1,883 @@
 package com.example.fitnessapp.fragment.community;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.io.File;
+
+import com.bumptech.glide.Glide;
+import com.example.fitnessapp.R;
+import com.example.fitnessapp.adapter.community.CommentAdapter;
+import com.example.fitnessapp.databinding.FragmentPostDetailBinding;
+import com.example.fitnessapp.model.response.ApiResponse;
+import com.example.fitnessapp.model.response.community.CommentResponse;
+import com.example.fitnessapp.model.response.community.PostResponse;
+import com.example.fitnessapp.repository.CommentRepository;
+import com.example.fitnessapp.repository.PostRepository;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PostDetailFragment extends Fragment {
+
+    private static final String TAG = "PostDetailFragment";
+    private static final String ARG_POST_ID = "post_id";
+
+    private FragmentPostDetailBinding binding;
+    private PostRepository repository;
+    private CommentRepository commentRepository;
+    private CommentAdapter commentAdapter;
+    private ExoPlayer player;
+    private long postId;
+    private PostResponse currentPost;
+
+    // Image picker for comments
+    private ActivityResultLauncher<Intent> commentImagePickerLauncher;
+    private Uri selectedCommentImageUri;
+
+    public static PostDetailFragment newInstance(long postId) {
+        PostDetailFragment fragment = new PostDetailFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_POST_ID, postId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            postId = getArguments().getLong(ARG_POST_ID);
+        }
+        repository = new PostRepository(requireContext());
+        commentRepository = new CommentRepository(requireContext());
+
+        // Register comment image picker launcher
+        commentImagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        selectedCommentImageUri = result.getData().getData();
+                        displayCommentImagePreview();
+                    }
+                }
+        );
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        binding = FragmentPostDetailBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Hide header and bottom navigation
+        hideHeaderAndBottomNavigation();
+
+        setupToolbar();
+        setupRecyclerView();
+        setupListeners();
+
+        // Load post detail
+        loadPostDetail();
+    }
+
+    private void hideHeaderAndBottomNavigation() {
+        if (getActivity() != null) {
+            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
+
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.GONE);
+            }
+
+            if (bottomNavigation != null) {
+                bottomNavigation.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void showHeaderAndBottomNavigation() {
+        if (getActivity() != null) {
+            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
+
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.VISIBLE);
+            }
+
+            if (bottomNavigation != null) {
+                bottomNavigation.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener(v -> {
+            requireActivity().onBackPressed();
+        });
+
+        // Add refresh menu item
+        binding.toolbar.inflateMenu(R.menu.menu_post_detail);
+        binding.toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_refresh) {
+                // Reload post data
+                loadPostDetail();
+                Toast.makeText(requireContext(), "Refreshing post...", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void setupRecyclerView() {
+        binding.rvComments.setLayoutManager(new LinearLayoutManager(requireContext()));
+        commentAdapter = new CommentAdapter(requireContext());
+        commentAdapter.setItemListener(new CommentAdapter.CommentItemListener() {
+            @Override
+            public void onDeleteClick(View view, int position) {
+                showDeleteCommentConfirmation(position);
+            }
+
+            @Override
+            public void onLikeClick(View view, int position) {
+                handleCommentLikeUnlike(position);
+            }
+
+            @Override
+            public void onImageClick(String imageUrl) {
+                showFullImageDialog(imageUrl);
+            }
+        });
+        binding.rvComments.setAdapter(commentAdapter);
+    }
+
+    private void setupListeners() {
+        // Like button
+        binding.ibLike.setOnClickListener(v -> {
+            if (currentPost != null) {
+                handleLikeUnlike();
+            }
+        });
+
+        // Send comment button
+        binding.ibSendComment.setOnClickListener(v -> {
+            String commentText = binding.etComment.getText().toString().trim();
+            if (!commentText.isEmpty()) {
+                sendComment(commentText);
+            }
+        });
+
+        // Attach image button for comment
+        binding.ibAttachImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            commentImagePickerLauncher.launch(intent);
+        });
+
+        // Remove comment image button
+        binding.ibRemoveCommentImage.setOnClickListener(v -> {
+            selectedCommentImageUri = null;
+            binding.llCommentImagePreview.setVisibility(View.GONE);
+        });
+    }
+
+    private void loadPostDetail() {
+        Log.d(TAG, "Loading post detail for postId: " + postId);
+        binding.progressBar.setVisibility(View.VISIBLE);
+
+        repository.getPostDetail(postId, new Callback<ApiResponse<PostResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<PostResponse>> call,
+                                   Response<ApiResponse<PostResponse>> response) {
+                binding.progressBar.setVisibility(View.GONE);
+
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    currentPost = response.body().getData();
+                    Log.d(TAG, "Post detail loaded successfully");
+                    displayPostDetail(currentPost);
+                } else {
+                    Log.e(TAG, "Failed to load post detail");
+                    Toast.makeText(requireContext(), "Failed to load post", Toast.LENGTH_SHORT).show();
+                    requireActivity().onBackPressed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<PostResponse>> call, Throwable t) {
+                binding.progressBar.setVisibility(View.GONE);
+                Log.e(TAG, "Error loading post detail: " + t.getMessage());
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                requireActivity().onBackPressed();
+            }
+        });
+    }
+
+   
+   
+   
+
+    private void displayPostDetail(PostResponse post) {
+        if (post == null) return;
+
+        // User info
+        binding.tvUserName.setText(post.getUserName() != null ? post.getUserName() : "Unknown");
+
+        // Load user avatar
+        if (post.getUserAvatarUrl() != null && !post.getUserAvatarUrl().isEmpty()) {
+            Glide.with(this)
+                    .load(post.getUserAvatarUrl())
+                    .placeholder(R.drawable.img_user_default_128)
+                    .error(R.drawable.img_user_default_128)
+                    .into(binding.ivUserAvatar);
+        }
+
+        // Post date
+        binding.tvPostDate.setText(formatDate(post.getCreateAt()));
+
+        // Content
+        binding.tvContent.setText(post.getContent());
+
+        // Display image if available
+        boolean hasImage = post.getImageUrl() != null && !post.getImageUrl().isEmpty();
+        if (hasImage) {
+            binding.cardImage.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(post.getImageUrl())
+                    .placeholder(R.color.gray_450)
+                    .into(binding.ivPostImage);
+
+            // Add click listener to view full image
+            binding.ivPostImage.setOnClickListener(v -> {
+                showFullImageDialog(post.getImageUrl());
+            });
+        } else {
+            binding.cardImage.setVisibility(View.GONE);
+        }
+
+        // Display video if available
+        boolean hasVideo = post.getVideoUrl() != null && !post.getVideoUrl().isEmpty();
+        if (hasVideo) {
+            binding.cardVideo.setVisibility(View.VISIBLE);
+            setupVideoPlayer(post.getVideoUrl());
+        } else {
+            binding.cardVideo.setVisibility(View.GONE);
+        }
+
+        // Like count and state
+        updateLikeUI(post);
+
+        // Comment count
+        binding.tvCommentCount.setText(String.valueOf(post.getCommentCount()));
+
+        // Edit and Delete buttons visibility (only show for own posts)
+        boolean canEdit = post.getCanEdit() != null && post.getCanEdit();
+        boolean canDelete = post.getCanDelete() != null && post.getCanDelete();
+
+        binding.ibEdit.setVisibility(canEdit ? View.VISIBLE : View.GONE);
+        binding.ibDelete.setVisibility(canDelete ? View.VISIBLE : View.GONE);
+
+        if (canEdit) {
+            binding.ibEdit.setOnClickListener(v -> navigateToEditPost());
+        }
+
+        if (canDelete) {
+            binding.ibDelete.setOnClickListener(v -> showDeleteConfirmation());
+        }
+
+        // Load comments
+        loadComments();
+    }
+
+    private String formatDate(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
+            return "";
+        }
+
+        try {
+            java.text.SimpleDateFormat inputFormat = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault());
+            java.util.Date date = inputFormat.parse(dateString);
+
+            if (date == null) return dateString;
+
+            long timeInMillis = date.getTime();
+            long now = System.currentTimeMillis();
+            long diff = now - timeInMillis;
+
+            long minutes = diff / (60 * 1000);
+            long hours = diff / (60 * 60 * 1000);
+            long days = diff / (24 * 60 * 60 * 1000);
+
+            if (minutes < 1) {
+                return "Just now";
+            } else if (minutes < 60) {
+                return minutes + " min ago";
+            } else if (hours < 24) {
+                return hours + " hour" + (hours > 1 ? "s" : "") + " ago";
+            } else if (days < 7) {
+                return days + " day" + (days > 1 ? "s" : "") + " ago";
+            } else {
+                java.text.SimpleDateFormat outputFormat = new java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault());
+                return outputFormat.format(date);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error formatting date: " + e.getMessage());
+            return dateString;
+        }
+    }
+
+    private void setupVideoPlayer(String videoUrl) {
+        Log.d(TAG, "Setting up video player for URL: " + videoUrl);
+
+        try {
+            // Create audio attributes for proper video playback with audio
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(com.google.android.exoplayer2.C.AUDIO_CONTENT_TYPE_MOVIE)
+                    .setUsage(com.google.android.exoplayer2.C.USAGE_MEDIA)
+                    .build();
+
+            // Initialize player with audio attributes
+            player = new ExoPlayer.Builder(requireContext())
+                    .setAudioAttributes(audioAttributes, /* handleAudioFocus= */ true)
+                    .build();
+            binding.playerView.setPlayer(player);
+
+            // Create data source factory
+            DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(requireContext());
+
+            // Create media source
+            MediaItem mediaItem = MediaItem.fromUri(Uri.parse(videoUrl));
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(mediaItem);
+
+            // Prepare player
+            player.setMediaSource(mediaSource);
+            player.prepare();
+            player.setPlayWhenReady(false); // Don't auto-play
+
+            // Add listener for errors
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onPlayerError(PlaybackException error) {
+                    Log.e(TAG, "ExoPlayer error: " + error.getMessage());
+                    Toast.makeText(requireContext(), "Video playback error", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            Log.d(TAG, "Video player setup complete");
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting up video player", e);
+            binding.cardVideo.setVisibility(View.GONE);
+            Toast.makeText(requireContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleLikeUnlike() {
+        boolean isLiked = currentPost.getLiked();
+
+        // Optimistic UI update
+        currentPost.setLiked(!isLiked);
+        long newLikeCount = currentPost.getLikeCount() + (isLiked ? -1 : 1);
+        currentPost.setLikeCount(newLikeCount);
+        updateLikeUI(currentPost);
+
+        // Make API call
+        Callback<ApiResponse<PostResponse>> callback = new Callback<ApiResponse<PostResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<PostResponse>> call,
+                                   Response<ApiResponse<PostResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    PostResponse updatedPost = response.body().getData();
+                    currentPost.setLiked(updatedPost.getLiked());
+                    currentPost.setLikeCount(updatedPost.getLikeCount());
+                    updateLikeUI(currentPost);
+                    Log.d(TAG, "Like/unlike successful");
+                } else {
+                    // Revert on error
+                    currentPost.setLiked(isLiked);
+                    currentPost.setLikeCount(currentPost.getLikeCount() + (isLiked ? 1 : -1));
+                    updateLikeUI(currentPost);
+                    Toast.makeText(requireContext(), "Failed to update like", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<PostResponse>> call, Throwable t) {
+                // Revert on error
+                currentPost.setLiked(isLiked);
+                currentPost.setLikeCount(currentPost.getLikeCount() + (isLiked ? 1 : -1));
+                updateLikeUI(currentPost);
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        if (isLiked) {
+            repository.unlikePost(currentPost.getId(), callback);
+        } else {
+            repository.likePost(currentPost.getId(), callback);
+        }
+    }
+
+    private void updateLikeUI(PostResponse post) {
+        binding.tvLikeCount.setText(String.valueOf(post.getLikeCount()));
+
+        if (post.getLiked()) {
+            binding.ibLike.setImageResource(R.drawable.ic_like_filled_24);
+            binding.ibLike.setColorFilter(requireContext()
+                    .getApplicationContext()
+                    .getColor(R.color.yellow));
+        } else {
+            binding.ibLike.setImageResource(R.drawable.ic_like_outline_24);
+            binding.ibLike.setColorFilter(requireContext()
+                    .getApplicationContext()
+                    .getColor(R.color.white));
+        }
+    }
+
+    private void loadComments() {
+        Log.d(TAG, "Loading comments for post: " + postId);
+
+        commentRepository.getComments(postId, 0, 20, new Callback<ApiResponse<java.util.List<CommentResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<java.util.List<CommentResponse>>> call,
+                                   Response<ApiResponse<java.util.List<CommentResponse>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    java.util.List<CommentResponse> comments = response.body().getData();
+                    Log.d(TAG, "Comments loaded: " + (comments != null ? comments.size() : 0));
+
+                    if (comments != null && !comments.isEmpty()) {
+                        commentAdapter.setComments(comments);
+                        binding.rvComments.setVisibility(View.VISIBLE);
+                        binding.llEmptyComments.setVisibility(View.GONE);
+                    } else {
+                        binding.llEmptyComments.setVisibility(View.VISIBLE);
+                        binding.rvComments.setVisibility(View.GONE);
+                    }
+                } else {
+                    Log.e(TAG, "Failed to load comments");
+                    binding.llEmptyComments.setVisibility(View.VISIBLE);
+                    binding.rvComments.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<java.util.List<CommentResponse>>> call, Throwable t) {
+                Log.e(TAG, "Error loading comments: " + t.getMessage());
+                binding.llEmptyComments.setVisibility(View.VISIBLE);
+                binding.rvComments.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void sendComment(String content) {
+        Log.d(TAG, "Sending comment: " + content);
+        binding.ibSendComment.setEnabled(false);
+
+        // Get image file if selected
+        File imageFile = null;
+        if (selectedCommentImageUri != null) {
+            try {
+                imageFile = getFileFromUri(selectedCommentImageUri);
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting file from URI: " + e.getMessage());
+                Toast.makeText(requireContext(), "Failed to process image", Toast.LENGTH_SHORT).show();
+                binding.ibSendComment.setEnabled(true);
+                return;
+            }
+        }
+
+        // Clear input field and image preview immediately
+        String savedContent = content;
+        binding.etComment.setText("");
+        selectedCommentImageUri = null;
+        binding.llCommentImagePreview.setVisibility(View.GONE);
+
+        // Show uploading toast and re-enable button
+        Toast.makeText(requireContext(), "Uploading comment in background...", Toast.LENGTH_SHORT).show();
+        binding.ibSendComment.setEnabled(true);
+
+        commentRepository.createComment(postId, savedContent, imageFile, new Callback<ApiResponse<CommentResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<CommentResponse>> call,
+                                   Response<ApiResponse<CommentResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    CommentResponse newComment = response.body().getData();
+                    Log.d(TAG, "Comment created successfully");
+
+                    // Run on UI thread to update UI
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            // Add comment to adapter
+                            commentAdapter.addComment(newComment);
+
+                            // Show RecyclerView and hide empty state
+                            binding.rvComments.setVisibility(View.VISIBLE);
+                            binding.llEmptyComments.setVisibility(View.GONE);
+
+                            // Update comment count
+                            if (currentPost != null) {
+                                currentPost.setCommentCount(currentPost.getCommentCount() + 1);
+                                binding.tvCommentCount.setText(String.valueOf(currentPost.getCommentCount()));
+                            }
+
+                            Toast.makeText(requireContext(), "Comment added successfully", Toast.LENGTH_SHORT).show();
+
+                            // Scroll to top to show new comment
+                            binding.rvComments.smoothScrollToPosition(0);
+                        });
+                    }
+                } else {
+                    Log.e(TAG, "Failed to create comment");
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            Toast.makeText(requireContext(), "Failed to post comment", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                Log.e(TAG, "Error creating comment: " + t.getMessage());
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+    }
+
+    private void handleCommentLikeUnlike(int position) {
+        CommentResponse comment = commentAdapter.getItem(position);
+        if (comment == null) return;
+
+        boolean isLiked = comment.getLiked() != null && comment.getLiked();
+
+        if (isLiked) {
+            // Unlike the comment
+            commentRepository.unlikeComment(comment.getId(), new Callback<ApiResponse<CommentResponse>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<CommentResponse>> call,
+                                       Response<ApiResponse<CommentResponse>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                        CommentResponse updatedComment = response.body().getData();
+                        commentAdapter.updateComment(position, updatedComment);
+                        Log.d(TAG, "Comment unliked successfully");
+                    } else {
+                        Log.e(TAG, "Failed to unlike comment");
+                        Toast.makeText(requireContext(), "Failed to unlike comment", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                    Log.e(TAG, "Error unliking comment: " + t.getMessage());
+                    Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Like the comment
+            commentRepository.likeComment(comment.getId(), new Callback<ApiResponse<CommentResponse>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<CommentResponse>> call,
+                                       Response<ApiResponse<CommentResponse>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                        CommentResponse updatedComment = response.body().getData();
+                        commentAdapter.updateComment(position, updatedComment);
+                        Log.d(TAG, "Comment liked successfully");
+                    } else {
+                        Log.e(TAG, "Failed to like comment");
+                        Toast.makeText(requireContext(), "Failed to like comment", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                    Log.e(TAG, "Error liking comment: " + t.getMessage());
+                    Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void showDeleteCommentConfirmation(int position) {
+        new android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Delete Comment")
+                .setMessage("Are you sure you want to delete this comment?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    deleteComment(position);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void deleteComment(int position) {
+        CommentResponse comment = commentAdapter.getItem(position);
+        if (comment == null) return;
+
+        commentRepository.deleteComment(comment.getId(), new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call,
+                                   Response<ApiResponse<String>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    Log.d(TAG, "Comment deleted successfully");
+
+                    // Remove comment from adapter
+                    commentAdapter.removeComment(position);
+
+                    // Update comment count
+                    if (currentPost != null) {
+                        currentPost.setCommentCount(currentPost.getCommentCount() - 1);
+                        binding.tvCommentCount.setText(String.valueOf(currentPost.getCommentCount()));
+                    }
+
+                    // Show empty state if no comments left
+                    if (commentAdapter.getItemCount() == 0) {
+                        binding.llEmptyComments.setVisibility(View.VISIBLE);
+                        binding.rvComments.setVisibility(View.GONE);
+                    }
+
+                    Toast.makeText(requireContext(), "Comment deleted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Failed to delete comment");
+                    Toast.makeText(requireContext(), "Failed to delete comment", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                Log.e(TAG, "Error deleting comment: " + t.getMessage());
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showMoreOptionsDialog() {
+        // TODO: Check if current user owns this post
+        // For now, just show basic options
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+
+        // If user owns the post, show edit and delete options
+        // Otherwise, show report option
+        String[] options = {"Edit Post", "Delete Post", "Cancel"};
+
+        builder.setTitle("Post Options")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0: // Edit
+                            // TODO: Navigate to edit post screen
+                            Toast.makeText(requireContext(), "Edit post: " + currentPost.getId(),
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case 1: // Delete
+                            showDeleteConfirmation();
+                            break;
+                        case 2: // Cancel
+                            dialog.dismiss();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    private void showDeleteConfirmation() {
+        new android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Delete Post")
+                .setMessage("Are you sure you want to delete this post?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    deletePost();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void navigateToEditPost() {
+        if (currentPost == null) return;
+
+        CreateUpdatePostFragment editFragment = CreateUpdatePostFragment.newInstance(currentPost);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, editFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void deletePost() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+
+        repository.deletePost(currentPost.getId(), new Callback<ApiResponse<String>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<String>> call,
+                                   Response<ApiResponse<String>> response) {
+                binding.progressBar.setVisibility(View.GONE);
+
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show();
+                    requireActivity().onBackPressed();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to delete post", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                binding.progressBar.setVisibility(View.GONE);
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private String formatDate(Date date) {
+        if (date == null) return "";
+
+        long diff = System.currentTimeMillis() - date.getTime();
+        long seconds = diff / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+
+        if (days > 7) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+            return sdf.format(date);
+        } else if (days > 0) {
+            return days + "d ago";
+        } else if (hours > 0) {
+            return hours + "h ago";
+        } else if (minutes > 0) {
+            return minutes + "m ago";
+        } else {
+            return "Just now";
+        }
+    }
+
+    private void displayCommentImagePreview() {
+        if (selectedCommentImageUri != null) {
+            binding.llCommentImagePreview.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(selectedCommentImageUri)
+                    .placeholder(R.color.gray_450)
+                    .into(binding.ivCommentImagePreview);
+        }
+    }
+
+    private File getFileFromUri(Uri uri) throws Exception {
+        // Get content resolver
+        android.content.ContentResolver contentResolver = requireContext().getContentResolver();
+
+        // Create a temporary file
+        String fileName = "temp_comment_" + System.currentTimeMillis();
+        String mimeType = contentResolver.getType(uri);
+
+        // Determine file extension
+        String extension = "";
+        if (mimeType != null) {
+            if (mimeType.startsWith("image/")) {
+                extension = ".jpg";
+            }
+        }
+
+        File tempFile = new File(requireContext().getCacheDir(), fileName + extension);
+
+        // Copy content to temp file
+        try (java.io.InputStream inputStream = contentResolver.openInputStream(uri);
+             java.io.FileOutputStream outputStream = new java.io.FileOutputStream(tempFile)) {
+
+            if (inputStream == null) {
+                throw new Exception("Cannot open input stream");
+            }
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            outputStream.flush();
+        }
+
+        return tempFile;
+    }
+
+    private void showFullImageDialog(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) return;
+
+        // Create dialog
+        android.app.Dialog dialog = new android.app.Dialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        dialog.setContentView(R.layout.dialog_full_image);
+
+        // Get views
+        android.widget.ImageView imageView = dialog.findViewById(R.id.iv_full_image);
+        android.widget.ImageButton closeButton = dialog.findViewById(R.id.ib_close);
+
+        // Load image
+        Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.color.gray_450)
+                .into(imageView);
+
+        // Close button
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+
+        // Close on image click
+        imageView.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (player != null) {
+            player.pause();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // Show header and bottom navigation when leaving this fragment
+        showHeaderAndBottomNavigation();
+
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
+        }
+        binding = null;
+    }
 }
