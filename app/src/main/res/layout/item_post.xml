@@ -120,7 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="280dp"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/img_user_default_128"/>
+                tools:src="@drawable/ic_empty_community_96"/>
 
         </androidx.cardview.widget.CardView>
 

@@ -3,6 +3,9 @@ package com.example.fitnessapp.fragment.nutrition;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -32,6 +35,8 @@ public class MenuDetailFragment extends Fragment {
     private MenuDetailViewModel viewModel;
     private MealAdapter mealAdapter;
     private Long menuId;
+    private Menu toolbarMenu;
+    private MenuResponse currentMenu;
 
     public static MenuDetailFragment newInstance(Long menuId) {
         MenuDetailFragment fragment = new MenuDetailFragment();
@@ -53,12 +58,19 @@ public class MenuDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentMenuDetailBinding.inflate(inflater, container, false);
+
+        // Enable options menu for this fragment
+        setHasOptionsMenu(true);
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Setup Toolbar
+        setupToolbar();
 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(MenuDetailViewModel.class);
@@ -124,6 +136,10 @@ public class MenuDetailFragment extends Fragment {
     private void displayMenu(MenuResponse menu) {
         Log.d(TAG, "Displaying menu: " + menu.getName());
 
+        // Save current menu and update toolbar
+        currentMenu = menu;
+        updateToolbarMenu();
+
         // Set menu name
         binding.tvMenuName.setText(menu.getName());
 
@@ -139,8 +155,8 @@ public class MenuDetailFragment extends Fragment {
         if (menu.getImage() != null && !menu.getImage().isEmpty()) {
             Glide.with(this)
                     .load(menu.getImage())
-                    .placeholder(R.drawable.img_user_default_128)
-                    .error(R.drawable.img_user_default_128)
+                    .placeholder(R.drawable.ic_empty_nutrition_96)
+                    .error(R.drawable.ic_empty_nutrition_96)
                     .centerCrop()
                     .into(binding.ivMenuHeaderImage);
         }
@@ -154,7 +170,7 @@ public class MenuDetailFragment extends Fragment {
             if (menu.getCreatorAvatar() != null && !menu.getCreatorAvatar().isEmpty()) {
                 Glide.with(this)
                         .load(menu.getCreatorAvatar())
-                        .placeholder(R.drawable.img_user_default_128)
+                        .placeholder(R.drawable.ic_empty_nutrition_96)
                         .error(R.drawable.img_user_default_128)
                         .centerCrop()
                         .into(binding.civCreatorAvatar);
@@ -265,6 +281,118 @@ public class MenuDetailFragment extends Fragment {
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Setup toolbar with back navigation
+     */
+    private void setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener(v -> {
+            requireActivity().onBackPressed();
+        });
+
+        // Inflate menu
+        binding.toolbar.inflateMenu(R.menu.menu_menu_detail);
+        toolbarMenu = binding.toolbar.getMenu();
+
+        // Handle menu item clicks
+        binding.toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_clone_menu) {
+                if (currentMenu != null) {
+                    cloneMenuFromToolbar(currentMenu);
+                }
+                return true;
+            }
+            return false;
+        });
+
+        // Initially hide clone button until we know if user owns the menu
+        updateToolbarMenu();
+    }
+
+    /**
+     * Update toolbar menu based on menu ownership
+     */
+    private void updateToolbarMenu() {
+        if (toolbarMenu != null) {
+            MenuItem cloneMenuItem = toolbarMenu.findItem(R.id.action_clone_menu);
+            if (cloneMenuItem != null) {
+                if (currentMenu != null) {
+                    // Show clone button only if user doesn't own this menu
+                    boolean isOwner = currentMenu.getIsOwner() != null && currentMenu.getIsOwner();
+                    cloneMenuItem.setVisible(!isOwner);
+                } else {
+                    // Hide clone button until we know menu ownership
+                    cloneMenuItem.setVisible(false);
+                }
+            }
+        }
+    }
+
+    /**
+     * Clone menu from toolbar
+     */
+    private void cloneMenuFromToolbar(MenuResponse menu) {
+        viewModel.cloneMenu(menu.getId(), new MenuDetailViewModel.OnMenuClonedListener() {
+            @Override
+            public void onSuccess(MenuResponse clonedMenu) {
+                Toast.makeText(requireContext(), R.string.menu_cloned_success, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Hide MainActivity's app bar when showing menu detail
+     */
+    private void hideMainAppBar() {
+        if (getActivity() instanceof com.example.fitnessapp.MainActivity) {
+            ((com.example.fitnessapp.MainActivity) getActivity()).setAppBarVisible(false);
+        }
+    }
+
+    /**
+     * Show MainActivity's app bar when leaving menu detail
+     */
+    private void showMainAppBar() {
+        if (getActivity() instanceof com.example.fitnessapp.MainActivity) {
+            ((com.example.fitnessapp.MainActivity) getActivity()).setAppBarVisible(true);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Hide MainActivity's app bar when this fragment becomes visible
+        hideMainAppBar();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Only show MainActivity's app bar if we're actually leaving the nutrition flow
+        // Check if the next fragment is also a nutrition fragment
+        if (!isNutritionFragmentInForeground()) {
+            showMainAppBar();
+        }
+    }
+
+    /**
+     * Check if a nutrition-related fragment is in the foreground
+     */
+    private boolean isNutritionFragmentInForeground() {
+        if (getActivity() == null) return false;
+
+        Fragment currentFragment = getActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
+
+        // Check if current fragment is any nutrition-related fragment
+        return currentFragment instanceof NutritionMainFragment ||
+               currentFragment instanceof MenuDetailFragment;
     }
 
     @Override

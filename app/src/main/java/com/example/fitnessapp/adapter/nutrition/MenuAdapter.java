@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,7 +68,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
         private final TextView tvFitnessGoal;
         private final CircleImageView civCreatorAvatar;
         private final TextView tvCreatorName;
-        private final ImageButton ibClone;
 
         public MenuViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,7 +78,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
             tvFitnessGoal = itemView.findViewById(R.id.tv_fitness_goal);
             civCreatorAvatar = itemView.findViewById(R.id.civ_creator_avatar);
             tvCreatorName = itemView.findViewById(R.id.tv_creator_name);
-            ibClone = itemView.findViewById(R.id.ib_clone);
         }
 
         public void bind(MenuResponse menu) {
@@ -106,12 +103,12 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
             if (menu.getImage() != null && !menu.getImage().isEmpty()) {
                 Glide.with(context)
                         .load(menu.getImage())
-                        .placeholder(R.drawable.img_user_default_128)
-                        .error(R.drawable.img_user_default_128)
+                        .placeholder(R.drawable.ic_empty_nutrition_96)
+                        .error(R.drawable.ic_empty_nutrition_96)
                         .centerCrop()
                         .into(ivMenuImage);
             } else {
-                ivMenuImage.setImageResource(R.drawable.img_user_default_128);
+                ivMenuImage.setImageResource(R.drawable.ic_empty_nutrition_96);
             }
 
             // Set creator info (for public menus)
@@ -124,7 +121,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
                 if (menu.getCreatorAvatar() != null && !menu.getCreatorAvatar().isEmpty()) {
                     Glide.with(context)
                             .load(menu.getCreatorAvatar())
-                            .placeholder(R.drawable.img_user_default_128)
+                            .placeholder(R.drawable.ic_empty_nutrition_96)
                             .error(R.drawable.img_user_default_128)
                             .centerCrop()
                             .into(civCreatorAvatar);
@@ -136,23 +133,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
                 civCreatorAvatar.setVisibility(View.GONE);
             }
 
-            // Show/hide clone button based on ownership
-            if (menu.getIsOwner() != null && menu.getIsOwner()) {
-                ibClone.setVisibility(View.GONE);
-            } else {
-                ibClone.setVisibility(View.VISIBLE);
-            }
-
-            // Click listeners
+            // Click listener
             cardMenu.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onMenuClick(menu);
-                }
-            });
-
-            ibClone.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onCloneClick(menu);
                 }
             });
         }

@@ -17,7 +17,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:scaleType="centerCrop"
-        tools:src="@drawable/img_user_default_128"/>
+        tools:src="@drawable/ic_empty_nutrition_96"/>
 
     <!-- Dish Info -->
     <LinearLayout

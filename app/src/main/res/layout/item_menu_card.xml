@@ -25,7 +25,7 @@
             android:scaleType="centerCrop"
             android:background="@color/gray_450"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/img_user_default_128"/>
+            tools:src="@drawable/ic_empty_nutrition_96"/>
 
         <!-- Menu Name -->
         <TextView
@@ -101,7 +101,7 @@
             android:layout_marginBottom="12dp"
             app:layout_constraintTop_toBottomOf="@id/ll_calories_info"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/ib_clone"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -124,22 +124,6 @@
                 tools:text="John Doe"/>
 
         </LinearLayout>
-
-        <!-- Clone Button -->
-        <ImageButton
-            android:id="@+id/ib_clone"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:padding="6dp"
-            android:src="@drawable/ic_black_add_24"
-            android:background="@drawable/filled_black_text_field"
-            android:scaleType="centerCrop"
-            app:tint="@color/yellow"
-            android:contentDescription="@string/clone_menu"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

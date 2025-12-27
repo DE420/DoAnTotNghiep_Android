@@ -2,8 +2,12 @@ package com.example.fitnessapp.fragment.nutrition;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,17 +25,26 @@ public class NutritionMainFragment extends Fragment {
     public static final String TAG = NutritionMainFragment.class.getSimpleName();
 
     private FragmentNutritionMainBinding binding;
+    private Menu toolbarMenu;
+    private int currentTabPosition = 0;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentNutritionMainBinding.inflate(inflater, container, false);
+
+        // Enable options menu for this fragment
+        setHasOptionsMenu(true);
+
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Setup Toolbar
+        setupToolbar();
 
         // Setup ViewPager adapter
         NutritionViewPagerAdapter adapter = new NutritionViewPagerAdapter(this);
@@ -57,6 +70,70 @@ public class NutritionMainFragment extends Fragment {
     }
 
     /**
+     * Setup toolbar with back navigation
+     */
+    private void setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener(v -> {
+            requireActivity().onBackPressed();
+        });
+
+        // Inflate menu
+        binding.toolbar.inflateMenu(R.menu.menu_nutrition_main);
+        toolbarMenu = binding.toolbar.getMenu();
+
+        // Handle menu item clicks
+        binding.toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_add_menu) {
+                onCreateMenuClicked();
+                return true;
+            }
+            return false;
+        });
+
+        // Initially hide the add button (show only on My Menus tab)
+        updateToolbarMenu();
+    }
+
+    /**
+     * Handle create menu button click
+     */
+    private void onCreateMenuClicked() {
+        // TODO: Navigate to CreateEditMenuFragment
+        Toast.makeText(requireContext(), "Create menu - Coming in Phase 7", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Update toolbar menu visibility based on current tab
+     */
+    private void updateToolbarMenu() {
+        if (toolbarMenu != null) {
+            MenuItem addMenuItem = toolbarMenu.findItem(R.id.action_add_menu);
+            if (addMenuItem != null) {
+                // Show add button on both tabs
+                addMenuItem.setVisible(true);
+            }
+        }
+    }
+
+    /**
+     * Hide MainActivity's app bar when showing nutrition screens
+     */
+    private void hideMainAppBar() {
+        if (getActivity() instanceof com.example.fitnessapp.MainActivity) {
+            ((com.example.fitnessapp.MainActivity) getActivity()).setAppBarVisible(false);
+        }
+    }
+
+    /**
+     * Show MainActivity's app bar when leaving nutrition screens
+     */
+    private void showMainAppBar() {
+        if (getActivity() instanceof com.example.fitnessapp.MainActivity) {
+            ((com.example.fitnessapp.MainActivity) getActivity()).setAppBarVisible(true);
+        }
+    }
+
+    /**
      * Setup nested scrolling between ViewPager2 children and AppBarLayout
      * This allows the TabLayout to hide/show when scrolling in child fragments
      */
@@ -75,8 +152,43 @@ public class NutritionMainFragment extends Fragment {
                 super.onPageSelected(position);
                 // Expand AppBarLayout when switching tabs
                 binding.appBarLayout.setExpanded(true, true);
+
+                // Update current tab position and toolbar menu
+                currentTabPosition = position;
+                updateToolbarMenu();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Hide MainActivity's app bar when this fragment becomes visible
+        hideMainAppBar();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Only show MainActivity's app bar if we're actually leaving the nutrition flow
+        // Check if the next fragment is also a nutrition fragment
+        if (!isNutritionFragmentInForeground()) {
+            showMainAppBar();
+        }
+    }
+
+    /**
+     * Check if a nutrition-related fragment is in the foreground
+     */
+    private boolean isNutritionFragmentInForeground() {
+        if (getActivity() == null) return false;
+
+        Fragment currentFragment = getActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
+
+        // Check if current fragment is any nutrition-related fragment
+        return currentFragment instanceof NutritionMainFragment ||
+               currentFragment instanceof MenuDetailFragment;
     }
 
     @Override

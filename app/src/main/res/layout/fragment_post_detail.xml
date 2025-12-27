@@ -147,9 +147,10 @@
                             android:id="@+id/iv_post_image"
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
-                            android:contentDescription="Post image"
                             android:scaleType="centerCrop"
-                            tools:src="@color/gray_450" />
+                            android:src="@drawable/ic_empty_community_96"
+                            android:contentDescription="Post image"
+                            tools:src="@color/gray_450"/>
 
                     </androidx.cardview.widget.CardView>
 

@@ -53,6 +53,9 @@ public class MenuViewModel extends AndroidViewModel {
     private String searchKeyword = "";
     private FitnessGoal filterGoal = null;
 
+    // Filters for my menus
+    private String mySearchKeyword = "";
+
     public MenuViewModel(@NonNull Application application) {
         super(application);
         repository = new NutritionRepository(application);
@@ -86,6 +89,14 @@ public class MenuViewModel extends AndroidViewModel {
 
     public boolean isLoadingMorePublic() {
         return publicIsLoadingMore;
+    }
+
+    public boolean hasMoreMyPages() {
+        return myHasMorePages;
+    }
+
+    public boolean isLoadingMoreMy() {
+        return myIsLoadingMore;
     }
 
     /**
@@ -270,7 +281,7 @@ public class MenuViewModel extends AndroidViewModel {
 
         errorLiveData.setValue(null);
 
-        repository.getMyMenus(myCurrentPage, PAGE_SIZE, new Callback<ApiResponse<List<MenuResponse>>>() {
+        repository.getMyMenus(myCurrentPage, PAGE_SIZE, mySearchKeyword, new Callback<ApiResponse<List<MenuResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<MenuResponse>>> call,
                                  Response<ApiResponse<List<MenuResponse>>> response) {
@@ -350,6 +361,17 @@ public class MenuViewModel extends AndroidViewModel {
         }
 
         myCurrentPage++;
+        loadMyMenus();
+    }
+
+    /**
+     * Search my menus by keyword
+     */
+    public void searchMyMenus(String keyword) {
+        this.mySearchKeyword = keyword != null ? keyword : "";
+        myCurrentPage = 0;
+        myHasMorePages = true;
+        allMyMenus.clear();
         loadMyMenus();
     }
 

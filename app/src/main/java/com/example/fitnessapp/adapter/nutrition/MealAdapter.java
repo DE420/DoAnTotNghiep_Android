@@ -111,11 +111,11 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                         ivMealIcon.setImageResource(R.drawable.ic_snack_24);
                         break;
                     default:
-                        ivMealIcon.setImageResource(R.drawable.ic_nutrition);
+                        ivMealIcon.setImageResource(R.drawable.ic_empty_nutrition_96);
                         break;
                 }
             } else {
-                ivMealIcon.setImageResource(R.drawable.ic_nutrition);
+                ivMealIcon.setImageResource(R.drawable.ic_empty_nutrition_96);
             }
 
             // Set dishes

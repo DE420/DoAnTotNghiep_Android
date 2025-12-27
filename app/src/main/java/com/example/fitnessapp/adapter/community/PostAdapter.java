@@ -327,6 +327,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         Glide.with(binding.civAvatar)
                 .load(item.getUserAvatarUrl())
+                .placeholder(R.drawable.ic_image_24)
                 .error(R.drawable.img_user_default_128)
                 .into(binding.civAvatar);
 
@@ -348,8 +349,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             Log.d(TAG, "Loading image: " + item.getImageUrl());
             Glide.with(binding.imgPost)
                     .load(item.getImageUrl())
-                    .placeholder(R.drawable.img_user_default_128)
-                    .error(R.drawable.img_user_default_128)
+                    .placeholder(R.drawable.ic_empty_community_96)
+                    .error(R.drawable.ic_empty_community_96)
                     .into(binding.imgPost);
 
             // Add click listener to view full image

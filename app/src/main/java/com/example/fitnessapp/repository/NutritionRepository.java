@@ -37,10 +37,10 @@ public class NutritionRepository {
         api.getPublicMenus(params).enqueue(callback);
     }
 
-    public void getMyMenus(int page, int size,
+    public void getMyMenus(int page, int size, String search,
                           Callback<ApiResponse<List<MenuResponse>>> callback) {
-        Log.d(TAG, "Getting my menus - page: " + page + ", size: " + size);
-        api.getMyMenus(page, size).enqueue(callback);
+        Log.d(TAG, "Getting my menus - page: " + page + ", size: " + size + ", search: " + search);
+        api.getMyMenus(page, size, search).enqueue(callback);
     }
 
     public void getMenuDetail(Long id,

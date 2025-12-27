@@ -99,12 +99,12 @@ public class MealDishAdapter extends RecyclerView.Adapter<MealDishAdapter.MealDi
             if (dish.getImage() != null && !dish.getImage().isEmpty()) {
                 Glide.with(context)
                         .load(dish.getImage())
-                        .placeholder(R.drawable.ic_dish_placeholder_24)
-                        .error(R.drawable.ic_dish_placeholder_24)
+                        .placeholder(R.drawable.ic_empty_nutrition_96)
+                        .error(R.drawable.ic_empty_nutrition_96)
                         .centerCrop()
                         .into(ivDishImage);
             } else {
-                ivDishImage.setImageResource(R.drawable.ic_dish_placeholder_24);
+                ivDishImage.setImageResource(R.drawable.ic_empty_nutrition_96);
             }
 
             // Click listeners

@@ -73,6 +73,27 @@
     <string name="text_super_long">Từ ngày 1/1/2026, khi hộ kinh doanh chuyển sang kê khai thuế theo doanh thu, yêu cầu thông báo và giám sát tài khoản ngân hàng trở thành nội dung được quan tâm. Theo chuyên gia, đây là bước đi cần thiết để minh bạch dòng tiền kinh doanh.
 </string>
 
+    <!-- Nutrition feature strings -->
+    <string name="nutrition">Nutrition</string>
+    <string name="public_menus">Public Menus</string>
+    <string name="my_menus">My Menus</string>
+    <string name="create_menu">Create Menu</string>
+    <string name="edit_menu">Edit Menu</string>
+    <string name="menu_detail">Menu Detail</string>
+    <string name="menu_name">Menu Name</string>
+    <string name="menu_description">Description</string>
+    <string name="fitness_goal">Fitness Goal</string>
+    <string name="calories_target">Calories Target</string>
+    <string name="make_private">Make this menu private</string>
+    <string name="clone_menu">Add to My Menus</string>
+    <string name="delete_menu">Delete Menu</string>
+    <string name="confirm_delete_menu">Are you sure you want to delete this menu?</string>
+    <string name="menu_cloned_success">Menu added to your collection!</string>
+    <string name="menu_deleted_success">Menu deleted</string>
+    <string name="menu_created_success">Menu created successfully!</string>
+    <string name="menu_updated_success">Menu updated successfully!</string>
+
+
     <!-- Navigation Titles -->
     <string name="nav_title_home">Trang chủ</string>
     <string name="nav_title_plan">Kế hoạch</string>

@@ -43,8 +43,8 @@ public class PublicMenusFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize ViewModel
-        viewModel = new ViewModelProvider(this).get(MenuViewModel.class);
+        // Initialize ViewModel (activity-scoped to share with other tabs)
+        viewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
 
         // Setup RecyclerView
         setupRecyclerView();
@@ -61,8 +61,10 @@ public class PublicMenusFragment extends Fragment {
         // Observe ViewModel
         observeViewModel();
 
-        // Load initial data
-        viewModel.loadPublicMenus();
+        // Load initial data only if not already loaded
+        if (viewModel.getPublicMenus().getValue() == null || viewModel.getPublicMenus().getValue().isEmpty()) {
+            viewModel.loadPublicMenus();
+        }
     }
 
     private void setupRecyclerView() {

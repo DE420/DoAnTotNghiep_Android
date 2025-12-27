@@ -82,7 +82,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         if (comment.getUserAvatarUrl() != null && !comment.getUserAvatarUrl().isEmpty()) {
             Glide.with(context)
                     .load(comment.getUserAvatarUrl())
-                    .placeholder(R.drawable.img_user_default_128)
+                    .placeholder(R.drawable.ic_image_24)
                     .error(R.drawable.img_user_default_128)
                     .into(binding.ivUserAvatar);
         } else {

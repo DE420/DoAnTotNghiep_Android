@@ -31,7 +31,8 @@ public interface NutritionApi {
     @GET("menus/my-menus")
     Call<ApiResponse<List<MenuResponse>>> getMyMenus(
             @Query("page") int page,
-            @Query("size") int size
+            @Query("size") int size,
+            @Query("search") String search
     );
 
     @GET("menus/{id}")
