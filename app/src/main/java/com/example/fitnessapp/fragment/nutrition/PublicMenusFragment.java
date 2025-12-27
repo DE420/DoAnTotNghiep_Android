@@ -116,6 +116,14 @@ public class PublicMenusFragment extends Fragment {
     }
 
     private void setupSearch() {
+        // Set SearchView text color to white
+        int searchTextId = getResources().getIdentifier("android:id/search_src_text", null, null);
+        android.widget.TextView searchText = binding.svSearch.findViewById(searchTextId);
+        if (searchText != null) {
+            searchText.setTextColor(getResources().getColor(R.color.white, null));
+            searchText.setHintTextColor(getResources().getColor(R.color.gray_450, null));
+        }
+
         binding.svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

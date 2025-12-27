@@ -6,6 +6,62 @@
     android:layout_height="match_parent"
     android:background="@color/background_app_color">
 
+    <!-- Empty State (declared first for lower z-order) -->
+    <LinearLayout
+        android:id="@+id/ll_empty_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="32dp"
+        tools:visibility="visible">
+
+        <!-- Empty Icon -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:cardBackgroundColor="@color/black_370"
+            app:cardCornerRadius="60dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_black_add_24"
+                android:alpha="0.6"
+                app:tint="@color/gray_450"
+                android:contentDescription="No posts yet"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Empty Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Posts Yet"
+            android:textSize="22sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"/>
+
+        <!-- Empty Description -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tap the + button to create\nyour first post!"
+            android:textSize="15sp"
+            android:textColor="@color/gray_450"
+            android:gravity="center"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
     <!-- Search Bar Section -->
     <LinearLayout
         android:id="@+id/ll_search_bar"
@@ -13,7 +69,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="2dp"
+        android:padding="8dp"
         android:background="@color/background_app_color"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -70,7 +126,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingTop="8dp"
             android:paddingBottom="80dp"
             tools:listitem="@layout/item_post"/>
 

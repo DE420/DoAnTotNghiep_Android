@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:scaleType="centerCrop"
+            android:background="@color/gray_450"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/img_user_default_128"/>
 

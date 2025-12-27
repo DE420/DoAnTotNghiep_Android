@@ -96,9 +96,27 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             }
 
             // Set meal icon based on meal type
-            // You can customize icons for different meal types
-            // For now using default
-            ivMealIcon.setImageResource(R.drawable.img_user_default_128);
+            if (meal.getMealType() != null) {
+                switch (meal.getMealType()) {
+                    case BREAKFAST:
+                        ivMealIcon.setImageResource(R.drawable.ic_breakfast_24);
+                        break;
+                    case LUNCH:
+                        ivMealIcon.setImageResource(R.drawable.ic_lunch_24);
+                        break;
+                    case DINNER:
+                        ivMealIcon.setImageResource(R.drawable.ic_dinner_24);
+                        break;
+                    case EXTRA_MEAL:
+                        ivMealIcon.setImageResource(R.drawable.ic_snack_24);
+                        break;
+                    default:
+                        ivMealIcon.setImageResource(R.drawable.ic_nutrition);
+                        break;
+                }
+            } else {
+                ivMealIcon.setImageResource(R.drawable.ic_nutrition);
+            }
 
             // Set dishes
             if (meal.getDishes() != null) {
