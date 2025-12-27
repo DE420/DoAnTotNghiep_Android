@@ -115,6 +115,23 @@ public class MenuDetailFragment extends Fragment {
         // Observe menu
         viewModel.getMenu().observe(getViewLifecycleOwner(), menu -> {
             if (menu != null) {
+                Log.d(TAG, "===== MENU DATA RECEIVED =====");
+                Log.d(TAG, "Menu ID: " + menu.getId());
+                Log.d(TAG, "Menu Name: " + menu.getName());
+                Log.d(TAG, "Description: " + menu.getDescription());
+                Log.d(TAG, "Image: " + menu.getImage());
+                Log.d(TAG, "Fitness Goal: " + menu.getFitnessGoal());
+                Log.d(TAG, "IsOwner: " + menu.getIsOwner());
+                Log.d(TAG, "IsPrivate: " + menu.getIsPrivate());
+                Log.d(TAG, "Creator ID: " + menu.getCreatorId());
+                Log.d(TAG, "Creator Name: " + menu.getCreatorName());
+                Log.d(TAG, "Creator Avatar: " + menu.getCreatorAvatar());
+                Log.d(TAG, "Calories: " + menu.getCalories());
+                Log.d(TAG, "Protein: " + menu.getProtein());
+                Log.d(TAG, "Carbs: " + menu.getCarbs());
+                Log.d(TAG, "Fat: " + menu.getFat());
+                Log.d(TAG, "Meals count: " + (menu.getMeals() != null ? menu.getMeals().size() : 0));
+                Log.d(TAG, "==============================");
                 displayMenu(menu);
             }
         });
@@ -161,21 +178,36 @@ public class MenuDetailFragment extends Fragment {
                     .into(binding.ivMenuHeaderImage);
         }
 
-        // Set creator info
-        if (menu.getCreatorName() != null && !menu.getCreatorName().isEmpty()) {
-            binding.llCreatorInfo.setVisibility(View.VISIBLE);
-            binding.tvCreatorName.setText(menu.getCreatorName());
+        // Set creator info (only show for menus you don't own)
+        boolean isOwner = menu.getIsOwner() != null && menu.getIsOwner();
+        Log.d(TAG, "Creator Info Check - isOwner: " + isOwner);
+        Log.d(TAG, "Creator Info Check - creatorName: " + menu.getCreatorName());
+        Log.d(TAG, "Creator Info Check - creatorAvatar: " + menu.getCreatorAvatar());
 
-            // Load creator avatar
+        if (!isOwner) {
+            Log.d(TAG, "SHOWING creator info");
+            binding.llCreatorInfo.setVisibility(View.VISIBLE);
+
+            // Set creator name - show "Unknown User" if null/empty
+            if (menu.getCreatorName() != null && !menu.getCreatorName().isEmpty()) {
+                binding.tvCreatorName.setText(menu.getCreatorName());
+            } else {
+                binding.tvCreatorName.setText(R.string.unknown_user);
+            }
+
+            // Load creator avatar - use default if null/empty
             if (menu.getCreatorAvatar() != null && !menu.getCreatorAvatar().isEmpty()) {
                 Glide.with(this)
                         .load(menu.getCreatorAvatar())
-                        .placeholder(R.drawable.ic_empty_nutrition_96)
+                        .placeholder(R.drawable.img_user_default_128)
                         .error(R.drawable.img_user_default_128)
                         .centerCrop()
                         .into(binding.civCreatorAvatar);
+            } else {
+                binding.civCreatorAvatar.setImageResource(R.drawable.img_user_default_128);
             }
         } else {
+            Log.d(TAG, "HIDING creator info - Reason: User is owner");
             binding.llCreatorInfo.setVisibility(View.GONE);
         }
 
