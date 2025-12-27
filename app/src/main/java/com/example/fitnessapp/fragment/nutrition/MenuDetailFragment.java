@@ -1,0 +1,275 @@
+package com.example.fitnessapp.fragment.nutrition;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.bumptech.glide.Glide;
+import com.example.fitnessapp.R;
+import com.example.fitnessapp.adapter.nutrition.MealAdapter;
+import com.example.fitnessapp.databinding.FragmentMenuDetailBinding;
+import com.example.fitnessapp.model.response.nutrition.MealDishResponse;
+import com.example.fitnessapp.model.response.nutrition.MenuResponse;
+import com.example.fitnessapp.viewmodel.MenuDetailViewModel;
+
+import java.util.Locale;
+
+public class MenuDetailFragment extends Fragment {
+
+    public static final String TAG = MenuDetailFragment.class.getSimpleName();
+    private static final String ARG_MENU_ID = "menu_id";
+
+    private FragmentMenuDetailBinding binding;
+    private MenuDetailViewModel viewModel;
+    private MealAdapter mealAdapter;
+    private Long menuId;
+
+    public static MenuDetailFragment newInstance(Long menuId) {
+        MenuDetailFragment fragment = new MenuDetailFragment();
+        Bundle args = new Bundle();
+        args.putLong(ARG_MENU_ID, menuId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            menuId = getArguments().getLong(ARG_MENU_ID);
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentMenuDetailBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(MenuDetailViewModel.class);
+
+        // Setup RecyclerView
+        setupRecyclerView();
+
+        // Observe ViewModel
+        observeViewModel();
+
+        // Load menu detail
+        if (menuId != null) {
+            viewModel.loadMenuDetail(menuId);
+        }
+    }
+
+    private void setupRecyclerView() {
+        mealAdapter = new MealAdapter(requireContext());
+        binding.rvMeals.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvMeals.setAdapter(mealAdapter);
+        binding.rvMeals.setNestedScrollingEnabled(false);
+
+        // Setup click listener for dishes
+        mealAdapter.setOnDishClickListener(new MealAdapter.OnDishClickListener() {
+            @Override
+            public void onDishClick(MealDishResponse dish) {
+                // TODO: Navigate to DishDetailFragment
+                Toast.makeText(requireContext(), "Dish: " + dish.getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onViewRecipeClick(MealDishResponse dish) {
+                // TODO: Navigate to DishDetailFragment
+                if (dish.getDishId() != null) {
+                    Toast.makeText(requireContext(), "View recipe: " + dish.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void observeViewModel() {
+        // Observe menu
+        viewModel.getMenu().observe(getViewLifecycleOwner(), menu -> {
+            if (menu != null) {
+                displayMenu(menu);
+            }
+        });
+
+        // Observe loading
+        viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        });
+
+        // Observe error
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                viewModel.clearError();
+            }
+        });
+    }
+
+    private void displayMenu(MenuResponse menu) {
+        Log.d(TAG, "Displaying menu: " + menu.getName());
+
+        // Set menu name
+        binding.tvMenuName.setText(menu.getName());
+
+        // Set description
+        if (menu.getDescription() != null && !menu.getDescription().isEmpty()) {
+            binding.tvMenuDescription.setText(menu.getDescription());
+            binding.tvMenuDescription.setVisibility(View.VISIBLE);
+        } else {
+            binding.tvMenuDescription.setVisibility(View.GONE);
+        }
+
+        // Load menu image
+        if (menu.getImage() != null && !menu.getImage().isEmpty()) {
+            Glide.with(this)
+                    .load(menu.getImage())
+                    .placeholder(R.drawable.img_user_default_128)
+                    .error(R.drawable.img_user_default_128)
+                    .centerCrop()
+                    .into(binding.ivMenuHeaderImage);
+        }
+
+        // Set creator info
+        if (menu.getCreatorName() != null && !menu.getCreatorName().isEmpty()) {
+            binding.llCreatorInfo.setVisibility(View.VISIBLE);
+            binding.tvCreatorName.setText(menu.getCreatorName());
+
+            // Load creator avatar
+            if (menu.getCreatorAvatar() != null && !menu.getCreatorAvatar().isEmpty()) {
+                Glide.with(this)
+                        .load(menu.getCreatorAvatar())
+                        .placeholder(R.drawable.img_user_default_128)
+                        .error(R.drawable.img_user_default_128)
+                        .centerCrop()
+                        .into(binding.civCreatorAvatar);
+            }
+        } else {
+            binding.llCreatorInfo.setVisibility(View.GONE);
+        }
+
+        // Set nutrition summary
+        if (menu.getCalories() != null) {
+            binding.tvCalories.setText(String.format(Locale.getDefault(), "%.0f", menu.getCalories()));
+        }
+        if (menu.getProtein() != null) {
+            binding.tvProtein.setText(String.format(Locale.getDefault(), "%.0fg", menu.getProtein()));
+        }
+        if (menu.getCarbs() != null) {
+            binding.tvCarbs.setText(String.format(Locale.getDefault(), "%.0fg", menu.getCarbs()));
+        }
+        if (menu.getFat() != null) {
+            binding.tvFat.setText(String.format(Locale.getDefault(), "%.0fg", menu.getFat()));
+        }
+
+        // Set fitness goal
+        if (menu.getFitnessGoal() != null) {
+            String goalText = getString(R.string.fitness_goal) + ": " +
+                    getString(menu.getFitnessGoal().getResId());
+            binding.tvFitnessGoal.setText(goalText);
+        }
+
+        // Set meals
+        if (menu.getMeals() != null && !menu.getMeals().isEmpty()) {
+            mealAdapter.setMealList(menu.getMeals());
+        }
+
+        // Setup action buttons
+        setupActionButtons(menu);
+    }
+
+    private void setupActionButtons(MenuResponse menu) {
+        // Check if user is owner
+        boolean isOwner = menu.getIsOwner() != null && menu.getIsOwner();
+
+        if (isOwner) {
+            // Show edit and delete buttons, hide clone
+            binding.btnClone.setVisibility(View.GONE);
+            binding.btnEdit.setVisibility(View.VISIBLE);
+            binding.btnDelete.setVisibility(View.VISIBLE);
+
+            // Edit button
+            binding.btnEdit.setOnClickListener(v -> {
+                // TODO: Navigate to CreateEditMenuFragment
+                Toast.makeText(requireContext(), "Edit menu", Toast.LENGTH_SHORT).show();
+            });
+
+            // Delete button
+            binding.btnDelete.setOnClickListener(v -> {
+                showDeleteConfirmation(menu);
+            });
+        } else {
+            // Show clone button, hide edit and delete
+            binding.btnClone.setVisibility(View.VISIBLE);
+            binding.btnEdit.setVisibility(View.GONE);
+            binding.btnDelete.setVisibility(View.GONE);
+
+            // Clone button
+            binding.btnClone.setOnClickListener(v -> {
+                cloneMenu(menu);
+            });
+        }
+    }
+
+    private void cloneMenu(MenuResponse menu) {
+        viewModel.cloneMenu(menu.getId(), new MenuDetailViewModel.OnMenuClonedListener() {
+            @Override
+            public void onSuccess(MenuResponse clonedMenu) {
+                Toast.makeText(requireContext(), R.string.menu_cloned_success, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showDeleteConfirmation(MenuResponse menu) {
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_menu)
+                .setMessage(R.string.confirm_delete_menu)
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    deleteMenu(menu);
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void deleteMenu(MenuResponse menu) {
+        viewModel.deleteMenu(menu.getId(), new MenuDetailViewModel.OnMenuDeletedListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(requireContext(), R.string.menu_deleted_success, Toast.LENGTH_SHORT).show();
+                // Go back
+                requireActivity().onBackPressed();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}

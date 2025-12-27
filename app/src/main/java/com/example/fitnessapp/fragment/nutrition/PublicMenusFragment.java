@@ -76,8 +76,13 @@ public class PublicMenusFragment extends Fragment {
         adapter.setOnMenuClickListener(new MenuAdapter.OnMenuClickListener() {
             @Override
             public void onMenuClick(MenuResponse menu) {
-                // TODO: Navigate to MenuDetailFragment
-                Toast.makeText(requireContext(), "Menu: " + menu.getName(), Toast.LENGTH_SHORT).show();
+                // Navigate to MenuDetailFragment
+                MenuDetailFragment detailFragment = MenuDetailFragment.newInstance(menu.getId());
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, detailFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
 
             @Override
