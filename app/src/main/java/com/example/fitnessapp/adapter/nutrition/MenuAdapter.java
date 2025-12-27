@@ -111,17 +111,25 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
                 ivMenuImage.setImageResource(R.drawable.ic_empty_nutrition_96);
             }
 
-            // Set creator info (for public menus)
-            if (menu.getCreatorName() != null && !menu.getCreatorName().isEmpty()) {
-                tvCreatorName.setText(menu.getCreatorName());
+            // Set creator info (only show for menus you don't own)
+            boolean isOwner = menu.getIsOwner() != null && menu.getIsOwner();
+
+            if (!isOwner) {
                 tvCreatorName.setVisibility(View.VISIBLE);
                 civCreatorAvatar.setVisibility(View.VISIBLE);
 
-                // Load creator avatar
+                // Set creator name - show "Unknown User" if null/empty
+                if (menu.getCreatorName() != null && !menu.getCreatorName().isEmpty()) {
+                    tvCreatorName.setText(menu.getCreatorName());
+                } else {
+                    tvCreatorName.setText(R.string.unknown_user);
+                }
+
+                // Load creator avatar - use default if null/empty
                 if (menu.getCreatorAvatar() != null && !menu.getCreatorAvatar().isEmpty()) {
                     Glide.with(context)
                             .load(menu.getCreatorAvatar())
-                            .placeholder(R.drawable.ic_empty_nutrition_96)
+                            .placeholder(R.drawable.img_user_default_128)
                             .error(R.drawable.img_user_default_128)
                             .centerCrop()
                             .into(civCreatorAvatar);
