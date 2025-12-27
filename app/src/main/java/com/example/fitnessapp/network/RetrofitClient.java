@@ -87,4 +87,9 @@ public class RetrofitClient {
                 .create(UserApi.class);
     }
 
+    public static NutritionApi getNutritionApi(Context ctx) {
+        return getAuthRetrofit(ctx.getApplicationContext())
+                .create(NutritionApi.class);
+    }
+
 }
