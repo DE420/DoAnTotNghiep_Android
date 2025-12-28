@@ -1,8 +1,12 @@
 package com.example.fitnessapp.fragment.nutrition;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -50,6 +55,9 @@ public class CreateEditMenuFragment extends Fragment {
     private static final String TAG = "CreateEditMenuFrag";
     private static final String ARG_MENU_ID = "menu_id";
     private static final String ARG_MENU_DATA = "menu_data";
+    private static final String CHANNEL_ID = "menu_save_channel";
+    private static final int NOTIFICATION_ID_CREATE = 1001;
+    private static final int NOTIFICATION_ID_UPDATE = 1002;
 
     private FragmentCreateEditMenuBinding binding;
     private NutritionRepository repository;
@@ -57,6 +65,7 @@ public class CreateEditMenuFragment extends Fragment {
     private MenuResponse existingMenu;
     private boolean isEditing;
     private Uri selectedImageUri;
+    private boolean isSaveInProgress = false;
 
     // Adapters for each meal type
     private CreateMenuDishAdapter breakfastAdapter;
@@ -89,6 +98,9 @@ public class CreateEditMenuFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         repository = new NutritionRepository(requireContext());
+
+        // Create notification channel for menu save operations
+        createNotificationChannel();
 
         if (getArguments() != null && getArguments().containsKey(ARG_MENU_ID)) {
             menuId = getArguments().getLong(ARG_MENU_ID);
@@ -175,6 +187,79 @@ public class CreateEditMenuFragment extends Fragment {
     private void showMainAppBar() {
         if (getActivity() instanceof com.example.fitnessapp.MainActivity) {
             ((com.example.fitnessapp.MainActivity) getActivity()).setAppBarVisible(true);
+        }
+    }
+
+    /**
+     * Create notification channel for menu save operations
+     */
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Menu Save";
+            String description = "Notifications for menu save operations";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = requireContext().getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    /**
+     * Show a progress notification
+     */
+    private void showProgressNotification(Context context, int notificationId, String title, String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_empty_nutrition_96)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setProgress(0, 0, true)
+                .setOngoing(true);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(notificationId, builder.build());
+        }
+    }
+
+    /**
+     * Show a success notification
+     */
+    private void showSuccessNotification(Context context, int notificationId, String title, String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_empty_nutrition_96)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(notificationId, builder.build());
+        }
+    }
+
+    /**
+     * Show an error notification
+     */
+    private void showErrorNotification(Context context, int notificationId, String title, String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_empty_nutrition_96)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(notificationId, builder.build());
         }
     }
 
@@ -438,6 +523,11 @@ public class CreateEditMenuFragment extends Fragment {
         repository.getMenuDetail(menuId, new Callback<ApiResponse<MenuResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<MenuResponse>> call, Response<ApiResponse<MenuResponse>> response) {
+                // Check if view is still attached
+                if (binding == null || !isAdded()) {
+                    return;
+                }
+
                 binding.progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
@@ -451,6 +541,11 @@ public class CreateEditMenuFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ApiResponse<MenuResponse>> call, Throwable t) {
+                // Check if view is still attached
+                if (binding == null || !isAdded()) {
+                    return;
+                }
+
                 binding.progressBar.setVisibility(View.GONE);
                 Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 requireActivity().onBackPressed();
@@ -689,6 +784,12 @@ public class CreateEditMenuFragment extends Fragment {
             return;
         }
 
+        // Don't allow multiple save operations
+        if (isSaveInProgress) {
+            Toast.makeText(requireContext(), "Save operation already in progress", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String description = binding.etDescription.getText().toString().trim();
         boolean isPrivate = binding.swPrivate.isChecked();
 
@@ -711,6 +812,7 @@ public class CreateEditMenuFragment extends Fragment {
         // Show progress
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.btnSave.setEnabled(false);
+        isSaveInProgress = true;
 
         // Get image file if selected
         File imageFile = null;
@@ -723,14 +825,28 @@ public class CreateEditMenuFragment extends Fragment {
                 Toast.makeText(requireContext(), "Error preparing image file", Toast.LENGTH_SHORT).show();
                 binding.progressBar.setVisibility(View.GONE);
                 binding.btnSave.setEnabled(true);
+                isSaveInProgress = false;
                 return;
             }
         }
 
+        // Capture application context for notifications (works even after fragment detaches)
+        final Context appContext = requireContext().getApplicationContext();
+
+        // Show notification about background save
+        int notificationId = isEditing ? NOTIFICATION_ID_UPDATE : NOTIFICATION_ID_CREATE;
+        String notificationTitle = isEditing ? "Updating Menu" : "Creating Menu";
+        showProgressNotification(appContext, notificationId, notificationTitle, "Saving " + name + "...");
+
+        // Show toast that allows user to navigate away
+        Toast.makeText(requireContext(),
+            "Saving in background. You can navigate away.",
+            Toast.LENGTH_LONG).show();
+
         if (isEditing && menuId != null) {
-            updateMenu(menuId, imageFile, menuRequest);
+            updateMenu(menuId, imageFile, menuRequest, appContext);
         } else {
-            createMenu(imageFile, menuRequest);
+            createMenu(imageFile, menuRequest, appContext);
         }
     }
 
@@ -757,50 +873,118 @@ public class CreateEditMenuFragment extends Fragment {
         return result;
     }
 
-    private void createMenu(File imageFile, MenuRequest menuRequest) {
+    private void createMenu(File imageFile, MenuRequest menuRequest, final Context appContext) {
         repository.createMenu(imageFile, menuRequest, new Callback<ApiResponse<MenuResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<MenuResponse>> call, Response<ApiResponse<MenuResponse>> response) {
-                binding.progressBar.setVisibility(View.GONE);
-                binding.btnSave.setEnabled(true);
+                // Update UI if still attached
+                if (binding != null && isAdded()) {
+                    binding.progressBar.setVisibility(View.GONE);
+                    binding.btnSave.setEnabled(true);
+                }
+
+                isSaveInProgress = false;
 
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                    Toast.makeText(requireContext(), R.string.menu_created_success, Toast.LENGTH_SHORT).show();
-                    requireActivity().onBackPressed();
+                    // Show success notification (using app context, works even if fragment detached)
+                    showSuccessNotification(appContext, NOTIFICATION_ID_CREATE,
+                        "Menu Created",
+                        menuRequest.getName() + " has been created successfully");
+
+                    // Navigate back if still attached
+                    if (isAdded()) {
+                        requireActivity().onBackPressed();
+                    }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to create menu", Toast.LENGTH_SHORT).show();
+                    // Show error notification (using app context, works even if fragment detached)
+                    showErrorNotification(appContext, NOTIFICATION_ID_CREATE,
+                        "Failed to Create Menu",
+                        "Could not create " + menuRequest.getName());
+
+                    // Show toast if still attached
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), "Failed to create menu", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<MenuResponse>> call, Throwable t) {
-                binding.progressBar.setVisibility(View.GONE);
-                binding.btnSave.setEnabled(true);
-                Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                // Update UI if still attached
+                if (binding != null && isAdded()) {
+                    binding.progressBar.setVisibility(View.GONE);
+                    binding.btnSave.setEnabled(true);
+                }
+
+                isSaveInProgress = false;
+
+                // Show error notification (using app context, works even if fragment detached)
+                showErrorNotification(appContext, NOTIFICATION_ID_CREATE,
+                    "Network Error",
+                    "Failed to create menu: " + t.getMessage());
+
+                // Show toast if still attached
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    private void updateMenu(Long menuId, File imageFile, MenuRequest menuRequest) {
+    private void updateMenu(Long menuId, File imageFile, MenuRequest menuRequest, final Context appContext) {
         repository.updateMenu(menuId, imageFile, menuRequest, new Callback<ApiResponse<MenuResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<MenuResponse>> call, Response<ApiResponse<MenuResponse>> response) {
-                binding.progressBar.setVisibility(View.GONE);
-                binding.btnSave.setEnabled(true);
+                // Update UI if still attached
+                if (binding != null && isAdded()) {
+                    binding.progressBar.setVisibility(View.GONE);
+                    binding.btnSave.setEnabled(true);
+                }
+
+                isSaveInProgress = false;
 
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                    Toast.makeText(requireContext(), R.string.menu_updated_success, Toast.LENGTH_SHORT).show();
-                    requireActivity().onBackPressed();
+                    // Show success notification (using app context, works even if fragment detached)
+                    showSuccessNotification(appContext, NOTIFICATION_ID_UPDATE,
+                        "Menu Updated",
+                        menuRequest.getName() + " has been updated successfully");
+
+                    // Navigate back if still attached
+                    if (isAdded()) {
+                        requireActivity().onBackPressed();
+                    }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to update menu", Toast.LENGTH_SHORT).show();
+                    // Show error notification (using app context, works even if fragment detached)
+                    showErrorNotification(appContext, NOTIFICATION_ID_UPDATE,
+                        "Failed to Update Menu",
+                        "Could not update " + menuRequest.getName());
+
+                    // Show toast if still attached
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), "Failed to update menu", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<MenuResponse>> call, Throwable t) {
-                binding.progressBar.setVisibility(View.GONE);
-                binding.btnSave.setEnabled(true);
-                Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                // Update UI if still attached
+                if (binding != null && isAdded()) {
+                    binding.progressBar.setVisibility(View.GONE);
+                    binding.btnSave.setEnabled(true);
+                }
+
+                isSaveInProgress = false;
+
+                // Show error notification (using app context, works even if fragment detached)
+                showErrorNotification(appContext, NOTIFICATION_ID_UPDATE,
+                    "Network Error",
+                    "Failed to update menu: " + t.getMessage());
+
+                // Show toast if still attached
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
