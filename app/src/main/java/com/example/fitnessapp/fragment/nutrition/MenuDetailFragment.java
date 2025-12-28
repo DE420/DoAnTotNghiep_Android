@@ -97,16 +97,12 @@ public class MenuDetailFragment extends Fragment {
         mealAdapter.setOnDishClickListener(new MealAdapter.OnDishClickListener() {
             @Override
             public void onDishClick(MealDishResponse dish) {
-                // TODO: Navigate to DishDetailFragment
-                Toast.makeText(requireContext(), "Dish: " + dish.getName(), Toast.LENGTH_SHORT).show();
+                navigateToDishDetail(dish);
             }
 
             @Override
             public void onViewRecipeClick(MealDishResponse dish) {
-                // TODO: Navigate to DishDetailFragment
-                if (dish.getDishId() != null) {
-                    Toast.makeText(requireContext(), "View recipe: " + dish.getName(), Toast.LENGTH_SHORT).show();
-                }
+                navigateToDishDetail(dish);
             }
         });
     }
@@ -253,8 +249,7 @@ public class MenuDetailFragment extends Fragment {
 
             // Edit button
             binding.btnEdit.setOnClickListener(v -> {
-                // TODO: Navigate to CreateEditMenuFragment
-                Toast.makeText(requireContext(), "Edit menu", Toast.LENGTH_SHORT).show();
+                navigateToEditMenu(menu);
             });
 
             // Delete button
@@ -414,6 +409,46 @@ public class MenuDetailFragment extends Fragment {
     }
 
     /**
+     * Navigate to DishDetailFragment
+     */
+    private void navigateToDishDetail(MealDishResponse dish) {
+        if (dish == null || dish.getDishId() == null) {
+            Log.e(TAG, "Cannot navigate to dish detail: dish or dishId is null");
+            return;
+        }
+
+        Log.d(TAG, "Navigating to dish detail: " + dish.getName() + " (ID: " + dish.getDishId() + ")");
+
+        DishDetailFragment fragment = DishDetailFragment.newInstance(dish.getDishId());
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Navigate to CreateEditMenuFragment for editing
+     * Passes the MenuResponse for instant display, then fetches updates in background
+     */
+    private void navigateToEditMenu(MenuResponse menu) {
+        if (menu == null || menu.getId() == null) {
+            Log.e(TAG, "Cannot navigate to edit menu: menu or menuId is null");
+            return;
+        }
+
+        Log.d(TAG, "Navigating to edit menu with data: " + menu.getName() + " (ID: " + menu.getId() + ")");
+
+        // Pass MenuResponse for instant display
+        CreateEditMenuFragment fragment = CreateEditMenuFragment.newInstance(menu.getId(), menu);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
      * Check if a nutrition-related fragment is in the foreground
      */
     private boolean isNutritionFragmentInForeground() {
@@ -424,7 +459,8 @@ public class MenuDetailFragment extends Fragment {
 
         // Check if current fragment is any nutrition-related fragment
         return currentFragment instanceof NutritionMainFragment ||
-               currentFragment instanceof MenuDetailFragment;
+               currentFragment instanceof MenuDetailFragment ||
+               currentFragment instanceof DishDetailFragment;
     }
 
     @Override

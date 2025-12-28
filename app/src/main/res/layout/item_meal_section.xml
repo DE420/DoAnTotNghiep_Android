@@ -56,6 +56,15 @@
                     android:textSize="14sp"
                     tools:text="450 kcal"/>
 
+                <TextView
+                    android:id="@+id/tv_meal_nutrition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/gray_450"
+                    android:textSize="12sp"
+                    tools:text="P: 30g | C: 45g | F: 15g"/>
+
             </LinearLayout>
 
         </LinearLayout>

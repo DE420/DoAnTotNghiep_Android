@@ -2,6 +2,7 @@ package com.example.fitnessapp.network;
 
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.nutrition.DishResponse;
+import com.example.fitnessapp.model.response.nutrition.MealDishResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 
 import java.util.List;
@@ -68,6 +69,11 @@ public interface NutritionApi {
     // Dish endpoints
     @GET("dishes")
     Call<ApiResponse<List<DishResponse>>> getDishes(
+            @QueryMap Map<String, String> params
+    );
+
+    @GET("dishes")
+    Call<ApiResponse<List<MealDishResponse>>> getDishesAsMealDish(
             @QueryMap Map<String, String> params
     );
 

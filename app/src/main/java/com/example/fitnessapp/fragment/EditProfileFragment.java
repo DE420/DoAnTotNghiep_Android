@@ -93,6 +93,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
     private boolean isEdit = false;
 
     private int colorPurple400, colorWhite200, colorPink200, colorGreen500, colorRed400;
+    private int colorYellow;
     private ApiService apiService;
 
 
@@ -163,6 +164,7 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
         setupClickListeners();
         setDataToContentView();
 
+        colorYellow = getResources().getColor(R.color.yellow, null);
         colorPurple400 = getResources().getColor(R.color.purple_400, null);
         colorWhite200 = getResources().getColor(R.color.white_200, null);
         colorPink200 = getResources().getColor(R.color.pink_200, null);
@@ -456,25 +458,25 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
     public void onFocusChange(View view, boolean hasFocus) {
         if (view.getId() == R.id.et_full_name) {
             if (hasFocus) {
-                checkEditTextFullName(colorPurple400, View.VISIBLE);
+                checkEditTextFullName(colorYellow, View.VISIBLE);
             } else {
                 checkEditTextFullName(colorWhite200, View.GONE);
             }
         } else if (view.getId() == R.id.et_date_of_birth) {
             if (hasFocus) {
-                checkEditTextDateOfBirth(colorPurple400, View.VISIBLE);
+                checkEditTextDateOfBirth(colorYellow, View.VISIBLE);
             } else {
                 checkEditTextDateOfBirth(colorWhite200, View.GONE);
             }
         } else if (view.getId() == R.id.et_weight) {
             if (hasFocus) {
-                checkEditTextWeight(colorPurple400, View.VISIBLE);
+                checkEditTextWeight(colorYellow, View.VISIBLE);
             } else {
                 checkEditTextWeight(colorWhite200, View.GONE);
             }
         } else if (view.getId() == R.id.et_height) {
             if (hasFocus) {
-                checkEditTextHeight(colorPurple400, View.VISIBLE);
+                checkEditTextHeight(colorYellow, View.VISIBLE);
             } else {
                 checkEditTextHeight(colorWhite200, View.GONE);
             }
@@ -833,13 +835,13 @@ public class EditProfileFragment extends Fragment implements View.OnClickListene
             isEdit = true;
         }
         if (view.getId() == R.id.et_full_name) {
-            checkEditTextFullName(colorPurple400, View.VISIBLE);
+            checkEditTextFullName(colorYellow, View.VISIBLE);
         } else if (view.getId() == R.id.et_date_of_birth) {
-            checkEditTextDateOfBirth(colorPurple400, View.VISIBLE);
+            checkEditTextDateOfBirth(colorYellow, View.VISIBLE);
         } else if (view.getId() == R.id.et_weight) {
-            checkEditTextWeight(colorPurple400, View.VISIBLE);
+            checkEditTextWeight(colorYellow, View.VISIBLE);
         } else if (view.getId() == R.id.et_height) {
-            checkEditTextHeight(colorPurple400, View.VISIBLE);
+            checkEditTextHeight(colorYellow, View.VISIBLE);
         }
         return false;
     }

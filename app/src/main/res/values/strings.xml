@@ -133,7 +133,19 @@
     <string name="total_nutrition">Total Nutrition</string>
     <string name="creator">Creator</string>
     <string name="unknown_user">Unknown User</string>
+    <string name="dish_detail">Dish Detail</string>
+    <string name="nutrition_facts">Nutrition Facts</string>
     <string name="meals">Meals</string>
+    <string name="back">Back</string>
+    <string name="description">Description</string>
+    <string name="make_menu_private">Make this menu private</string>
+    <string name="menu_image">Menu Image</string>
+    <string name="dish_image">Dish Image</string>
+    <string name="decrease_quantity">Decrease Quantity</string>
+    <string name="increase_quantity">Increase Quantity</string>
+    <string name="remove_dish">Remove Dish</string>
+    <string name="snacks">Snacks</string>
+    <string name="kcal">kcal</string>
 
 
     <!-- Navigation Titles -->

@@ -8,7 +8,7 @@
             <corners android:radius="@dimen/radius_4"/>
             <stroke
                 android:width="2dp"
-                android:color="@color/purple_400" />
+                android:color="@color/yellow" />
         </shape>
     </item>
 </layer-list>

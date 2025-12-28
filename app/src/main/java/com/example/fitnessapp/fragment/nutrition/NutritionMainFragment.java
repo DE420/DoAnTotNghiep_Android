@@ -98,8 +98,12 @@ public class NutritionMainFragment extends Fragment {
      * Handle create menu button click
      */
     private void onCreateMenuClicked() {
-        // TODO: Navigate to CreateEditMenuFragment
-        Toast.makeText(requireContext(), "Create menu - Coming in Phase 7", Toast.LENGTH_SHORT).show();
+        CreateEditMenuFragment fragment = CreateEditMenuFragment.newInstance(null);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     /**

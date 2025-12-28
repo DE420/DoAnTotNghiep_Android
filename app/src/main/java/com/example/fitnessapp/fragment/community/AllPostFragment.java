@@ -407,15 +407,6 @@ public class AllPostFragment extends Fragment {
             if (isLoading != null) {
                 Log.d(TAG, "Loading state changed: " + isLoading);
                 binding.swipeRefresh.setRefreshing(isLoading);
-
-                // Show/hide progress bar for initial load
-                if (isLoading && adapter.getItemCount() == 0) {
-                    binding.progressBar.setVisibility(View.VISIBLE);
-                    binding.rvPostList.setVisibility(View.GONE);
-                    binding.llEmptyState.setVisibility(View.GONE);
-                } else {
-                    binding.progressBar.setVisibility(View.GONE);
-                }
             }
         });
 
@@ -479,9 +470,6 @@ public class AllPostFragment extends Fragment {
     private void deletePost(PostResponse post, int position) {
         Log.d(TAG, "Deleting post: " + post.getId());
 
-        // Show progress
-        binding.progressBar.setVisibility(View.VISIBLE);
-
         // Call repository to delete
         com.example.fitnessapp.repository.PostRepository repository =
                 new com.example.fitnessapp.repository.PostRepository(requireContext());
@@ -490,7 +478,6 @@ public class AllPostFragment extends Fragment {
             @Override
             public void onResponse(retrofit2.Call<com.example.fitnessapp.model.response.ApiResponse<String>> call,
                                    retrofit2.Response<com.example.fitnessapp.model.response.ApiResponse<String>> response) {
-                binding.progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                     Log.d(TAG, "Post deleted successfully");
@@ -505,7 +492,6 @@ public class AllPostFragment extends Fragment {
             @Override
             public void onFailure(retrofit2.Call<com.example.fitnessapp.model.response.ApiResponse<String>> call,
                                   Throwable t) {
-                binding.progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Error deleting post: " + t.getMessage());
                 Toast.makeText(requireContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
             }
