@@ -120,6 +120,7 @@
     <string name="search_dishes">Search dishes...</string>
     <string name="no_menus_found">No menus found</string>
     <string name="no_dishes_found">No dishes found</string>
+    <string name="no_dishes_added">No dishes added yet. Tap \"Add Dish\" to add one.</string>
     <string name="loading">Loading...</string>
     <string name="error_loading_menus">Failed to load menus</string>
     <string name="error_loading_dishes">Failed to load dishes</string>

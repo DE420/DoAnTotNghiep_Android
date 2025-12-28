@@ -347,6 +347,32 @@ public class CreateEditMenuFragment extends Fragment {
         updateMealNutrition(binding.tvLunchNutrition, lunchAdapter.getDishList());
         updateMealNutrition(binding.tvDinnerNutrition, dinnerAdapter.getDishList());
         updateMealNutrition(binding.tvSnacksNutrition, snacksAdapter.getDishList());
+
+        // Update empty states
+        updateEmptyStates();
+    }
+
+    private void updateEmptyStates() {
+        // Show/hide empty states for each meal based on whether there are dishes
+        binding.tvBreakfastEmpty.setVisibility(
+                breakfastAdapter.getDishList().isEmpty() ? View.VISIBLE : View.GONE);
+        binding.rvBreakfastDishes.setVisibility(
+                breakfastAdapter.getDishList().isEmpty() ? View.GONE : View.VISIBLE);
+
+        binding.tvLunchEmpty.setVisibility(
+                lunchAdapter.getDishList().isEmpty() ? View.VISIBLE : View.GONE);
+        binding.rvLunchDishes.setVisibility(
+                lunchAdapter.getDishList().isEmpty() ? View.GONE : View.VISIBLE);
+
+        binding.tvDinnerEmpty.setVisibility(
+                dinnerAdapter.getDishList().isEmpty() ? View.VISIBLE : View.GONE);
+        binding.rvDinnerDishes.setVisibility(
+                dinnerAdapter.getDishList().isEmpty() ? View.GONE : View.VISIBLE);
+
+        binding.tvSnacksEmpty.setVisibility(
+                snacksAdapter.getDishList().isEmpty() ? View.VISIBLE : View.GONE);
+        binding.rvSnacksDishes.setVisibility(
+                snacksAdapter.getDishList().isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void updateMealNutrition(android.widget.TextView textView, List<CreateMenuDishAdapter.MealDishItem> dishes) {
