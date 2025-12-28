@@ -24,7 +24,7 @@
             android:background="@color/black_370"
             app:title="@string/nutrition"
             app:titleTextColor="@color/white"
-            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIcon="@drawable/ic_arrow_back_24"
             app:navigationIconTint="@color/white"
             app:layout_scrollFlags="scroll|enterAlways|snap"/>
 

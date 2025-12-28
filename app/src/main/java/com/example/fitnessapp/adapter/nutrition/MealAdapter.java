@@ -62,6 +62,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         private final ImageView ivMealIcon;
         private final TextView tvMealName;
         private final TextView tvMealCalories;
+        private final TextView tvMealNutrition;
         private final RecyclerView rvMealDishes;
         private final MealDishAdapter dishAdapter;
 
@@ -70,6 +71,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             ivMealIcon = itemView.findViewById(R.id.iv_meal_icon);
             tvMealName = itemView.findViewById(R.id.tv_meal_name);
             tvMealCalories = itemView.findViewById(R.id.tv_meal_calories);
+            tvMealNutrition = itemView.findViewById(R.id.tv_meal_nutrition);
             rvMealDishes = itemView.findViewById(R.id.rv_meal_dishes);
 
             // Setup dishes RecyclerView
@@ -93,6 +95,20 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                     "%.0f kcal", meal.getCalories()));
             } else {
                 tvMealCalories.setText("-- kcal");
+            }
+
+            // Set meal nutrition (protein, carbs, fat)
+            if (meal.getProtein() != null || meal.getCarbs() != null || meal.getFat() != null) {
+                double protein = meal.getProtein() != null ? meal.getProtein() : 0;
+                double carbs = meal.getCarbs() != null ? meal.getCarbs() : 0;
+                double fat = meal.getFat() != null ? meal.getFat() : 0;
+
+                String nutritionText = String.format(Locale.getDefault(),
+                        "P: %.0fg | C: %.0fg | F: %.0fg",
+                        protein, carbs, fat);
+                tvMealNutrition.setText(nutritionText);
+            } else {
+                tvMealNutrition.setText("--");
             }
 
             // Set meal icon based on meal type

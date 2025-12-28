@@ -157,19 +157,6 @@
 
     </HorizontalScrollView>
 
-    <!-- Loading Indicator -->
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/hsv_filters"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:indeterminateTint="@color/yellow"
-        tools:visibility="visible"/>
-
     <!-- Swipe Refresh Layout -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"

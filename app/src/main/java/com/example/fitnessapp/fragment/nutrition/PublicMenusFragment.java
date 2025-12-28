@@ -192,8 +192,7 @@ public class PublicMenusFragment extends Fragment {
 
         // Observe loading
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            binding.swipeRefresh.setRefreshing(false);
+            binding.swipeRefresh.setRefreshing(isLoading);
         });
 
         // Observe error
