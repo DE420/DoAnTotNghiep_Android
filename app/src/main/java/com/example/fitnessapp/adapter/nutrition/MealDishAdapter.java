@@ -63,6 +63,7 @@ public class MealDishAdapter extends RecyclerView.Adapter<MealDishAdapter.MealDi
         private final TextView tvDishName;
         private final TextView tvQuantity;
         private final TextView tvDishCalories;
+        private final TextView tvDishNutrition;
         private final ImageButton ibViewRecipe;
 
         public MealDishViewHolder(@NonNull View itemView) {
@@ -71,6 +72,7 @@ public class MealDishAdapter extends RecyclerView.Adapter<MealDishAdapter.MealDi
             tvDishName = itemView.findViewById(R.id.tv_dish_name);
             tvQuantity = itemView.findViewById(R.id.tv_quantity);
             tvDishCalories = itemView.findViewById(R.id.tv_dish_calories);
+            tvDishNutrition = itemView.findViewById(R.id.tv_dish_nutrition);
             ibViewRecipe = itemView.findViewById(R.id.ib_view_recipe);
         }
 
@@ -94,6 +96,35 @@ public class MealDishAdapter extends RecyclerView.Adapter<MealDishAdapter.MealDi
             } else {
                 tvDishCalories.setText("-- kcal");
             }
+
+            // Set nutrition info (protein, carbs, fat)
+            // Try totalProtein/Carbs/Fat first, if not available calculate from per-serving values
+            double protein = 0;
+            double carbs = 0;
+            double fat = 0;
+
+            if (dish.getTotalProtein() != null) {
+                protein = dish.getTotalProtein();
+            } else if (dish.getProtein() != null && dish.getQuantity() != null) {
+                protein = dish.getProtein() * dish.getQuantity();
+            }
+
+            if (dish.getTotalCarbs() != null) {
+                carbs = dish.getTotalCarbs();
+            } else if (dish.getCarbs() != null && dish.getQuantity() != null) {
+                carbs = dish.getCarbs() * dish.getQuantity();
+            }
+
+            if (dish.getTotalFat() != null) {
+                fat = dish.getTotalFat();
+            } else if (dish.getFat() != null && dish.getQuantity() != null) {
+                fat = dish.getFat() * dish.getQuantity();
+            }
+
+            String nutritionText = String.format(Locale.getDefault(),
+                    "P: %.0fg | C: %.0fg | F: %.0fg",
+                    protein, carbs, fat);
+            tvDishNutrition.setText(nutritionText);
 
             // Load dish image
             if (dish.getImage() != null && !dish.getImage().isEmpty()) {

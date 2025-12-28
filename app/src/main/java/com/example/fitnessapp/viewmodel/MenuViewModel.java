@@ -112,7 +112,7 @@ public class MenuViewModel extends AndroidViewModel {
     public void refreshPublicMenus() {
         publicCurrentPage = 0;
         publicHasMorePages = true;
-        allPublicMenus.clear();
+        // Don't clear data here - wait for successful response
         loadPublicMenusInternal(true);
     }
 
@@ -205,6 +205,12 @@ public class MenuViewModel extends AndroidViewModel {
                         List<MenuResponse> newMenus = apiResponse.getData();
                         Log.d(TAG, "SUCCESS - Received " + newMenus.size() + " menus");
 
+                        // Clear old data only on successful refresh
+                        if (isRefreshing) {
+                            allPublicMenus.clear();
+                            Log.d(TAG, "Cleared old data for refresh");
+                        }
+
                         // Add new menus to the list
                         allPublicMenus.addAll(newMenus);
                         Log.d(TAG, "Total menus now: " + allPublicMenus.size());
@@ -271,7 +277,14 @@ public class MenuViewModel extends AndroidViewModel {
      * Load my menus
      */
     public void loadMyMenus() {
-        Log.d(TAG, "loadMyMenus() - page: " + myCurrentPage);
+        loadMyMenus(false);
+    }
+
+    /**
+     * Internal method to load my menus
+     */
+    private void loadMyMenus(boolean isRefreshing) {
+        Log.d(TAG, "loadMyMenus() - page: " + myCurrentPage + ", refresh: " + isRefreshing);
 
         if (myCurrentPage == 0) {
             loadingLiveData.setValue(true);
@@ -294,6 +307,12 @@ public class MenuViewModel extends AndroidViewModel {
                     if (apiResponse.isStatus() && apiResponse.getData() != null) {
                         List<MenuResponse> newMenus = apiResponse.getData();
                         Log.d(TAG, "SUCCESS - Received " + newMenus.size() + " my menus");
+
+                        // Clear old data only on successful refresh
+                        if (isRefreshing) {
+                            allMyMenus.clear();
+                            Log.d(TAG, "Cleared old my menus data for refresh");
+                        }
 
                         allMyMenus.addAll(newMenus);
                         myMenusLiveData.postValue(new ArrayList<>(allMyMenus));
@@ -348,8 +367,8 @@ public class MenuViewModel extends AndroidViewModel {
     public void refreshMyMenus() {
         myCurrentPage = 0;
         myHasMorePages = true;
-        allMyMenus.clear();
-        loadMyMenus();
+        // Don't clear data here - wait for successful response
+        loadMyMenus(true);
     }
 
     /**

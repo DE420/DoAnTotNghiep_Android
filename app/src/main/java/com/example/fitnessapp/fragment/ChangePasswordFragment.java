@@ -49,7 +49,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     private ApiService apiService;
 
     private FragmentChangePasswordBinding binding;
-    private int colorPurple400, colorWhite200, colorPink200;
+    private int colorYellow, colorPurple400, colorWhite200, colorPink200;
     private int shortAnimationDuration;
 
     private OnBackPressedCallback backPressedCallback;
@@ -85,6 +85,7 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
 
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+        colorYellow = getResources().getColor(R.color.yellow, null);
         colorPurple400 = getResources().getColor(R.color.purple_400, null);
         colorWhite200 = getResources().getColor(R.color.white_200, null);
         colorPink200 = getResources().getColor(R.color.pink_200, null);
@@ -171,19 +172,19 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
     public void onFocusChange(View view, boolean hasFocus) {
         if (view.getId() == R.id.et_current_password) {
             if (hasFocus) {
-                checkEditTextCurrentPassword(colorPurple400);
+                checkEditTextCurrentPassword(colorYellow);
             } else {
                 checkEditTextCurrentPassword(colorWhite200);
             }
         } else if (view.getId() == R.id.et_new_password) {
             if (hasFocus) {
-                checkEditTextNewPassword(colorPurple400);
+                checkEditTextNewPassword(colorYellow);
             } else {
                 checkEditTextNewPassword(colorWhite200);
             }
         } else if (view.getId() == R.id.et_confirm_password) {
             if (hasFocus) {
-                checkEditTextConfirmPassword(colorPurple400);
+                checkEditTextConfirmPassword(colorYellow);
             } else {
                 checkEditTextConfirmPassword(colorWhite200);
             }
@@ -200,11 +201,11 @@ public class ChangePasswordFragment extends Fragment implements View.OnClickList
             return true;
         }
         if (view.getId() == R.id.et_current_password) {
-            checkEditTextCurrentPassword(colorPurple400);
+            checkEditTextCurrentPassword(colorYellow);
         } else if (view.getId() == R.id.et_new_password) {
-            checkEditTextNewPassword(colorPurple400);
+            checkEditTextNewPassword(colorYellow);
         } else if (view.getId() == R.id.et_confirm_password) {
-            checkEditTextConfirmPassword(colorPurple400);
+            checkEditTextConfirmPassword(colorYellow);
         }
         return false;
     }

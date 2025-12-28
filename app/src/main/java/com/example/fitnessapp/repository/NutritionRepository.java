@@ -6,12 +6,14 @@ import android.util.Log;
 import com.example.fitnessapp.model.request.nutrition.MenuRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.nutrition.DishResponse;
+import com.example.fitnessapp.model.response.nutrition.MealDishResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 import com.example.fitnessapp.network.NutritionApi;
 import com.example.fitnessapp.network.RetrofitClient;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,6 +118,18 @@ public class NutritionRepository {
                          Callback<ApiResponse<List<DishResponse>>> callback) {
         Log.d(TAG, "Getting dishes with params: " + params);
         api.getDishes(params).enqueue(callback);
+    }
+
+    public void getDishes(int page, int size, String search,
+                         Callback<ApiResponse<List<MealDishResponse>>> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("page", String.valueOf(page));
+        params.put("size", String.valueOf(size));
+        if (search != null && !search.isEmpty()) {
+            params.put("search", search);
+        }
+        Log.d(TAG, "Getting dishes - page: " + page + ", size: " + size + ", search: " + search);
+        api.getDishesAsMealDish(params).enqueue(callback);
     }
 
     public void getDishDetail(Long id,

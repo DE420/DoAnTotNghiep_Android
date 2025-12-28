@@ -28,7 +28,7 @@
                 android:layout_width="@dimen/icon_size_48"
                 android:layout_height="@dimen/icon_size_48"
                 android:padding="12dp"
-                android:src="@drawable/ic_chevron_left"
+                android:src="@drawable/ic_arrow_back_24"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="@dimen/margin_4"
