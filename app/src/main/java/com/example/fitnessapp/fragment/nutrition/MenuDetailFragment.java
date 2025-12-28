@@ -72,6 +72,9 @@ public class MenuDetailFragment extends Fragment {
         // Setup Toolbar
         setupToolbar();
 
+        // Setup SwipeRefreshLayout
+        setupSwipeRefresh();
+
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(MenuDetailViewModel.class);
 
@@ -107,6 +110,28 @@ public class MenuDetailFragment extends Fragment {
         });
     }
 
+    /**
+     * Setup SwipeRefreshLayout
+     */
+    private void setupSwipeRefresh() {
+        // Set refresh colors
+        binding.swipeRefresh.setColorSchemeResources(
+                R.color.yellow,
+                R.color.white,
+                R.color.gray_450
+        );
+
+        // Set background color
+        binding.swipeRefresh.setProgressBackgroundColorSchemeResource(R.color.black_370);
+
+        // Set refresh listener
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            if (menuId != null) {
+                viewModel.loadMenuDetail(menuId);
+            }
+        });
+    }
+
     private void observeViewModel() {
         // Observe menu
         viewModel.getMenu().observe(getViewLifecycleOwner(), menu -> {
@@ -135,6 +160,11 @@ public class MenuDetailFragment extends Fragment {
         // Observe loading
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+
+            // Stop swipe refresh animation when loading completes
+            if (!isLoading && binding.swipeRefresh.isRefreshing()) {
+                binding.swipeRefresh.setRefreshing(false);
+            }
         });
 
         // Observe error
