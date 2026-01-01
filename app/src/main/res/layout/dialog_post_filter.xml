@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Filter Posts"
+        android:text="@string/community_filter_title"
         android:textSize="22sp"
         android:textColor="@color/white"
         android:textStyle="bold"
@@ -21,7 +21,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sort By"
+        android:text="@string/community_sort_by"
         android:textSize="16sp"
         android:textColor="@color/yellow"
         android:textStyle="bold"
@@ -37,7 +37,7 @@
             android:id="@+id/rb_newest"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Newest First"
+            android:text="@string/community_sort_newest"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:buttonTint="@color/yellow"
@@ -47,7 +47,7 @@
             android:id="@+id/rb_oldest"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Oldest First"
+            android:text="@string/community_sort_oldest"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:buttonTint="@color/yellow"/>
@@ -58,7 +58,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Date Range"
+        android:text="@string/community_date_range"
         android:textSize="16sp"
         android:textColor="@color/yellow"
         android:textStyle="bold"
@@ -68,7 +68,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Date"
+        android:text="@string/community_start_date"
         android:textSize="14sp"
         android:textColor="@color/white_200"
         android:layout_marginBottom="8dp"/>
@@ -87,7 +87,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Select start date"
+            android:text="@string/community_select_date"
             android:textColor="@color/gray_450"
             android:textSize="15sp"/>
 
@@ -103,7 +103,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End Date"
+        android:text="@string/community_end_date"
         android:textSize="14sp"
         android:textColor="@color/white_200"
         android:layout_marginBottom="8dp"/>
@@ -122,7 +122,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Select end date"
+            android:text="@string/community_select_date"
             android:textColor="@color/gray_450"
             android:textSize="15sp"/>
 
@@ -145,7 +145,7 @@
             android:id="@+id/btn_clear_filter"
             android:layout_width="wrap_content"
             android:layout_height="56dp"
-            android:text="Clear"
+            android:text="@string/community_clear_filters"
             android:textColor="@color/gray_450"
             android:textSize="15sp"
             android:textAllCaps="false"
@@ -159,7 +159,7 @@
             android:id="@+id/btn_apply_filter"
             android:layout_width="wrap_content"
             android:layout_height="56dp"
-            android:text="Apply"
+            android:text="@string/community_apply"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textAllCaps="false"
