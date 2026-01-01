@@ -96,6 +96,8 @@
     <string name="community_send">Gửi</string>
     <string name="community_add_image">Thêm ảnh</string>
     <string name="community_no_comments">Chưa có bình luận nào</string>
+    <string name="community_be_first_comment">Hãy là người đầu tiên bình luận!</string>
+    <string name="community_comments">Bình luận</string>
     <string name="community_comments_count">%d bình luận</string>
 
     <!-- CreateUpdatePostFragment -->
@@ -134,9 +136,6 @@
     <string name="community_confirm_delete_comment">Bạn có chắc muốn xóa bình luận này?</string>
     <string name="community_delete_comment_title">Xóa bình luận</string>
     <string name="community_edit_comment">Chỉnh sửa bình luận</string>
-    <string name="community_no_comments">Chưa có bình luận nào</string>
-    <string name="community_be_first_comment">Hãy là người đầu tiên bình luận!</string>
-    <string name="community_comments">Bình luận</string>
     <string name="community_delete_post_title">Xóa bài viết</string>
 
     <!-- Filter Dialog -->
