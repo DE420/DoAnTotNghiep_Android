@@ -62,12 +62,25 @@ public class CommentRepository {
     }
 
     /**
-     * Update a comment
+     * Update a comment with optional image
      */
-    public void updateComment(long commentId, String content, Callback<ApiResponse<CommentResponse>> callback) {
+    public void updateComment(long commentId, String content, File imageFile, Callback<ApiResponse<CommentResponse>> callback) {
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"), content);
 
-        commentApi.updateComment(commentId, contentBody).enqueue(callback);
+        MultipartBody.Part imagePart = null;
+        if (imageFile != null) {
+            RequestBody imageBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
+            imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), imageBody);
+        }
+
+        commentApi.updateComment(commentId, contentBody, imagePart).enqueue(callback);
+    }
+
+    /**
+     * Update a comment (text only - backward compatibility)
+     */
+    public void updateComment(long commentId, String content, Callback<ApiResponse<CommentResponse>> callback) {
+        updateComment(commentId, content, null, callback);
     }
 
     /**

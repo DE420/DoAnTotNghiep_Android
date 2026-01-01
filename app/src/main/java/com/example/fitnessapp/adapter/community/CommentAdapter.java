@@ -137,12 +137,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             }
         });
 
-        // Show/hide delete button based on ownership
+        // Show/hide edit and delete buttons based on ownership
         if (comment.getCanDelete() != null && comment.getCanDelete()) {
+            binding.ibEditComment.setVisibility(View.VISIBLE);
             binding.ibDeleteComment.setVisibility(View.VISIBLE);
         } else {
+            binding.ibEditComment.setVisibility(View.GONE);
             binding.ibDeleteComment.setVisibility(View.GONE);
         }
+
+        // Set edit button click listener
+        binding.ibEditComment.setOnClickListener(v -> {
+            if (itemListener != null) {
+                itemListener.onEditClick(v, position);
+            }
+        });
 
         // Set delete button click listener
         binding.ibDeleteComment.setOnClickListener(v -> {
@@ -167,6 +176,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     public interface CommentItemListener {
+        void onEditClick(View view, int position);
         void onDeleteClick(View view, int position);
         void onLikeClick(View view, int position);
         void onImageClick(String imageUrl);

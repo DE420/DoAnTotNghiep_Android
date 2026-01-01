@@ -63,6 +63,11 @@ public class PostDetailFragment extends Fragment {
     private ActivityResultLauncher<Intent> commentImagePickerLauncher;
     private Uri selectedCommentImageUri;
 
+    // Edit comment dialog variables
+    private ActivityResultLauncher<Intent> editCommentImagePickerLauncher;
+    private Uri selectedEditCommentImageUri;
+    private boolean shouldRemoveEditCommentImage = false;
+
     public static PostDetailFragment newInstance(long postId) {
         PostDetailFragment fragment = new PostDetailFragment();
         Bundle args = new Bundle();
@@ -87,6 +92,16 @@ public class PostDetailFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         selectedCommentImageUri = result.getData().getData();
                         displayCommentImagePreview();
+                    }
+                }
+        );
+
+        // Register edit comment image picker launcher
+        editCommentImagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        selectedEditCommentImageUri = result.getData().getData();
                     }
                 }
         );
@@ -167,6 +182,11 @@ public class PostDetailFragment extends Fragment {
         binding.rvComments.setLayoutManager(new LinearLayoutManager(requireContext()));
         commentAdapter = new CommentAdapter(requireContext());
         commentAdapter.setItemListener(new CommentAdapter.CommentItemListener() {
+            @Override
+            public void onEditClick(View view, int position) {
+                showEditCommentDialog(position);
+            }
+
             @Override
             public void onDeleteClick(View view, int position) {
                 showDeleteCommentConfirmation(position);
@@ -645,6 +665,100 @@ public class PostDetailFragment extends Fragment {
                 .show();
     }
 
+    private void showEditCommentDialog(int position) {
+        CommentResponse comment = commentAdapter.getItem(position);
+        if (comment == null) return;
+
+        // Create dialog
+        android.app.Dialog dialog = new android.app.Dialog(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_comment, null);
+        dialog.setContentView(dialogView);
+
+        // Get dialog views
+        com.google.android.material.textfield.TextInputEditText etCommentContent =
+                dialogView.findViewById(R.id.et_comment_content);
+        androidx.cardview.widget.CardView cvCurrentImage = dialogView.findViewById(R.id.cv_current_image);
+        android.widget.ImageView ivCurrentImage = dialogView.findViewById(R.id.iv_current_image);
+        android.widget.TextView tvImageSectionTitle = dialogView.findViewById(R.id.tv_image_section_title);
+        android.widget.LinearLayout llImageActions = dialogView.findViewById(R.id.ll_image_actions);
+        com.google.android.material.button.MaterialButton btnChangeImage =
+                dialogView.findViewById(R.id.btn_change_image);
+        com.google.android.material.button.MaterialButton btnRemoveImage =
+                dialogView.findViewById(R.id.btn_remove_image);
+        com.google.android.material.button.MaterialButton btnAddImage =
+                dialogView.findViewById(R.id.btn_add_image);
+        com.google.android.material.button.MaterialButton btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        com.google.android.material.button.MaterialButton btnSave = dialogView.findViewById(R.id.btn_save);
+
+        // Pre-fill comment content
+        etCommentContent.setText(comment.getContent());
+
+        // Reset edit image state
+        selectedEditCommentImageUri = null;
+        shouldRemoveEditCommentImage = false;
+
+        // Show current image if exists
+        if (comment.getImageUrl() != null && !comment.getImageUrl().isEmpty()) {
+            tvImageSectionTitle.setVisibility(View.VISIBLE);
+            cvCurrentImage.setVisibility(View.VISIBLE);
+            llImageActions.setVisibility(View.VISIBLE);
+            btnAddImage.setVisibility(View.GONE);
+
+            Glide.with(this)
+                    .load(comment.getImageUrl())
+                    .placeholder(R.color.gray_450)
+                    .into(ivCurrentImage);
+        } else {
+            tvImageSectionTitle.setVisibility(View.GONE);
+            cvCurrentImage.setVisibility(View.GONE);
+            llImageActions.setVisibility(View.GONE);
+            btnAddImage.setVisibility(View.VISIBLE);
+        }
+
+        // Change image button - pick new image
+        btnChangeImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            editCommentImagePickerLauncher.launch(intent);
+        });
+
+        // Remove image button - mark for removal
+        btnRemoveImage.setOnClickListener(v -> {
+            shouldRemoveEditCommentImage = true;
+            selectedEditCommentImageUri = null;
+            cvCurrentImage.setVisibility(View.GONE);
+            llImageActions.setVisibility(View.GONE);
+            btnAddImage.setVisibility(View.VISIBLE);
+            tvImageSectionTitle.setVisibility(View.GONE);
+        });
+
+        // Add image button - pick new image
+        btnAddImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            editCommentImagePickerLauncher.launch(intent);
+        });
+
+        // Cancel button
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        // Save button
+        btnSave.setOnClickListener(v -> {
+            String newContent = etCommentContent.getText().toString().trim();
+            if (newContent.isEmpty()) {
+                Toast.makeText(requireContext(), R.string.community_validation_empty, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Update comment
+            updateComment(position, comment.getId(), newContent);
+            dialog.dismiss();
+        });
+
+        // Show dialog
+        dialog.show();
+    }
+
     private void deleteComment(int position) {
         CommentResponse comment = commentAdapter.getItem(position);
         if (comment == null) return;
@@ -684,6 +798,56 @@ public class PostDetailFragment extends Fragment {
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateComment(int position, long commentId, String newContent) {
+        Log.d(TAG, "Updating comment: " + commentId);
+
+        // Get image file if a new image was selected
+        File imageFile = null;
+        if (selectedEditCommentImageUri != null) {
+            try {
+                imageFile = getFileFromUri(selectedEditCommentImageUri);
+                Log.d(TAG, "New image file prepared for update: " + imageFile.getPath());
+            } catch (Exception e) {
+                Log.e(TAG, "Error preparing image file", e);
+                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // Show uploading toast
+        Toast.makeText(requireContext(), R.string.community_loading, Toast.LENGTH_SHORT).show();
+
+        // Call repository to update comment with image support
+        commentRepository.updateComment(commentId, newContent, imageFile, new Callback<ApiResponse<CommentResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<CommentResponse>> call,
+                                   Response<ApiResponse<CommentResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    CommentResponse updatedComment = response.body().getData();
+                    Log.d(TAG, "Comment updated successfully");
+
+                    // Update adapter
+                    commentAdapter.updateComment(position, updatedComment);
+
+                    Toast.makeText(requireContext(), R.string.success_comment_updated, Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Failed to update comment");
+                    Toast.makeText(requireContext(), R.string.error_update_failed, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                Log.e(TAG, "Error updating comment: " + t.getMessage());
+                Toast.makeText(requireContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Reset edit image state
+        selectedEditCommentImageUri = null;
+        shouldRemoveEditCommentImage = false;
     }
 
     private void showMoreOptionsDialog() {
