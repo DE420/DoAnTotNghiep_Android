@@ -109,6 +109,8 @@
     <string name="community_post_content_hint">Nội dung…</string>
     <string name="community_add_photo">Thêm ảnh</string>
     <string name="community_add_video">Thêm video</string>
+    <string name="community_image_preview">Xem trước ảnh</string>
+    <string name="community_video_preview">Xem trước video</string>
     <string name="community_remove_media">Xóa</string>
     <string name="community_post_button">Đăng</string>
     <string name="community_update_button">Cập nhật</string>

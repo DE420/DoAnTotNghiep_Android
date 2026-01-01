@@ -252,7 +252,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                android:paddingBottom="80dp"
+                android:paddingBottom="160dp"
                 tools:listitem="@layout/item_comment"/>
 
             <!-- Empty Comments State -->
@@ -262,8 +262,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:padding="32dp"
-                android:paddingBottom="80dp"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:paddingTop="32dp"
+                android:paddingBottom="160dp"
                 android:visibility="gone"
                 tools:visibility="gone">
 

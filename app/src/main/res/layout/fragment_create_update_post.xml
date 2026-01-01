@@ -118,7 +118,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Image Preview"
+            android:text="@string/community_image_preview"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -172,7 +172,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Video Preview"
+            android:text="@string/community_video_preview"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"

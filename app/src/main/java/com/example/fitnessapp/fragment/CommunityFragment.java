@@ -73,9 +73,11 @@ public class CommunityFragment extends Fragment {
             com.example.fitnessapp.fragment.community.CreateUpdatePostFragment createFragment =
                     com.example.fitnessapp.fragment.community.CreateUpdatePostFragment.newInstance(null);
 
+            // Hide this fragment instead of replacing to preserve state and scroll position
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, createFragment)
+                    .hide(this)
+                    .add(R.id.fragment_container, createFragment)
                     .addToBackStack(null)
                     .commit();
         });

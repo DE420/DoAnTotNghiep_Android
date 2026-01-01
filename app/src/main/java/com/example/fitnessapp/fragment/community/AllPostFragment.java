@@ -521,12 +521,17 @@ public class AllPostFragment extends Fragment {
         // Create PostDetailFragment with postId argument
         PostDetailFragment detailFragment = PostDetailFragment.newInstance(postId);
 
-        // Navigate using fragment transaction
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, detailFragment)
-                .addToBackStack(null)
-                .commit();
+        // Navigate using parent fragment manager (since this is a child fragment in ViewPager)
+        // Hide parent CommunityFragment instead of this child fragment to preserve state
+        Fragment parentFragment = getParentFragment();
+        if (parentFragment != null) {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .hide(parentFragment)
+                    .add(R.id.fragment_container, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     /**
@@ -538,12 +543,17 @@ public class AllPostFragment extends Fragment {
         // Create CreateUpdatePostFragment with post data for editing
         CreateUpdatePostFragment editFragment = CreateUpdatePostFragment.newInstance(post);
 
-        // Navigate using fragment transaction
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, editFragment)
-                .addToBackStack(null)
-                .commit();
+        // Navigate using parent fragment manager (since this is a child fragment in ViewPager)
+        // Hide parent CommunityFragment instead of this child fragment to preserve state
+        Fragment parentFragment = getParentFragment();
+        if (parentFragment != null) {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .hide(parentFragment)
+                    .add(R.id.fragment_container, editFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override

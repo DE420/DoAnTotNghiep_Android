@@ -36,6 +36,8 @@
     <string name="community_post_content_hint">Content…</string>
     <string name="community_add_photo">Add Photo</string>
     <string name="community_add_video">Add Video</string>
+    <string name="community_image_preview">Image Preview</string>
+    <string name="community_video_preview">Video Preview</string>
     <string name="community_remove_media">Remove</string>
     <string name="community_post_button">Post</string>
     <string name="community_update_button">Update</string>
