@@ -290,8 +290,9 @@ public class PostDetailFragment extends Fragment {
                     .into(binding.ivUserAvatar);
         }
 
-        // Post date
-        binding.tvPostDate.setText(formatDate(post.getCreateAt()));
+        // Post date - Use TimeUtils for localized time
+        binding.tvPostDate.setText(com.example.fitnessapp.utils.TimeUtils.getTime(
+                requireContext(), post.getCreateAt()));
 
         // Content
         binding.tvContent.setText(post.getContent());

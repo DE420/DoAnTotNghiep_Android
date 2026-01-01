@@ -91,6 +91,8 @@
     <string name="community_retry">Thử lại</string>
 
     <!-- PostDetailFragment -->
+    <string name="community_post_detail_title">Chi tiết bài viết</string>
+    <string name="community_refresh">Làm mới</string>
     <string name="community_comments_title">Bình luận</string>
     <string name="community_comment_hint">Viết bình luận…</string>
     <string name="community_send">Gửi</string>

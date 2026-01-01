@@ -94,7 +94,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         // Set comment date
         binding.tvCommentDate.setText(comment.getCreatedAt() != null ?
-                TimeUtils.getTime(comment.getCreatedAt()) : "");
+                TimeUtils.getTime(context, comment.getCreatedAt()) : "");
 
         // Set comment content
         binding.tvCommentContent.setText(comment.getContent());
@@ -138,13 +138,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         });
 
         // Show/hide edit and delete buttons based on ownership
-        if (comment.getCanDelete() != null && comment.getCanDelete()) {
-            binding.ibEditComment.setVisibility(View.VISIBLE);
-            binding.ibDeleteComment.setVisibility(View.VISIBLE);
-        } else {
-            binding.ibEditComment.setVisibility(View.GONE);
-            binding.ibDeleteComment.setVisibility(View.GONE);
-        }
+        // Edit button shows only if user can edit (comment owner)
+        // Delete button shows if user can delete (comment owner or post owner/admin)
+        boolean canEdit = comment.getCanEdit() != null && comment.getCanEdit();
+        boolean canDelete = comment.getCanDelete() != null && comment.getCanDelete();
+
+        binding.ibEditComment.setVisibility(canEdit ? View.VISIBLE : View.GONE);
+        binding.ibDeleteComment.setVisibility(canDelete ? View.VISIBLE : View.GONE);
 
         // Set edit button click listener
         binding.ibEditComment.setOnClickListener(v -> {

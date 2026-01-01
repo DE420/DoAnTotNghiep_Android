@@ -152,8 +152,8 @@ public class CreateUpdatePostFragment extends Fragment {
     }
 
     private void setupToolbar() {
-        String title = isEditing ? "Edit Post" : "Create Post";
-        binding.tvTitle.setText(title);
+        int titleResId = isEditing ? R.string.community_edit_post_title : R.string.community_create_post_title;
+        binding.tvTitle.setText(titleResId);
 
         // Back button click listener
         binding.ibBack.setOnClickListener(v -> {

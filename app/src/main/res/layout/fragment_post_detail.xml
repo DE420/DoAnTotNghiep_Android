@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/black_370"
             app:navigationIcon="@drawable/ic_arrow_back_24"
-            app:title="Post Detail"
+            app:title="@string/community_post_detail_title"
             app:titleTextColor="@color/white"/>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -147,9 +147,9 @@
                             android:id="@+id/iv_post_image"
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
-                            android:scaleType="centerCrop"
                             android:contentDescription="Post image"
-                            tools:src="@color/gray_450"/>
+                            android:scaleType="centerCrop"
+                            tools:src="@color/gray_450" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -189,7 +189,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_like_32"
+                            android:src="@drawable/ic_like_filled_24"
                             android:contentDescription="Like"/>
 
                         <TextView
@@ -263,6 +263,7 @@
                 android:orientation="vertical"
                 android:gravity="center"
                 android:padding="32dp"
+                android:paddingBottom="80dp"
                 android:visibility="gone"
                 tools:visibility="gone">
 

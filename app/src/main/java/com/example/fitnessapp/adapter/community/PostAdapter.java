@@ -332,7 +332,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         binding.tvUserFullName.setText(item.getUserName() != null ? item.getUserName() : "Unknown User");
 
-        binding.tvPostTime.setText(TimeUtils.getTime(item.getCreateAt()));
+        binding.tvPostTime.setText(TimeUtils.getTime(context, item.getCreateAt()));
         binding.tvCommentCount.setText(CountFormatUtils.formatCount(item.getCommentCount()));
         binding.tvContent.setText(item.getContent());
 

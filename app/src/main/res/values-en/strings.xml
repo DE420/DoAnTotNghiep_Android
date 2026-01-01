@@ -18,6 +18,8 @@
     <string name="community_retry">Retry</string>
 
     <!-- PostDetailFragment -->
+    <string name="community_post_detail_title">Post Detail</string>
+    <string name="community_refresh">Refresh</string>
     <string name="community_comments_title">Comments</string>
     <string name="community_comment_hint">Write a comment…</string>
     <string name="community_send">Send</string>
