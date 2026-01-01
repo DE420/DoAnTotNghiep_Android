@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void fakeLogin() {
 
-        String username = "tuyenvu1";
-        String password = "haih010b@";
+        String username = "vanan";
+        String password = "Password123!";
 
 
         AuthRepository authRepository = new AuthRepository(this);
