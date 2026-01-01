@@ -82,6 +82,9 @@ public class DishDetailFragment extends Fragment {
         // Setup FAB button
         setupFabButton();
 
+        // Setup Swipe Refresh
+        setupSwipeRefresh();
+
         // Initialize Repository
         repository = new NutritionRepository(requireContext());
 
@@ -112,6 +115,20 @@ public class DishDetailFragment extends Fragment {
         });
     }
 
+    private void setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            if (dishId != null) {
+                loadDishDetail(dishId);
+            }
+        });
+
+        binding.swipeRefresh.setColorSchemeResources(
+                R.color.yellow,
+                R.color.green_500,
+                R.color.red_400
+        );
+    }
+
     private void loadDishDetail(Long id) {
         Log.d(TAG, "Loading dish detail for ID: " + id);
 
@@ -122,6 +139,7 @@ public class DishDetailFragment extends Fragment {
             public void onResponse(Call<ApiResponse<DishResponse>> call,
                                  Response<ApiResponse<DishResponse>> response) {
                 binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefresh.setRefreshing(false);
 
                 if (response.isSuccessful() && response.body() != null) {
                     ApiResponse<DishResponse> apiResponse = response.body();
@@ -144,6 +162,7 @@ public class DishDetailFragment extends Fragment {
             public void onFailure(Call<ApiResponse<DishResponse>> call, Throwable t) {
                 Log.e(TAG, "Network failure loading dish", t);
                 binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefresh.setRefreshing(false);
                 showError("Network error: " + t.getMessage());
             }
         });
@@ -154,9 +173,9 @@ public class DishDetailFragment extends Fragment {
         binding.tvDishName.setText(dish.getName());
 
         // Set cooking time
-        if (dish.getCookingTime() != null && !dish.getCookingTime().isEmpty()) {
+        if (dish.getCookingTime() != null) {
             binding.llCookingTime.setVisibility(View.VISIBLE);
-            binding.tvCookingTime.setText(dish.getCookingTime());
+            binding.tvCookingTime.setText(dish.getCookingTime() + " phút");
         } else {
             binding.llCookingTime.setVisibility(View.GONE);
         }
@@ -199,17 +218,18 @@ public class DishDetailFragment extends Fragment {
         }
 
         // Set ingredients
-        if (dish.getIngredients() != null && !dish.getIngredients().isEmpty()) {
-            binding.tvIngredients.setText(dish.getIngredients());
+        String ingredientsText = dish.getIngredientsAsString();
+        if (ingredientsText != null && !ingredientsText.isEmpty()) {
+            binding.tvIngredients.setText(ingredientsText);
         } else {
-            binding.tvIngredients.setText("No ingredients information available");
+            binding.tvIngredients.setText("Không có thông tin nguyên liệu");
         }
 
         // Set preparation
         if (dish.getPreparation() != null && !dish.getPreparation().isEmpty()) {
             binding.tvPreparation.setText(dish.getPreparation());
         } else {
-            binding.tvPreparation.setText("No preparation instructions available");
+            binding.tvPreparation.setText("Không có hướng dẫn chế biến");
         }
     }
 

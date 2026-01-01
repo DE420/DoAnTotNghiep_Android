@@ -77,6 +77,11 @@ public class NutritionMainFragment extends Fragment {
             requireActivity().onBackPressed();
         });
 
+        // Setup search dish button
+        binding.ibSearchDish.setOnClickListener(v -> {
+            openSearchDishDialog();
+        });
+
         // Inflate menu
         binding.toolbar.inflateMenu(R.menu.menu_nutrition_main);
         toolbarMenu = binding.toolbar.getMenu();
@@ -101,9 +106,30 @@ public class NutritionMainFragment extends Fragment {
         CreateEditMenuFragment fragment = CreateEditMenuFragment.newInstance(null);
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .hide(this)
+                .add(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    /**
+     * Open dish search dialog
+     * Uses DishSelectorFragment in search mode to view dish details
+     */
+    private void openSearchDishDialog() {
+        // Use DishSelectorFragment without meal type filter for browsing all dishes
+        DishSelectorFragment dishSelector = DishSelectorFragment.newInstance(null);
+        dishSelector.setOnDishSelectedListener(dish -> {
+            // When user selects a dish, show its detail
+            DishDetailFragment detailFragment = DishDetailFragment.newInstance(dish.getDishId());
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .hide(this)
+                    .add(R.id.fragment_container, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+        dishSelector.show(getChildFragmentManager(), "SearchDish");
     }
 
     /**
@@ -178,6 +204,20 @@ public class NutritionMainFragment extends Fragment {
         // Check if the next fragment is also a nutrition fragment
         if (!isNutritionFragmentInForeground()) {
             showMainAppBar();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        // Hide/show this fragment's app bar when fragment is hidden/shown
+        if (binding != null && binding.appBarLayout != null) {
+            binding.appBarLayout.setVisibility(hidden ? View.GONE : View.VISIBLE);
+        }
+
+        // When fragment becomes visible again, ensure MainActivity's app bar is hidden
+        if (!hidden) {
+            hideMainAppBar();
         }
     }
 

@@ -1,17 +1,18 @@
 package com.example.fitnessapp.model.response.nutrition;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class DishResponse implements Serializable {
     private Long id;
     private String name;
-    private String cookingTime;
+    private Integer cookingTime;  // Changed from String to Integer (backend sends Integer)
     private String image;
     private Float calories;
     private Float protein;
     private Float fat;
     private Float carbs;
-    private String ingredients;
+    private List<DishIngredientResponse> ingredients;  // Changed from String to List
     private String preparation;
 
     public DishResponse() {
@@ -33,11 +34,11 @@ public class DishResponse implements Serializable {
         this.name = name;
     }
 
-    public String getCookingTime() {
+    public Integer getCookingTime() {
         return cookingTime;
     }
 
-    public void setCookingTime(String cookingTime) {
+    public void setCookingTime(Integer cookingTime) {
         this.cookingTime = cookingTime;
     }
 
@@ -81,12 +82,31 @@ public class DishResponse implements Serializable {
         this.carbs = carbs;
     }
 
-    public String getIngredients() {
+    public List<DishIngredientResponse> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(String ingredients) {
+    public void setIngredients(List<DishIngredientResponse> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    /**
+     * Helper method to get ingredients as formatted string for display
+     * Example: "200g Chicken breast (Diced)\n100g Rice\n50g Broccoli"
+     */
+    public String getIngredientsAsString() {
+        if (ingredients == null || ingredients.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < ingredients.size(); i++) {
+            sb.append(ingredients.get(i).getFormattedIngredient());
+            if (i < ingredients.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 
     public String getPreparation() {
