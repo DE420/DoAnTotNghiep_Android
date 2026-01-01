@@ -73,6 +73,12 @@
     <string name="text_super_long">Từ ngày 1/1/2026, khi hộ kinh doanh chuyển sang kê khai thuế theo doanh thu, yêu cầu thông báo và giám sát tài khoản ngân hàng trở thành nội dung được quan tâm. Theo chuyên gia, đây là bước đi cần thiết để minh bạch dòng tiền kinh doanh.
 </string>
 
+    <!-- Navigation Titles -->
+    <string name="nav_title_home">Trang chủ</string>
+    <string name="nav_title_plan">Kế hoạch</string>
+    <string name="nav_title_community">Cộng đồng</string>
+    <string name="nav_title_other">Khác</string>
+
     <!-- ========== COMMUNITY FEATURE STRINGS (VIETNAMESE PRIMARY) ========== -->
 
     <!-- CommunityFragment -->

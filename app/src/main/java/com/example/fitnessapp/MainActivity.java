@@ -63,19 +63,19 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
-                title = "Home";
+                title = getString(R.string.nav_title_home);
             } else if (itemId == R.id.nav_plan) {
                 selectedFragment = new PlanFragment();
-                title = "Plan";
+                title = getString(R.string.nav_title_plan);
             } else if (itemId == R.id.nav_practice) {
                 startActivity(new Intent(this, ExerciseCountActivity.class));
                 return false;
             } else if (itemId == R.id.nav_community) {
                 selectedFragment = new CommunityFragment();
-                title = "Community";
+                title = getString(R.string.nav_title_community);
             } else if (itemId == R.id.nav_other) {
                 selectedFragment = new OtherFragment();
-                title = "Other";
+                title = getString(R.string.nav_title_other);
             }
 
             if (selectedFragment != null) {

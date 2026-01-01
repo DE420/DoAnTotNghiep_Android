@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Navigation Titles -->
+    <string name="nav_title_home">Home</string>
+    <string name="nav_title_plan">Plan</string>
+    <string name="nav_title_community">Community</string>
+    <string name="nav_title_other">Other</string>
+
     <!-- ========== COMMUNITY FEATURE STRINGS (ENGLISH FALLBACK) ========== -->
 
     <!-- CommunityFragment -->
