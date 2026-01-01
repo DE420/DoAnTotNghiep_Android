@@ -52,7 +52,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:contentDescription="Create new post"
+        android:contentDescription="@string/community_fab_create_post"
         android:src="@drawable/ic_black_add_24"
         app:backgroundTint="@color/yellow"
         app:tint="@color/black"

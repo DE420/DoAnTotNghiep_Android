@@ -24,7 +24,7 @@
             android:layout_weight="1"
             android:background="@drawable/filled_black_text_field"
             android:searchHintIcon="@color/white"
-            android:queryHint="Search posts..."
+            android:queryHint="@string/community_search_hint"
             android:iconifiedByDefault="false"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="4dp"/>
@@ -39,7 +39,7 @@
             android:scaleType="centerCrop"
             app:tint="@color/yellow"
             android:layout_marginEnd="6dp"
-            android:contentDescription="Filter posts"/>
+            android:contentDescription="@string/community_filter_button"/>
 
     </LinearLayout>
 
@@ -113,7 +113,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Posts Found"
+            android:text="@string/community_empty_no_posts"
             android:textSize="22sp"
             android:textColor="@color/white"
             android:textStyle="bold"

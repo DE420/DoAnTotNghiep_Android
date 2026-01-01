@@ -73,4 +73,123 @@
     <string name="text_super_long">Từ ngày 1/1/2026, khi hộ kinh doanh chuyển sang kê khai thuế theo doanh thu, yêu cầu thông báo và giám sát tài khoản ngân hàng trở thành nội dung được quan tâm. Theo chuyên gia, đây là bước đi cần thiết để minh bạch dòng tiền kinh doanh.
 </string>
 
+    <!-- ========== COMMUNITY FEATURE STRINGS (VIETNAMESE PRIMARY) ========== -->
+
+    <!-- CommunityFragment -->
+    <string name="community_tab_all_posts">Tất cả bài viết</string>
+    <string name="community_tab_my_posts">Bài viết của tôi</string>
+    <string name="community_fab_create_post">Tạo bài viết mới</string>
+
+    <!-- AllPostFragment & MyPostFragment -->
+    <string name="community_search_hint">Tìm kiếm bài viết…</string>
+    <string name="community_filter_button">Lọc</string>
+    <string name="community_empty_no_posts">Không tìm thấy bài viết</string>
+    <string name="community_empty_my_posts">Bạn chưa có bài viết nào</string>
+    <string name="community_empty_create_first">Tạo bài viết đầu tiên của bạn!</string>
+    <string name="community_error_loading">Lỗi tải bài viết</string>
+    <string name="community_loading">Đang tải…</string>
+    <string name="community_retry">Thử lại</string>
+
+    <!-- PostDetailFragment -->
+    <string name="community_comments_title">Bình luận</string>
+    <string name="community_comment_hint">Viết bình luận…</string>
+    <string name="community_send">Gửi</string>
+    <string name="community_add_image">Thêm ảnh</string>
+    <string name="community_no_comments">Chưa có bình luận nào</string>
+    <string name="community_comments_count">%d bình luận</string>
+
+    <!-- CreateUpdatePostFragment -->
+    <string name="community_create_post_title">Tạo bài viết</string>
+    <string name="community_edit_post_title">Chỉnh sửa bài viết</string>
+    <string name="community_post_title_hint">Tiêu đề…</string>
+    <string name="community_post_content_hint">Nội dung…</string>
+    <string name="community_add_photo">Thêm ảnh</string>
+    <string name="community_add_video">Thêm video</string>
+    <string name="community_remove_media">Xóa</string>
+    <string name="community_post_button">Đăng</string>
+    <string name="community_update_button">Cập nhật</string>
+    <string name="community_validation_empty">Vui lòng nhập tiêu đề và nội dung</string>
+    <string name="community_select_image">Chọn ảnh</string>
+    <string name="community_select_video">Chọn video</string>
+
+    <!-- NotificationFragment -->
+    <string name="community_notifications_title">Thông báo</string>
+    <string name="community_mark_all_read">Đánh dấu tất cả đã đọc</string>
+    <string name="community_no_notifications">Không có thông báo</string>
+    <string name="community_no_notifications_desc">Bạn sẽ nhận được thông báo tại đây</string>
+
+    <!-- Post Actions (PostAdapter) -->
+    <string name="community_edit">Chỉnh sửa</string>
+    <string name="community_delete">Xóa</string>
+    <string name="community_like">Thích</string>
+    <string name="community_comment">Bình luận</string>
+    <string name="community_read_more">Xem thêm</string>
+    <string name="community_read_less">Thu gọn</string>
+    <string name="community_confirm_delete_post">Bạn có chắc muốn xóa bài viết này?</string>
+    <string name="community_yes">Có</string>
+    <string name="community_no">Không</string>
+    <string name="community_cancel">Hủy</string>
+
+    <!-- Comment Actions (CommentAdapter) -->
+    <string name="community_confirm_delete_comment">Bạn có chắc muốn xóa bình luận này?</string>
+    <string name="community_edit_comment">Chỉnh sửa bình luận</string>
+
+    <!-- Filter Dialog -->
+    <string name="community_filter_title">Lọc bài viết</string>
+    <string name="community_sort_by">Sắp xếp theo</string>
+    <string name="community_sort_newest">Mới nhất</string>
+    <string name="community_sort_oldest">Cũ nhất</string>
+    <string name="community_date_range">Khoảng thời gian</string>
+    <string name="community_start_date">Ngày bắt đầu</string>
+    <string name="community_end_date">Ngày kết thúc</string>
+    <string name="community_apply">Áp dụng</string>
+    <string name="community_clear_filters">Xóa bộ lọc</string>
+    <string name="community_select_date">Chọn ngày</string>
+
+    <!-- Edit Comment Dialog -->
+    <string name="community_edit_comment_title">Chỉnh sửa bình luận</string>
+    <string name="community_comment_content_hint">Nội dung bình luận…</string>
+    <string name="community_keep_image">Giữ ảnh hiện tại</string>
+    <string name="community_change_image">Thay đổi ảnh</string>
+    <string name="community_remove_image">Xóa ảnh</string>
+    <string name="community_save">Lưu</string>
+
+    <!-- Relative Time -->
+    <string name="time_just_now">Vừa xong</string>
+    <string name="time_one_minute_ago">1 phút trước</string>
+    <string name="time_minutes_ago">%d phút trước</string>
+    <string name="time_one_hour_ago">1 giờ trước</string>
+    <string name="time_hours_ago">%d giờ trước</string>
+    <string name="time_one_day_ago">1 ngày trước</string>
+    <string name="time_days_ago">%d ngày trước</string>
+    <string name="time_one_week_ago">1 tuần trước</string>
+    <string name="time_weeks_ago">%d tuần trước</string>
+    <string name="time_one_month_ago">1 tháng trước</string>
+    <string name="time_months_ago">%d tháng trước</string>
+
+    <!-- Success Messages -->
+    <string name="success_post_created">Đã tạo bài viết</string>
+    <string name="success_post_updated">Đã cập nhật bài viết</string>
+    <string name="success_post_deleted">Đã xóa bài viết</string>
+    <string name="success_comment_posted">Đã đăng bình luận</string>
+    <string name="success_comment_updated">Đã cập nhật bình luận</string>
+    <string name="success_comment_deleted">Đã xóa bình luận</string>
+    <string name="success_liked">Đã thích</string>
+    <string name="success_unliked">Đã bỏ thích</string>
+
+    <!-- Error Messages -->
+    <string name="error_network">Lỗi kết nối. Vui lòng thử lại.</string>
+    <string name="error_upload">Lỗi tải lên file</string>
+    <string name="error_load_posts">Không thể tải bài viết</string>
+    <string name="error_load_comments">Không thể tải bình luận</string>
+    <string name="error_post_failed">Không thể đăng bài</string>
+    <string name="error_update_failed">Không thể cập nhật</string>
+    <string name="error_delete_failed">Không thể xóa</string>
+    <string name="error_generic">Đã có lỗi xảy ra</string>
+
+    <!-- Counts & Stats -->
+    <string name="community_likes_count">%d lượt thích</string>
+    <string name="community_one_like">1 lượt thích</string>
+    <string name="community_one_comment">1 bình luận</string>
+
 </resources>
