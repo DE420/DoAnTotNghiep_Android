@@ -99,21 +99,21 @@ public class DishSelectorAdapter extends RecyclerView.Adapter<DishSelectorAdapte
             }
 
             if (dish.getProtein() != null) {
-                tvProtein.setText(String.format(Locale.getDefault(), "P: %.0fg", dish.getProtein()));
+                tvProtein.setText(context.getString(R.string.format_protein, dish.getProtein()));
             } else {
-                tvProtein.setText("P: -");
+                tvProtein.setText(context.getString(R.string.format_protein_dash));
             }
 
             if (dish.getCarbs() != null) {
-                tvCarbs.setText(String.format(Locale.getDefault(), "C: %.0fg", dish.getCarbs()));
+                tvCarbs.setText(context.getString(R.string.format_carbs, dish.getCarbs()));
             } else {
-                tvCarbs.setText("C: -");
+                tvCarbs.setText(context.getString(R.string.format_carbs_dash));
             }
 
             if (dish.getFat() != null) {
-                tvFat.setText(String.format(Locale.getDefault(), "F: %.0fg", dish.getFat()));
+                tvFat.setText(context.getString(R.string.format_fat, dish.getFat()));
             } else {
-                tvFat.setText("F: -");
+                tvFat.setText(context.getString(R.string.format_fat_dash));
             }
 
             // Load dish image

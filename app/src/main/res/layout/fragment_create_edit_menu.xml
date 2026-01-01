@@ -193,7 +193,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/yellow"
                             android:textSize="14sp"
-                            android:text="0 kcal"/>
+                            android:text="@string/default_zero_kcal"/>
 
                         <TextView
                             android:id="@+id/tv_breakfast_nutrition"
@@ -202,7 +202,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/gray_450"
                             android:textSize="12sp"
-                            android:text="P: 0g | C: 0g | F: 0g"/>
+                            android:text="@string/default_zero_macros"/>
 
                     </LinearLayout>
 
@@ -307,7 +307,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/yellow"
                             android:textSize="14sp"
-                            android:text="0 kcal"/>
+                            android:text="@string/default_zero_kcal"/>
 
                         <TextView
                             android:id="@+id/tv_lunch_nutrition"
@@ -316,7 +316,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/gray_450"
                             android:textSize="12sp"
-                            android:text="P: 0g | C: 0g | F: 0g"/>
+                            android:text="@string/default_zero_macros"/>
 
                     </LinearLayout>
 
@@ -421,7 +421,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/yellow"
                             android:textSize="14sp"
-                            android:text="0 kcal"/>
+                            android:text="@string/default_zero_kcal"/>
 
                         <TextView
                             android:id="@+id/tv_dinner_nutrition"
@@ -430,7 +430,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/gray_450"
                             android:textSize="12sp"
-                            android:text="P: 0g | C: 0g | F: 0g"/>
+                            android:text="@string/default_zero_macros"/>
 
                     </LinearLayout>
 
@@ -535,7 +535,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/yellow"
                             android:textSize="14sp"
-                            android:text="0 kcal"/>
+                            android:text="@string/default_zero_kcal"/>
 
                         <TextView
                             android:id="@+id/tv_snacks_nutrition"
@@ -544,7 +544,7 @@
                             android:layout_marginTop="2dp"
                             android:textColor="@color/gray_450"
                             android:textSize="12sp"
-                            android:text="P: 0g | C: 0g | F: 0g"/>
+                            android:text="@string/default_zero_macros"/>
 
                     </LinearLayout>
 
@@ -637,7 +637,7 @@
                             android:id="@+id/tv_total_calories"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="@string/default_zero"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold"/>
@@ -662,7 +662,7 @@
                             android:id="@+id/tv_total_protein"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0g"
+                            android:text="@string/default_zero_g"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold"/>
@@ -687,7 +687,7 @@
                             android:id="@+id/tv_total_carbs"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0g"
+                            android:text="@string/default_zero_g"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold"/>
@@ -712,7 +712,7 @@
                             android:id="@+id/tv_total_fat"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0g"
+                            android:text="@string/default_zero_g"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold"/>

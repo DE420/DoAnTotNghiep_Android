@@ -150,11 +150,11 @@ public class DishDetailFragment extends Fragment {
                         displayDish(dish);
                     } else {
                         Log.e(TAG, "API returned error status");
-                        showError("Failed to load dish details");
+                        showError(getString(R.string.dish_load_failed));
                     }
                 } else {
                     Log.e(TAG, "Response unsuccessful: " + response.code());
-                    showError("Failed to load dish details");
+                    showError(getString(R.string.dish_load_failed));
                 }
             }
 
@@ -175,7 +175,7 @@ public class DishDetailFragment extends Fragment {
         // Set cooking time
         if (dish.getCookingTime() != null) {
             binding.llCookingTime.setVisibility(View.VISIBLE);
-            binding.tvCookingTime.setText(dish.getCookingTime() + " phút");
+            binding.tvCookingTime.setText(getString(R.string.format_minutes, dish.getCookingTime()));
         } else {
             binding.llCookingTime.setVisibility(View.GONE);
         }
@@ -196,25 +196,25 @@ public class DishDetailFragment extends Fragment {
         if (dish.getCalories() != null) {
             binding.tvCalories.setText(String.format(Locale.getDefault(), "%.0f", dish.getCalories()));
         } else {
-            binding.tvCalories.setText("--");
+            binding.tvCalories.setText(getString(R.string.default_dash));
         }
 
         if (dish.getProtein() != null) {
             binding.tvProtein.setText(String.format(Locale.getDefault(), "%.0fg", dish.getProtein()));
         } else {
-            binding.tvProtein.setText("--");
+            binding.tvProtein.setText(getString(R.string.default_dash));
         }
 
         if (dish.getCarbs() != null) {
             binding.tvCarbs.setText(String.format(Locale.getDefault(), "%.0fg", dish.getCarbs()));
         } else {
-            binding.tvCarbs.setText("--");
+            binding.tvCarbs.setText(getString(R.string.default_dash));
         }
 
         if (dish.getFat() != null) {
             binding.tvFat.setText(String.format(Locale.getDefault(), "%.0fg", dish.getFat()));
         } else {
-            binding.tvFat.setText("--");
+            binding.tvFat.setText(getString(R.string.default_dash));
         }
 
         // Set ingredients
@@ -222,14 +222,14 @@ public class DishDetailFragment extends Fragment {
         if (ingredientsText != null && !ingredientsText.isEmpty()) {
             binding.tvIngredients.setText(ingredientsText);
         } else {
-            binding.tvIngredients.setText("Không có thông tin nguyên liệu");
+            binding.tvIngredients.setText(getString(R.string.no_ingredients_info));
         }
 
         // Set preparation
         if (dish.getPreparation() != null && !dish.getPreparation().isEmpty()) {
             binding.tvPreparation.setText(dish.getPreparation());
         } else {
-            binding.tvPreparation.setText("Không có hướng dẫn chế biến");
+            binding.tvPreparation.setText(getString(R.string.no_preparation_info));
         }
     }
 

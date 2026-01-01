@@ -115,7 +115,7 @@ public class MyMenusFragment extends Fragment {
             @Override
             public void onCloneClick(MenuResponse menu) {
                 // Should not happen on My Menus (clone button hidden for owned menus)
-                Toast.makeText(requireContext(), "This is your menu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.this_is_your_menu, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -150,6 +150,19 @@ public class MyMenusFragment extends Fragment {
         if (searchText != null) {
             searchText.setTextColor(getResources().getColor(R.color.white, null));
             searchText.setHintTextColor(getResources().getColor(R.color.gray_450, null));
+        }
+
+        // Set SearchView icons to white
+        int searchIconId = getResources().getIdentifier("android:id/search_mag_icon", null, null);
+        android.widget.ImageView searchIcon = binding.svSearch.findViewById(searchIconId);
+        if (searchIcon != null) {
+            searchIcon.setColorFilter(getResources().getColor(R.color.white, null));
+        }
+
+        int closeIconId = getResources().getIdentifier("android:id/search_close_btn", null, null);
+        android.widget.ImageView closeIcon = binding.svSearch.findViewById(closeIconId);
+        if (closeIcon != null) {
+            closeIcon.setColorFilter(getResources().getColor(R.color.white, null));
         }
 
         binding.svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

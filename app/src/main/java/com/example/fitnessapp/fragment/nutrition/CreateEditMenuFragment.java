@@ -222,8 +222,8 @@ public class CreateEditMenuFragment extends Fragment {
      */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Menu Save";
-            String description = "Notifications for menu save operations";
+            CharSequence name = getString(R.string.notification_channel_menu_save);
+            String description = getString(R.string.notification_channel_menu_save_desc);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
@@ -564,7 +564,7 @@ public class CreateEditMenuFragment extends Fragment {
                     existingMenu = response.body().getData();
                     populateMenuData(existingMenu);
                 } else {
-                    Toast.makeText(requireContext(), "Failed to load menu", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.menu_load_failed, Toast.LENGTH_SHORT).show();
                     requireActivity().onBackPressed();
                 }
             }
@@ -811,13 +811,13 @@ public class CreateEditMenuFragment extends Fragment {
         // Validate inputs
         String name = binding.etMenuName.getText().toString().trim();
         if (name.isEmpty()) {
-            Toast.makeText(requireContext(), "Please enter menu name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.menu_name_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Don't allow multiple save operations
         if (isSaveInProgress) {
-            Toast.makeText(requireContext(), "Save operation already in progress", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.save_in_progress, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -852,12 +852,12 @@ public class CreateEditMenuFragment extends Fragment {
 
         // Show notification about background save
         int notificationId = isEditing ? NOTIFICATION_ID_UPDATE : NOTIFICATION_ID_CREATE;
-        String notificationTitle = isEditing ? "Updating Menu" : "Creating Menu";
-        showProgressNotification(appContext, notificationId, notificationTitle, "Saving " + name + "...");
+        String notificationTitle = isEditing ? getString(R.string.notification_updating_menu) : getString(R.string.notification_creating_menu);
+        showProgressNotification(appContext, notificationId, notificationTitle, getString(R.string.notification_saving, name));
 
         // Show toast that allows user to navigate away
         Toast.makeText(requireContext(),
-            "Saving in background. You can navigate away.",
+            R.string.notification_saving_background,
             Toast.LENGTH_LONG).show();
 
         if (isEditing && menuId != null) {
@@ -905,8 +905,8 @@ public class CreateEditMenuFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                     // Show success notification (using app context, works even if fragment detached)
                     showSuccessNotification(appContext, NOTIFICATION_ID_CREATE,
-                        "Menu Created",
-                        menuRequest.getName() + " has been created successfully");
+                        appContext.getString(R.string.notification_menu_created),
+                        menuRequest.getName() + " " + appContext.getString(R.string.menu_created_success));
 
                     // Navigate back if still attached
                     if (isAdded()) {
@@ -915,12 +915,12 @@ public class CreateEditMenuFragment extends Fragment {
                 } else {
                     // Show error notification (using app context, works even if fragment detached)
                     showErrorNotification(appContext, NOTIFICATION_ID_CREATE,
-                        "Failed to Create Menu",
-                        "Could not create " + menuRequest.getName());
+                        appContext.getString(R.string.notification_menu_create_failed),
+                        appContext.getString(R.string.notification_could_not_create, menuRequest.getName()));
 
                     // Show toast if still attached
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Failed to create menu", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.menu_create_failed, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -937,12 +937,12 @@ public class CreateEditMenuFragment extends Fragment {
 
                 // Show error notification (using app context, works even if fragment detached)
                 showErrorNotification(appContext, NOTIFICATION_ID_CREATE,
-                    "Network Error",
-                    "Failed to create menu: " + t.getMessage());
+                    appContext.getString(R.string.notification_network_error),
+                    appContext.getString(R.string.menu_create_failed) + ": " + t.getMessage());
 
                 // Show toast if still attached
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), appContext.getString(R.string.notification_network_error) + ": " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -963,8 +963,8 @@ public class CreateEditMenuFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                     // Show success notification (using app context, works even if fragment detached)
                     showSuccessNotification(appContext, NOTIFICATION_ID_UPDATE,
-                        "Menu Updated",
-                        menuRequest.getName() + " has been updated successfully");
+                        appContext.getString(R.string.notification_menu_updated),
+                        menuRequest.getName() + " " + appContext.getString(R.string.menu_updated_success));
 
                     // Navigate back if still attached
                     if (isAdded()) {
@@ -973,12 +973,12 @@ public class CreateEditMenuFragment extends Fragment {
                 } else {
                     // Show error notification (using app context, works even if fragment detached)
                     showErrorNotification(appContext, NOTIFICATION_ID_UPDATE,
-                        "Failed to Update Menu",
-                        "Could not update " + menuRequest.getName());
+                        appContext.getString(R.string.notification_menu_update_failed),
+                        appContext.getString(R.string.notification_could_not_update, menuRequest.getName()));
 
                     // Show toast if still attached
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Failed to update menu", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.menu_update_failed_toast, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -995,12 +995,12 @@ public class CreateEditMenuFragment extends Fragment {
 
                 // Show error notification (using app context, works even if fragment detached)
                 showErrorNotification(appContext, NOTIFICATION_ID_UPDATE,
-                    "Network Error",
-                    "Failed to update menu: " + t.getMessage());
+                    appContext.getString(R.string.notification_network_error),
+                    appContext.getString(R.string.menu_update_failed_toast) + ": " + t.getMessage());
 
                 // Show toast if still attached
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), appContext.getString(R.string.notification_network_error) + ": " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
