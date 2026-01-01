@@ -109,7 +109,7 @@
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All"
+                android:text="@string/chip_all"
                 android:textColor="@color/white"
                 android:checked="true"
                 app:chipBackgroundColor="@color/black_370"

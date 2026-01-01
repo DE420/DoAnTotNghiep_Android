@@ -103,12 +103,11 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                 double carbs = meal.getCarbs() != null ? meal.getCarbs() : 0;
                 double fat = meal.getFat() != null ? meal.getFat() : 0;
 
-                String nutritionText = String.format(Locale.getDefault(),
-                        "P: %.0fg | C: %.0fg | F: %.0fg",
+                String nutritionText = context.getString(R.string.format_macros,
                         protein, carbs, fat);
                 tvMealNutrition.setText(nutritionText);
             } else {
-                tvMealNutrition.setText("--");
+                tvMealNutrition.setText(context.getString(R.string.default_dash));
             }
 
             // Set meal icon based on meal type

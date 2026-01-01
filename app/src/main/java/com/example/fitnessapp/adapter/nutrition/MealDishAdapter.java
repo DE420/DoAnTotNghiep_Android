@@ -80,8 +80,8 @@ public class MealDishAdapter extends RecyclerView.Adapter<MealDishAdapter.MealDi
 
             // Set quantity
             if (dish.getQuantity() != null) {
-                String quantityText = String.format(Locale.getDefault(),
-                    "x %d %s", dish.getQuantity(), context.getString(R.string.servings));
+                String quantityText = context.getString(R.string.format_quantity_servings,
+                    dish.getQuantity(), context.getString(R.string.servings));
                 tvQuantity.setText(quantityText);
             } else {
                 tvQuantity.setText("");

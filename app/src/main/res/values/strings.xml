@@ -74,76 +74,76 @@
 </string>
 
     <!-- Nutrition feature strings -->
-    <string name="nutrition">Nutrition</string>
-    <string name="public_menus">Public Menus</string>
-    <string name="my_menus">My Menus</string>
-    <string name="create_menu">Create Menu</string>
-    <string name="edit_menu">Edit Menu</string>
-    <string name="menu_detail">Menu Detail</string>
-    <string name="menu_name">Menu Name</string>
-    <string name="menu_description">Description</string>
-    <string name="fitness_goal">Fitness Goal</string>
-    <string name="calories_target">Calories Target</string>
-    <string name="make_private">Make this menu private</string>
-    <string name="clone_menu">Add to My Menus</string>
-    <string name="delete_menu">Delete Menu</string>
-    <string name="confirm_delete_menu">Are you sure you want to delete this menu?</string>
-    <string name="menu_cloned_success">Menu added to your collection!</string>
-    <string name="menu_deleted_success">Menu deleted</string>
-    <string name="menu_created_success">Menu created successfully!</string>
-    <string name="menu_updated_success">Menu updated successfully!</string>
+    <string name="nutrition">Dinh dưỡng</string>
+    <string name="public_menus">Thực đơn công khai</string>
+    <string name="my_menus">Thực đơn của tôi</string>
+    <string name="create_menu">Tạo thực đơn</string>
+    <string name="edit_menu">Chỉnh sửa thực đơn</string>
+    <string name="menu_detail">Chi tiết thực đơn</string>
+    <string name="menu_name">Tên thực đơn</string>
+    <string name="menu_description">Mô tả</string>
+    <string name="fitness_goal">Mục tiêu thể hình</string>
+    <string name="calories_target">Mục tiêu calo</string>
+    <string name="make_private">Đặt thực đơn ở chế độ riêng tư</string>
+    <string name="clone_menu">Thêm vào thực đơn của tôi</string>
+    <string name="delete_menu">Xóa thực đơn</string>
+    <string name="confirm_delete_menu">Bạn có chắc muốn xóa thực đơn này?</string>
+    <string name="menu_cloned_success">Đã thêm thực đơn vào bộ sưu tập của bạn!</string>
+    <string name="menu_deleted_success">Đã xóa thực đơn</string>
+    <string name="menu_created_success">đã được tạo thành công</string>
+    <string name="menu_updated_success">đã được cập nhật thành công</string>
 
     <!-- Meal types -->
-    <string name="breakfast">Breakfast</string>
-    <string name="lunch">Lunch</string>
-    <string name="dinner">Dinner</string>
-    <string name="extra_meal">Snacks</string>
+    <string name="breakfast">Bữa sáng</string>
+    <string name="lunch">Bữa trưa</string>
+    <string name="dinner">Bữa tối</string>
+    <string name="extra_meal">Bữa phụ</string>
 
     <!-- Nutrition labels -->
-    <string name="calories">Calories</string>
+    <string name="calories">Calo</string>
     <string name="protein">Protein</string>
     <string name="carbs">Carbs</string>
-    <string name="fat">Fat</string>
-    <string name="cooking_time">Cooking Time</string>
-    <string name="ingredients">Ingredients</string>
-    <string name="preparation">Preparation</string>
+    <string name="fat">Chất béo</string>
+    <string name="cooking_time">Thời gian nấu</string>
+    <string name="ingredients">Nguyên liệu</string>
+    <string name="preparation">Cách chế biến</string>
 
     <!-- Actions -->
-    <string name="add_dish">Add Dish</string>
-    <string name="select_dish">Select Dish</string>
-    <string name="view_recipe">View Recipe</string>
-    <string name="save_menu">Save Menu</string>
-    <string name="search_menus">Search menus...</string>
-    <string name="search_dishes">Search dishes...</string>
-    <string name="search_dish">Search dish</string>
-    <string name="no_menus_found">No menus found</string>
-    <string name="no_dishes_found">No dishes found</string>
-    <string name="no_dishes_added">No dishes added yet. Tap \"Add Dish\" to add one.</string>
-    <string name="loading">Loading...</string>
-    <string name="error_loading_menus">Failed to load menus</string>
-    <string name="error_loading_dishes">Failed to load dishes</string>
-    <string name="choose_image">Choose Image</string>
-    <string name="cancel">Cancel</string>
-    <string name="delete">Delete</string>
-    <string name="edit">Edit</string>
-    <string name="save">Save</string>
-    <string name="quantity">Quantity</string>
-    <string name="servings">servings</string>
-    <string name="total_nutrition">Total Nutrition</string>
-    <string name="creator">Creator</string>
-    <string name="unknown_user">Unknown User</string>
-    <string name="dish_detail">Dish Detail</string>
-    <string name="nutrition_facts">Nutrition Facts</string>
-    <string name="meals">Meals</string>
-    <string name="back">Back</string>
-    <string name="description">Description</string>
-    <string name="make_menu_private">Make this menu private</string>
-    <string name="menu_image">Menu Image</string>
-    <string name="dish_image">Dish Image</string>
-    <string name="decrease_quantity">Decrease Quantity</string>
-    <string name="increase_quantity">Increase Quantity</string>
-    <string name="remove_dish">Remove Dish</string>
-    <string name="snacks">Snacks</string>
+    <string name="add_dish">Thêm món ăn</string>
+    <string name="select_dish">Chọn món ăn</string>
+    <string name="view_recipe">Xem công thức</string>
+    <string name="save_menu">Lưu thực đơn</string>
+    <string name="search_menus">Tìm kiếm thực đơn...</string>
+    <string name="search_dishes">Tìm kiếm món ăn...</string>
+    <string name="search_dish">Tìm món ăn</string>
+    <string name="no_menus_found">Không tìm thấy thực đơn</string>
+    <string name="no_dishes_found">Không tìm thấy món ăn</string>
+    <string name="no_dishes_added">Chưa có món ăn nào. Nhấn \"Thêm món ăn\" để thêm.</string>
+    <string name="loading">Đang tải...</string>
+    <string name="error_loading_menus">Không thể tải thực đơn</string>
+    <string name="error_loading_dishes">Không thể tải món ăn</string>
+    <string name="choose_image">Chọn ảnh</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="save">Lưu</string>
+    <string name="quantity">Số lượng</string>
+    <string name="servings">phần ăn</string>
+    <string name="total_nutrition">Tổng dinh dưỡng</string>
+    <string name="creator">Người tạo</string>
+    <string name="unknown_user">Người dùng không xác định</string>
+    <string name="dish_detail">Chi tiết món ăn</string>
+    <string name="nutrition_facts">Thông tin dinh dưỡng</string>
+    <string name="meals">Bữa ăn</string>
+    <string name="back">Quay lại</string>
+    <string name="description">Mô tả</string>
+    <string name="make_menu_private">Đặt thực đơn ở chế độ riêng tư</string>
+    <string name="menu_image">Ảnh thực đơn</string>
+    <string name="dish_image">Ảnh món ăn</string>
+    <string name="decrease_quantity">Giảm số lượng</string>
+    <string name="increase_quantity">Tăng số lượng</string>
+    <string name="remove_dish">Xóa món ăn</string>
+    <string name="snacks">Bữa phụ</string>
     <string name="kcal">kcal</string>
 
 
@@ -292,5 +292,75 @@
     <string name="menu_apply_filter">Áp dụng</string>
     <string name="menu_filter_button">Bộ lọc</string>
     <string name="close">Đóng</string>
+
+    <!-- ========== NUTRITION FEATURE HARDCODED TEXT STRINGS ========== -->
+
+    <!-- CreateEditMenuFragment Toast Messages -->
+    <string name="menu_load_failed">Không thể tải thực đơn</string>
+    <string name="menu_name_required">Vui lòng nhập tên thực đơn</string>
+    <string name="save_in_progress">Đang lưu, vui lòng đợi</string>
+    <string name="menu_create_failed">Không thể tạo thực đơn</string>
+    <string name="menu_update_failed_toast">Không thể cập nhật thực đơn</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_channel_menu_save">Lưu thực đơn</string>
+    <string name="notification_channel_menu_save_desc">Thông báo cho các thao tác lưu thực đơn</string>
+    <string name="notification_creating_menu">Đang tạo thực đơn</string>
+    <string name="notification_updating_menu">Đang cập nhật thực đơn</string>
+    <string name="notification_saving">Đang lưu %s...</string>
+    <string name="notification_saving_background">Đang lưu ở nền. Bạn có thể điều hướng ra ngoài.</string>
+    <string name="notification_menu_created">Đã tạo thực đơn</string>
+    <string name="notification_menu_create_failed">Không thể tạo thực đơn</string>
+    <string name="notification_could_not_create">Không thể tạo %s</string>
+    <string name="notification_menu_updated">Đã cập nhật thực đơn</string>
+    <string name="notification_menu_update_failed">Không thể cập nhật thực đơn</string>
+    <string name="notification_could_not_update">Không thể cập nhật %s</string>
+    <string name="notification_network_error">Lỗi mạng</string>
+    <string name="notification_check_connection">Kiểm tra kết nối mạng của bạn</string>
+
+    <!-- DishDetailFragment -->
+    <string name="dish_load_failed">Không thể tải thông tin món ăn</string>
+    <string name="no_ingredients_info">Không có thông tin nguyên liệu</string>
+    <string name="no_preparation_info">Không có hướng dẫn chế biến</string>
+
+    <!-- MyMenusFragment -->
+    <string name="this_is_your_menu">Đây là thực đơn của bạn</string>
+
+    <!-- Default Values (0 calories, macros) -->
+    <string name="default_zero_kcal">0 kcal</string>
+    <string name="default_zero_macros">P: 0g | C: 0g | F: 0g</string>
+    <string name="default_zero">0</string>
+    <string name="default_zero_g">0g</string>
+    <string name="default_dash">--</string>
+
+    <!-- Empty State Messages -->
+    <string name="tap_create_first_menu">Nhấn nút + để tạo\nthực đơn đầu tiên của bạn!</string>
+
+    <!-- Filter Chips -->
+    <string name="chip_all">Tất cả</string>
+
+    <!-- Separators and Symbols -->
+    <string name="separator_pipe">|</string>
+    <string name="separator_bullet"> • </string>
+
+    <!-- Time Units -->
+    <string name="minutes_unit">phút</string>
+    <string name="format_minutes">%d phút</string>
+
+    <!-- Nutrition Display Formats -->
+    <string name="format_macros">P: %.0fg | C: %.0fg | F: %.0fg</string>
+    <string name="format_protein">P: %.0fg</string>
+    <string name="format_carbs">C: %.0fg</string>
+    <string name="format_fat">F: %.0fg</string>
+    <string name="format_protein_dash">P: -</string>
+    <string name="format_carbs_dash">C: -</string>
+    <string name="format_fat_dash">F: -</string>
+    <string name="format_quantity_servings">x %d %s</string>
+
+    <!-- Dialog Messages -->
+    <string name="dialog_remove_dish_title">Xóa món ăn</string>
+    <string name="dialog_remove_dish_message">Bạn có chắc muốn xóa \"%s\" khỏi bữa ăn này?</string>
+    <string name="dialog_remove_button">Xóa</string>
+    <string name="dialog_cancel_button">Hủy</string>
 
 </resources>
