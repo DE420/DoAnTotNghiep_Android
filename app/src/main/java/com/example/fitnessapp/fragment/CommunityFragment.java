@@ -50,9 +50,9 @@ public class CommunityFragment extends Fragment {
         new TabLayoutMediator(binding.tabLayout, binding.viewPager,
                 (tab, position) -> {
                     if (position == 0) {
-                        tab.setText("All Posts");
+                        tab.setText(R.string.community_tab_all_posts);
                     } else {
-                        tab.setText("My Posts");
+                        tab.setText(R.string.community_tab_my_posts);
                     }
                 }
         ).attach();

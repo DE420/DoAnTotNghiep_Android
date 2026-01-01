@@ -322,7 +322,7 @@ public class AllPostFragment extends Fragment {
             // Apply default filter (no filters)
             applyFilters("newest", null, null);
             dialog.dismiss();
-            Toast.makeText(requireContext(), "Filters cleared", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.community_clear_filters, Toast.LENGTH_SHORT).show();
         });
 
         // Apply filter button
@@ -337,7 +337,7 @@ public class AllPostFragment extends Fragment {
             // Apply filters
             applyFilters(sortBy, startDate[0], endDate[0]);
             dialog.dismiss();
-            Toast.makeText(requireContext(), "Filters applied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.community_apply, Toast.LENGTH_SHORT).show();
         });
 
         dialog.show();
@@ -495,10 +495,10 @@ public class AllPostFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                     Log.d(TAG, "Post deleted successfully");
                     adapter.removePost(position);
-                    Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.success_post_deleted, Toast.LENGTH_SHORT).show();
                 } else {
                     Log.e(TAG, "Failed to delete post");
-                    Toast.makeText(requireContext(), "Failed to delete post", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.error_delete_failed, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -507,7 +507,7 @@ public class AllPostFragment extends Fragment {
                                   Throwable t) {
                 binding.progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Error deleting post: " + t.getMessage());
-                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
             }
         });
     }

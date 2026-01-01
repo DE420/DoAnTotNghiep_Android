@@ -1,5 +1,9 @@
 package com.example.fitnessapp.utils;
 
+import android.content.Context;
+
+import com.example.fitnessapp.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -64,6 +68,89 @@ public class DateUtil {
         return inputFormat.format(input);
     }
 
+    /**
+     * Converts a Date to a relative time string (e.g., "Vừa xong", "1 phút trước", "2 giờ trước")
+     * Supports both Vietnamese (primary) and English (fallback) based on device language
+     *
+     * @param context Android context for accessing string resources
+     * @param date    The date to convert to relative time
+     * @return Localized relative time string
+     */
+    public static String getRelativeTimeString(Context context, Date date) {
+        if (context == null || date == null) {
+            return "";
+        }
+
+        long diff = System.currentTimeMillis() - date.getTime();
+
+        // Handle future dates
+        if (diff < 0) {
+            return context.getString(R.string.time_just_now);
+        }
+
+        long seconds = diff / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        long weeks = days / 7;
+        long months = days / 30; // Approximate
+
+        // Just now (less than 60 seconds)
+        if (seconds < 60) {
+            return context.getString(R.string.time_just_now);
+        }
+        // Minutes ago
+        else if (minutes < 60) {
+            if (minutes == 1) {
+                return context.getString(R.string.time_one_minute_ago);
+            } else {
+                return context.getString(R.string.time_minutes_ago, minutes);
+            }
+        }
+        // Hours ago
+        else if (hours < 24) {
+            if (hours == 1) {
+                return context.getString(R.string.time_one_hour_ago);
+            } else {
+                return context.getString(R.string.time_hours_ago, hours);
+            }
+        }
+        // Days ago
+        else if (days < 7) {
+            if (days == 1) {
+                return context.getString(R.string.time_one_day_ago);
+            } else {
+                return context.getString(R.string.time_days_ago, days);
+            }
+        }
+        // Weeks ago
+        else if (weeks < 4) {
+            if (weeks == 1) {
+                return context.getString(R.string.time_one_week_ago);
+            } else {
+                return context.getString(R.string.time_weeks_ago, weeks);
+            }
+        }
+        // Months ago
+        else {
+            if (months == 1) {
+                return context.getString(R.string.time_one_month_ago);
+            } else {
+                return context.getString(R.string.time_months_ago, months);
+            }
+        }
+    }
+
+    /**
+     * Converts a timestamp (long) to a relative time string
+     *
+     * @param context   Android context for accessing string resources
+     * @param timestamp Timestamp in milliseconds
+     * @return Localized relative time string
+     */
+    public static String getRelativeTimeString(Context context, long timestamp) {
+        return getRelativeTimeString(context, new Date(timestamp));
+    }
 
 
 }

@@ -178,7 +178,7 @@ public class CreateUpdatePostFragment extends Fragment {
         binding.btnSubmit.setOnClickListener(v -> {
             String content = binding.etContent.getText().toString().trim();
             if (content.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter post content", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.community_validation_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -262,7 +262,7 @@ public class CreateUpdatePostFragment extends Fragment {
     private void populateExistingPostData() {
         if (existingPost != null) {
             binding.etContent.setText(existingPost.getContent());
-            binding.btnSubmit.setText("Update Post");
+            binding.btnSubmit.setText(R.string.community_update_button);
 
             // Display existing media using displaySelectedMedia()
             // This ensures consistency with the media display logic
@@ -310,7 +310,7 @@ public class CreateUpdatePostFragment extends Fragment {
                 public void onPlayerError(PlaybackException error) {
                     Log.e(TAG, "Video preview error: " + error.getMessage());
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Error loading video preview", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -357,7 +357,7 @@ public class CreateUpdatePostFragment extends Fragment {
                 Log.d(TAG, "Image file prepared: " + imageFile.getPath());
             } catch (Exception e) {
                 Log.e(TAG, "Error preparing image file", e);
-                Toast.makeText(requireContext(), "Error preparing image file", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
                 binding.btnSubmit.setEnabled(true);
                 return;
             }
@@ -370,14 +370,14 @@ public class CreateUpdatePostFragment extends Fragment {
                 Log.d(TAG, "Video file prepared: " + videoFile.getPath());
             } catch (Exception e) {
                 Log.e(TAG, "Error preparing video file", e);
-                Toast.makeText(requireContext(), "Error preparing video file", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
                 binding.btnSubmit.setEnabled(true);
                 return;
             }
         }
 
         // Show uploading notification and go back immediately
-        Toast.makeText(requireContext(), "Uploading post in background...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), R.string.community_loading, Toast.LENGTH_SHORT).show();
         requireActivity().onBackPressed();
 
         repository.createPost(content, imageFile, videoFile, new Callback<ApiResponse<PostResponse>>() {
@@ -392,14 +392,14 @@ public class CreateUpdatePostFragment extends Fragment {
                     // Show notification on main thread
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
-                            Toast.makeText(requireContext(), "Post created successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.success_post_created, Toast.LENGTH_SHORT).show();
                         });
                     }
                 } else {
                     Log.e(TAG, "Failed to create post");
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
-                            Toast.makeText(requireContext(), "Failed to create post", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), R.string.error_post_failed, Toast.LENGTH_SHORT).show();
                         });
                     }
                 }
@@ -410,7 +410,7 @@ public class CreateUpdatePostFragment extends Fragment {
                 Log.e(TAG, "Error creating post: " + t.getMessage());
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
-                        Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
                     });
                 }
             }
@@ -433,7 +433,7 @@ public class CreateUpdatePostFragment extends Fragment {
                 Log.d(TAG, "Image file prepared: " + imageFile.getPath());
             } catch (Exception e) {
                 Log.e(TAG, "Error preparing image file", e);
-                Toast.makeText(requireContext(), "Error preparing image file", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
                 binding.btnSubmit.setEnabled(true);
                 return;
             }
@@ -446,14 +446,14 @@ public class CreateUpdatePostFragment extends Fragment {
                 Log.d(TAG, "Video file prepared: " + videoFile.getPath());
             } catch (Exception e) {
                 Log.e(TAG, "Error preparing video file", e);
-                Toast.makeText(requireContext(), "Error preparing video file", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
                 binding.btnSubmit.setEnabled(true);
                 return;
             }
         }
 
         // Show uploading notification and go back immediately
-        Toast.makeText(requireContext(), "Updating post in background...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), R.string.community_loading, Toast.LENGTH_SHORT).show();
         requireActivity().onBackPressed();
 
         repository.updatePost(existingPost.getId(), content, imageFile, videoFile,
@@ -465,14 +465,14 @@ public class CreateUpdatePostFragment extends Fragment {
                             Log.d(TAG, "Post updated successfully");
                             if (getActivity() != null) {
                                 getActivity().runOnUiThread(() -> {
-                                    Toast.makeText(requireContext(), "Post updated successfully", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(requireContext(), R.string.success_post_updated, Toast.LENGTH_SHORT).show();
                                 });
                             }
                         } else {
                             Log.e(TAG, "Failed to update post");
                             if (getActivity() != null) {
                                 getActivity().runOnUiThread(() -> {
-                                    Toast.makeText(requireContext(), "Failed to update post", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(requireContext(), R.string.error_update_failed, Toast.LENGTH_SHORT).show();
                                 });
                             }
                         }
@@ -483,7 +483,7 @@ public class CreateUpdatePostFragment extends Fragment {
                         Log.e(TAG, "Error updating post: " + t.getMessage());
                         if (getActivity() != null) {
                             getActivity().runOnUiThread(() -> {
-                                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
                             });
                         }
                     }
