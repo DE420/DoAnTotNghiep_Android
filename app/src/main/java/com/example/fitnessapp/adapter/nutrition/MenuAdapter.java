@@ -62,7 +62,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
 
     class MenuViewHolder extends RecyclerView.ViewHolder {
         private final MaterialCardView cardMenu;
-        private final ImageView ivMenuImage;
         private final TextView tvMenuName;
         private final TextView tvCalories;
         private final TextView tvFitnessGoal;
@@ -72,7 +71,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
         public MenuViewHolder(@NonNull View itemView) {
             super(itemView);
             cardMenu = itemView.findViewById(R.id.card_menu);
-            ivMenuImage = itemView.findViewById(R.id.iv_menu_image);
             tvMenuName = itemView.findViewById(R.id.tv_menu_name);
             tvCalories = itemView.findViewById(R.id.tv_calories);
             tvFitnessGoal = itemView.findViewById(R.id.tv_fitness_goal);
@@ -97,18 +95,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
                 tvFitnessGoal.setText(context.getString(goalStringRes));
             } else {
                 tvFitnessGoal.setText("");
-            }
-
-            // Load menu image
-            if (menu.getImage() != null && !menu.getImage().isEmpty()) {
-                Glide.with(context)
-                        .load(menu.getImage())
-                        .placeholder(R.drawable.ic_empty_nutrition_96)
-                        .error(R.drawable.ic_empty_nutrition_96)
-                        .centerCrop()
-                        .into(ivMenuImage);
-            } else {
-                ivMenuImage.setImageResource(R.drawable.ic_empty_nutrition_96);
             }
 
             // Set creator info (only show for menus you don't own)

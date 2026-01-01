@@ -1,5 +1,6 @@
 package com.example.fitnessapp.network;
 
+import com.example.fitnessapp.model.request.nutrition.MenuRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.nutrition.DishResponse;
 import com.example.fitnessapp.model.response.nutrition.MealDishResponse;
@@ -8,15 +9,12 @@ import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -31,9 +29,7 @@ public interface NutritionApi {
 
     @GET("menus/my-menus")
     Call<ApiResponse<List<MenuResponse>>> getMyMenus(
-            @Query("page") int page,
-            @Query("size") int size,
-            @Query("search") String search
+            @QueryMap Map<String, String> params
     );
 
     @GET("menus/{id}")
@@ -41,19 +37,15 @@ public interface NutritionApi {
             @Path("id") Long id
     );
 
-    @Multipart
     @POST("menus")
     Call<ApiResponse<MenuResponse>> createMenu(
-            @Part MultipartBody.Part image,
-            @Part("data") RequestBody data
+            @Body MenuRequest request
     );
 
-    @Multipart
     @PUT("menus/{id}")
     Call<ApiResponse<MenuResponse>> updateMenu(
             @Path("id") Long id,
-            @Part MultipartBody.Part image,
-            @Part("data") RequestBody data
+            @Body MenuRequest request
     );
 
     @POST("menus/{id}/clone")

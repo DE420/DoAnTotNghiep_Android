@@ -39,10 +39,10 @@ public class NutritionRepository {
         api.getPublicMenus(params).enqueue(callback);
     }
 
-    public void getMyMenus(int page, int size, String search,
+    public void getMyMenus(Map<String, String> params,
                           Callback<ApiResponse<List<MenuResponse>>> callback) {
-        Log.d(TAG, "Getting my menus - page: " + page + ", size: " + size + ", search: " + search);
-        api.getMyMenus(page, size, search).enqueue(callback);
+        Log.d(TAG, "Getting my menus with params: " + params);
+        api.getMyMenus(params).enqueue(callback);
     }
 
     public void getMenuDetail(Long id,
@@ -53,52 +53,16 @@ public class NutritionRepository {
 
     public void createMenu(File imageFile, MenuRequest menuRequest,
                           Callback<ApiResponse<MenuResponse>> callback) {
-        try {
-            // Convert MenuRequest to JSON
-            Gson gson = new Gson();
-            String json = gson.toJson(menuRequest);
-            RequestBody dataBody = RequestBody.create(
-                MediaType.parse("application/json"), json);
-
-            // Handle image
-            MultipartBody.Part imagePart = null;
-            if (imageFile != null && imageFile.exists()) {
-                RequestBody imageBody = RequestBody.create(
-                    MediaType.parse("image/*"), imageFile);
-                imagePart = MultipartBody.Part.createFormData(
-                    "image", imageFile.getName(), imageBody);
-                Log.d(TAG, "Image part created: " + imageFile.getName());
-            }
-
-            Log.d(TAG, "Creating menu: " + json);
-            api.createMenu(imagePart, dataBody).enqueue(callback);
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating menu", e);
-        }
+        // Backend doesn't support image upload, send JSON only
+        Log.d(TAG, "Creating menu (JSON only): " + menuRequest.getName());
+        api.createMenu(menuRequest).enqueue(callback);
     }
 
     public void updateMenu(Long id, File imageFile, MenuRequest menuRequest,
                           Callback<ApiResponse<MenuResponse>> callback) {
-        try {
-            Gson gson = new Gson();
-            String json = gson.toJson(menuRequest);
-            RequestBody dataBody = RequestBody.create(
-                MediaType.parse("application/json"), json);
-
-            MultipartBody.Part imagePart = null;
-            if (imageFile != null && imageFile.exists()) {
-                RequestBody imageBody = RequestBody.create(
-                    MediaType.parse("image/*"), imageFile);
-                imagePart = MultipartBody.Part.createFormData(
-                    "image", imageFile.getName(), imageBody);
-                Log.d(TAG, "Image part created: " + imageFile.getName());
-            }
-
-            Log.d(TAG, "Updating menu ID: " + id);
-            api.updateMenu(id, imagePart, dataBody).enqueue(callback);
-        } catch (Exception e) {
-            Log.e(TAG, "Error updating menu", e);
-        }
+        // Backend doesn't support image upload, send JSON only
+        Log.d(TAG, "Updating menu ID: " + id + " (JSON only)");
+        api.updateMenu(id, menuRequest).enqueue(callback);
     }
 
     public void cloneMenu(Long id,

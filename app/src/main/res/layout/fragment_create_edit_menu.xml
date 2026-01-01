@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_app_color"
@@ -38,50 +42,14 @@
             app:layout_constraintStart_toEndOf="@id/ib_back"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Menu Image -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_menu_image"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/black_370"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <ImageView
-                android:id="@+id/iv_menu_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_empty_nutrition_96"
-                android:contentDescription="@string/menu_image"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_choose_image"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/choose_image"
-            android:textColor="@color/black"
-            app:backgroundTint="@color/yellow"
-            app:icon="@drawable/ic_image_24"
-            app:iconTint="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/cv_menu_image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
         <!-- Menu Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_menu_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:hint="@string/menu_name"
-            app:layout_constraintTop_toBottomOf="@id/btn_choose_image"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:boxBackgroundColor="@color/black_370"
@@ -154,21 +122,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Privacy Toggle -->
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/sw_private"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/make_menu_private"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:thumbTint="@color/yellow"
-            app:trackTint="@color/gray_450"
-            app:layout_constraintTop_toBottomOf="@id/sp_fitness_goal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
         <!-- Meals Section -->
         <TextView
             android:id="@+id/tv_meals_label"
@@ -179,7 +132,7 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/sw_private"
+            app:layout_constraintTop_toBottomOf="@id/sp_fitness_goal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -832,3 +785,24 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
+
+<!-- Loading Overlay with Blur Background -->
+<FrameLayout
+    android:id="@+id/loading_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone">
+
+    <ProgressBar
+        android:id="@+id/progress_bar_overlay"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/yellow"/>
+
+</FrameLayout>
+
+</FrameLayout>

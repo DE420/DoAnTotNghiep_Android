@@ -64,7 +64,6 @@ public class CreateEditMenuFragment extends Fragment {
     private Long menuId;
     private MenuResponse existingMenu;
     private boolean isEditing;
-    private Uri selectedImageUri;
     private boolean isSaveInProgress = false;
 
     // Adapters for each meal type
@@ -75,7 +74,6 @@ public class CreateEditMenuFragment extends Fragment {
 
     private FitnessGoalAdapter fitnessGoalAdapter;
     private FitnessGoal selectedFitnessGoal = FitnessGoal.MUSCLE_GAIN;
-    private ActivityResultLauncher<Intent> imagePickerLauncher;
 
     public static CreateEditMenuFragment newInstance(Long menuId) {
         return newInstance(menuId, null);
@@ -114,7 +112,8 @@ public class CreateEditMenuFragment extends Fragment {
             }
         }
 
-        // Register image picker launcher
+        // Image picker removed - backend doesn't support menu images
+        /*
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -124,6 +123,7 @@ public class CreateEditMenuFragment extends Fragment {
                     }
                 }
         );
+        */
     }
 
     @Nullable
@@ -168,8 +168,35 @@ public class CreateEditMenuFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        // Show MainActivity's app bar when leaving
-        showMainAppBar();
+        // Don't show app bar in onPause - it will show when fragment is destroyed
+        // This prevents the header from appearing when navigating back
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Only show app bar if we're not going back to NutritionMainFragment
+        if (!isReturningToNutritionFlow()) {
+            showMainAppBar();
+        }
+    }
+
+    /**
+     * Check if we're going back to a nutrition-related fragment
+     */
+    private boolean isReturningToNutritionFlow() {
+        if (getActivity() == null) return false;
+
+        // Check all fragments in the back stack
+        for (Fragment fragment : getActivity().getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof NutritionMainFragment && fragment.isHidden()) {
+                return true;
+            }
+            if (fragment instanceof MenuDetailFragment && fragment.isHidden()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -326,8 +353,8 @@ public class CreateEditMenuFragment extends Fragment {
         // Back button
         binding.ibBack.setOnClickListener(v -> requireActivity().onBackPressed());
 
-        // Choose image button
-        binding.btnChooseImage.setOnClickListener(v -> pickImage());
+        // Image button removed - backend doesn't support menu images
+        // binding.btnChooseImage.setOnClickListener(v -> pickImage());
 
         // Add dish buttons
         binding.btnAddBreakfastDish.setOnClickListener(v -> openDishSelector(MealType.BREAKFAST));
@@ -340,6 +367,8 @@ public class CreateEditMenuFragment extends Fragment {
         binding.btnSave.setOnClickListener(v -> saveMenu());
     }
 
+    // Image upload removed - backend doesn't support menu images
+    /*
     private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -355,6 +384,7 @@ public class CreateEditMenuFragment extends Fragment {
                     .into(binding.ivMenuImage);
         }
     }
+    */
 
     private void openDishSelector(MealType mealType) {
         DishSelectorFragment dishSelector = DishSelectorFragment.newInstance(mealType);
@@ -600,7 +630,6 @@ public class CreateEditMenuFragment extends Fragment {
         // Set basic fields
         binding.etMenuName.setText(menu.getName());
         binding.etDescription.setText(menu.getDescription());
-        binding.swPrivate.setChecked(menu.getIsPrivate() != null && menu.getIsPrivate());
 
         // Set fitness goal
         if (menu.getFitnessGoal() != null) {
@@ -614,7 +643,8 @@ public class CreateEditMenuFragment extends Fragment {
             }
         }
 
-        // Load image
+        // Image loading removed - backend doesn't support menu images
+        /*
         if (menu.getImage() != null && !menu.getImage().isEmpty()) {
             Glide.with(this)
                     .load(menu.getImage())
@@ -622,6 +652,7 @@ public class CreateEditMenuFragment extends Fragment {
                     .centerCrop()
                     .into(binding.ivMenuImage);
         }
+        */
 
         // Populate meals
         populateMeals(menu);
@@ -791,14 +822,13 @@ public class CreateEditMenuFragment extends Fragment {
         }
 
         String description = binding.etDescription.getText().toString().trim();
-        boolean isPrivate = binding.swPrivate.isChecked();
 
         // Build menu request
         MenuRequest menuRequest = new MenuRequest();
         menuRequest.setName(name);
         menuRequest.setDescription(description);
         menuRequest.setFitnessGoal(selectedFitnessGoal);
-        menuRequest.setIsPrivate(isPrivate);
+        menuRequest.setIsPrivate(true); // Always private since we removed the toggle
 
         // Build meals
         List<MealRequest> meals = new ArrayList<>();
@@ -809,26 +839,13 @@ public class CreateEditMenuFragment extends Fragment {
 
         menuRequest.setMeals(meals);
 
-        // Show progress
-        binding.progressBar.setVisibility(View.VISIBLE);
+        // Show center loading overlay with blur background
+        binding.loadingOverlay.setVisibility(View.VISIBLE);
         binding.btnSave.setEnabled(false);
         isSaveInProgress = true;
 
-        // Get image file if selected
+        // Backend doesn't support menu images - always pass null
         File imageFile = null;
-        if (selectedImageUri != null) {
-            try {
-                imageFile = getFileFromUri(selectedImageUri);
-                Log.d(TAG, "Image file prepared: " + imageFile.getPath());
-            } catch (Exception e) {
-                Log.e(TAG, "Error preparing image file", e);
-                Toast.makeText(requireContext(), "Error preparing image file", Toast.LENGTH_SHORT).show();
-                binding.progressBar.setVisibility(View.GONE);
-                binding.btnSave.setEnabled(true);
-                isSaveInProgress = false;
-                return;
-            }
-        }
 
         // Capture application context for notifications (works even after fragment detaches)
         final Context appContext = requireContext().getApplicationContext();
@@ -879,7 +896,7 @@ public class CreateEditMenuFragment extends Fragment {
             public void onResponse(Call<ApiResponse<MenuResponse>> call, Response<ApiResponse<MenuResponse>> response) {
                 // Update UI if still attached
                 if (binding != null && isAdded()) {
-                    binding.progressBar.setVisibility(View.GONE);
+                    binding.loadingOverlay.setVisibility(View.GONE);
                     binding.btnSave.setEnabled(true);
                 }
 
@@ -912,7 +929,7 @@ public class CreateEditMenuFragment extends Fragment {
             public void onFailure(Call<ApiResponse<MenuResponse>> call, Throwable t) {
                 // Update UI if still attached
                 if (binding != null && isAdded()) {
-                    binding.progressBar.setVisibility(View.GONE);
+                    binding.loadingOverlay.setVisibility(View.GONE);
                     binding.btnSave.setEnabled(true);
                 }
 
@@ -937,7 +954,7 @@ public class CreateEditMenuFragment extends Fragment {
             public void onResponse(Call<ApiResponse<MenuResponse>> call, Response<ApiResponse<MenuResponse>> response) {
                 // Update UI if still attached
                 if (binding != null && isAdded()) {
-                    binding.progressBar.setVisibility(View.GONE);
+                    binding.loadingOverlay.setVisibility(View.GONE);
                     binding.btnSave.setEnabled(true);
                 }
 
@@ -970,7 +987,7 @@ public class CreateEditMenuFragment extends Fragment {
             public void onFailure(Call<ApiResponse<MenuResponse>> call, Throwable t) {
                 // Update UI if still attached
                 if (binding != null && isAdded()) {
-                    binding.progressBar.setVisibility(View.GONE);
+                    binding.loadingOverlay.setVisibility(View.GONE);
                     binding.btnSave.setEnabled(true);
                 }
 
@@ -990,9 +1007,10 @@ public class CreateEditMenuFragment extends Fragment {
     }
 
     /**
-     * Convert URI to File
+     * Convert URI to File - REMOVED (backend doesn't support menu images)
      * Copies the content from URI to a temporary file in cache directory
      */
+    /*
     private File getFileFromUri(Uri uri) throws Exception {
         // Get content resolver
         android.content.ContentResolver contentResolver = requireContext().getContentResolver();
@@ -1031,6 +1049,7 @@ public class CreateEditMenuFragment extends Fragment {
 
         return tempFile;
     }
+    */
 
     private void openDishDetail(Long dishId) {
         DishDetailFragment fragment = DishDetailFragment.newInstance(dishId);

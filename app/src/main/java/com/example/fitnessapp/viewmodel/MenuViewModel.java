@@ -52,9 +52,26 @@ public class MenuViewModel extends AndroidViewModel {
     // Filters for public menus
     private String searchKeyword = "";
     private FitnessGoal filterGoal = null;
+    private Float filterMinCalories = null;
+    private Float filterMaxCalories = null;
+    private Float filterMinProtein = null;
+    private Float filterMaxProtein = null;
+    private Float filterMinCarbs = null;
+    private Float filterMaxCarbs = null;
+    private Float filterMinFat = null;
+    private Float filterMaxFat = null;
 
     // Filters for my menus
     private String mySearchKeyword = "";
+    private FitnessGoal myFilterGoal = null;
+    private Float myFilterMinCalories = null;
+    private Float myFilterMaxCalories = null;
+    private Float myFilterMinProtein = null;
+    private Float myFilterMaxProtein = null;
+    private Float myFilterMinCarbs = null;
+    private Float myFilterMaxCarbs = null;
+    private Float myFilterMinFat = null;
+    private Float myFilterMaxFat = null;
 
     public MenuViewModel(@NonNull Application application) {
         super(application);
@@ -152,6 +169,28 @@ public class MenuViewModel extends AndroidViewModel {
     }
 
     /**
+     * Load public menus with all filters
+     */
+    public void loadPublicMenusWithFilters(FitnessGoal goal, Float minCalories, Float maxCalories,
+                                          Float minProtein, Float maxProtein, Float minCarbs, Float maxCarbs,
+                                          Float minFat, Float maxFat) {
+        this.filterGoal = goal;
+        this.filterMinCalories = minCalories;
+        this.filterMaxCalories = maxCalories;
+        this.filterMinProtein = minProtein;
+        this.filterMaxProtein = maxProtein;
+        this.filterMinCarbs = minCarbs;
+        this.filterMaxCarbs = maxCarbs;
+        this.filterMinFat = minFat;
+        this.filterMaxFat = maxFat;
+
+        publicCurrentPage = 0;
+        publicHasMorePages = true;
+        allPublicMenus.clear();
+        loadPublicMenusInternal(false);
+    }
+
+    /**
      * Internal method to load public menus
      */
     private void loadPublicMenusInternal(boolean isRefreshing) {
@@ -182,6 +221,46 @@ public class MenuViewModel extends AndroidViewModel {
         if (filterGoal != null) {
             params.put("goal", filterGoal.name());
             Log.d(TAG, "Adding goal filter: " + filterGoal.name());
+        }
+
+        if (filterMinCalories != null) {
+            params.put("minCalories", String.valueOf(filterMinCalories));
+            Log.d(TAG, "Adding minCalories filter: " + filterMinCalories);
+        }
+
+        if (filterMaxCalories != null) {
+            params.put("maxCalories", String.valueOf(filterMaxCalories));
+            Log.d(TAG, "Adding maxCalories filter: " + filterMaxCalories);
+        }
+
+        if (filterMinProtein != null) {
+            params.put("minProtein", String.valueOf(filterMinProtein));
+            Log.d(TAG, "Adding minProtein filter: " + filterMinProtein);
+        }
+
+        if (filterMaxProtein != null) {
+            params.put("maxProtein", String.valueOf(filterMaxProtein));
+            Log.d(TAG, "Adding maxProtein filter: " + filterMaxProtein);
+        }
+
+        if (filterMinCarbs != null) {
+            params.put("minCarbs", String.valueOf(filterMinCarbs));
+            Log.d(TAG, "Adding minCarbs filter: " + filterMinCarbs);
+        }
+
+        if (filterMaxCarbs != null) {
+            params.put("maxCarbs", String.valueOf(filterMaxCarbs));
+            Log.d(TAG, "Adding maxCarbs filter: " + filterMaxCarbs);
+        }
+
+        if (filterMinFat != null) {
+            params.put("minFat", String.valueOf(filterMinFat));
+            Log.d(TAG, "Adding minFat filter: " + filterMinFat);
+        }
+
+        if (filterMaxFat != null) {
+            params.put("maxFat", String.valueOf(filterMaxFat));
+            Log.d(TAG, "Adding maxFat filter: " + filterMaxFat);
         }
 
         Log.d(TAG, "API params: " + params.toString());
@@ -294,7 +373,52 @@ public class MenuViewModel extends AndroidViewModel {
 
         errorLiveData.setValue(null);
 
-        repository.getMyMenus(myCurrentPage, PAGE_SIZE, mySearchKeyword, new Callback<ApiResponse<List<MenuResponse>>>() {
+        // Build query parameters
+        Map<String, String> params = new HashMap<>();
+        params.put("page", String.valueOf(myCurrentPage));
+        params.put("size", String.valueOf(PAGE_SIZE));
+
+        if (mySearchKeyword != null && !mySearchKeyword.trim().isEmpty()) {
+            params.put("search", mySearchKeyword);
+        }
+
+        if (myFilterGoal != null) {
+            params.put("goal", myFilterGoal.name());
+        }
+
+        if (myFilterMinCalories != null) {
+            params.put("minCalories", String.valueOf(myFilterMinCalories));
+        }
+
+        if (myFilterMaxCalories != null) {
+            params.put("maxCalories", String.valueOf(myFilterMaxCalories));
+        }
+
+        if (myFilterMinProtein != null) {
+            params.put("minProtein", String.valueOf(myFilterMinProtein));
+        }
+
+        if (myFilterMaxProtein != null) {
+            params.put("maxProtein", String.valueOf(myFilterMaxProtein));
+        }
+
+        if (myFilterMinCarbs != null) {
+            params.put("minCarbs", String.valueOf(myFilterMinCarbs));
+        }
+
+        if (myFilterMaxCarbs != null) {
+            params.put("maxCarbs", String.valueOf(myFilterMaxCarbs));
+        }
+
+        if (myFilterMinFat != null) {
+            params.put("minFat", String.valueOf(myFilterMinFat));
+        }
+
+        if (myFilterMaxFat != null) {
+            params.put("maxFat", String.valueOf(myFilterMaxFat));
+        }
+
+        repository.getMyMenus(params, new Callback<ApiResponse<List<MenuResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<MenuResponse>>> call,
                                  Response<ApiResponse<List<MenuResponse>>> response) {
@@ -392,6 +516,64 @@ public class MenuViewModel extends AndroidViewModel {
         myHasMorePages = true;
         allMyMenus.clear();
         loadMyMenus();
+    }
+
+    /**
+     * Filter my menus by fitness goal
+     */
+    public void filterMyMenusByGoal(FitnessGoal goal) {
+        this.myFilterGoal = goal;
+        myCurrentPage = 0;
+        myHasMorePages = true;
+        allMyMenus.clear();
+        loadMyMenus(false);
+    }
+
+    /**
+     * Load my menus with all filters
+     */
+    public void loadMyMenusWithFilters(FitnessGoal goal, Float minCalories, Float maxCalories,
+                                      Float minProtein, Float maxProtein, Float minCarbs, Float maxCarbs,
+                                      Float minFat, Float maxFat) {
+        this.myFilterGoal = goal;
+        this.myFilterMinCalories = minCalories;
+        this.myFilterMaxCalories = maxCalories;
+        this.myFilterMinProtein = minProtein;
+        this.myFilterMaxProtein = maxProtein;
+        this.myFilterMinCarbs = minCarbs;
+        this.myFilterMaxCarbs = maxCarbs;
+        this.myFilterMinFat = minFat;
+        this.myFilterMaxFat = maxFat;
+
+        myCurrentPage = 0;
+        myHasMorePages = true;
+        allMyMenus.clear();
+        loadMyMenus(false);
+    }
+
+    /**
+     * Apply filters locally to my menus (filters in memory after fetching)
+     * @deprecated This method is deprecated - use loadMyMenusWithFilters instead
+     */
+    @Deprecated
+    private void applyLocalFiltersToMyMenus() {
+        if (myFilterGoal == null) {
+            // No filter, show all
+            myMenusLiveData.postValue(new ArrayList<>(allMyMenus));
+        } else {
+            // Filter by goal
+            List<MenuResponse> filtered = new ArrayList<>();
+            for (MenuResponse menu : allMyMenus) {
+                if (menu.getFitnessGoal() == myFilterGoal) {
+                    filtered.add(menu);
+                }
+            }
+            myMenusLiveData.postValue(filtered);
+        }
+
+        // Update empty state
+        List<MenuResponse> currentList = myMenusLiveData.getValue();
+        emptyStateLiveData.postValue(currentList == null || currentList.isEmpty());
     }
 
     /**

@@ -82,8 +82,7 @@
             android:searchHintIcon="@color/white"
             android:queryHint="@string/community_search_hint"
             android:iconifiedByDefault="false"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="2dp"/>
+            android:layout_marginEnd="4dp"/>
 
         <ImageButton
             android:id="@+id/ib_search_criteria"
@@ -94,7 +93,6 @@
             android:background="@drawable/filled_black_text_field"
             android:scaleType="centerCrop"
             app:tint="@color/yellow"
-            android:layout_marginEnd="6dp"
             android:contentDescription="@string/community_filter_button"/>
 
     </LinearLayout>
@@ -117,60 +115,5 @@
             tools:listitem="@layout/item_post"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <!-- Empty State -->
-    <LinearLayout
-        android:id="@+id/ll_empty_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone"
-        android:padding="32dp"
-        tools:visibility="visible">
-
-        <!-- Empty Icon -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            app:cardBackgroundColor="@color/black_370"
-            app:cardCornerRadius="60dp"
-            app:cardElevation="0dp">
-
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_black_add_24"
-                android:alpha="0.6"
-                app:tint="@color/gray_450"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Empty Title -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/community_empty_my_posts"
-            android:textSize="22sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:layout_marginTop="24dp"/>
-
-        <!-- Empty Description -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/community_empty_create_first"
-            android:textSize="15sp"
-            android:textColor="@color/gray_450"
-            android:gravity="center"
-            android:layout_marginTop="8dp"/>
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

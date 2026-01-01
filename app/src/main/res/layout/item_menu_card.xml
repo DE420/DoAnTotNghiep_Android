@@ -17,30 +17,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Menu Image -->
-        <ImageView
-            android:id="@+id/iv_menu_image"
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:scaleType="centerCrop"
-            android:background="@color/gray_450"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_empty_nutrition_96"/>
-
         <!-- Menu Name -->
         <TextView
             android:id="@+id/tv_menu_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             android:maxLines="2"
             android:ellipsize="end"
-            app:layout_constraintTop_toBottomOf="@id/iv_menu_image"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Healthy Weight Loss Menu"/>

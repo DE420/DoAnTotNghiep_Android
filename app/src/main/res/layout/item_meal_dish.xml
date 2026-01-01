@@ -54,15 +54,6 @@
             android:textSize="13sp"
             tools:text="300 kcal"/>
 
-        <TextView
-            android:id="@+id/tv_dish_nutrition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="@color/gray_450"
-            android:textSize="11sp"
-            tools:text="P: 25g | C: 30g | F: 10g"/>
-
     </LinearLayout>
 
     <!-- View Recipe Button -->

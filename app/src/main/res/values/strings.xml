@@ -118,6 +118,7 @@
     <string name="save_menu">Save Menu</string>
     <string name="search_menus">Search menus...</string>
     <string name="search_dishes">Search dishes...</string>
+    <string name="search_dish">Search dish</string>
     <string name="no_menus_found">No menus found</string>
     <string name="no_dishes_found">No dishes found</string>
     <string name="no_dishes_added">No dishes added yet. Tap \"Add Dish\" to add one.</string>
@@ -284,5 +285,15 @@
     <string name="community_likes_count">%d lượt thích</string>
     <string name="community_one_like">1 lượt thích</string>
     <string name="community_one_comment">1 bình luận</string>
+
+    <!-- Menu Filter Dialog -->
+    <string name="menu_filter_title">Bộ lọc thực đơn</string>
+    <string name="menu_nutrition_ranges">Giới hạn dinh dưỡng</string>
+    <string name="menu_min">Tối thiểu</string>
+    <string name="menu_max">Tối đa</string>
+    <string name="menu_clear_filters">Xóa bộ lọc</string>
+    <string name="menu_apply_filter">Áp dụng</string>
+    <string name="menu_filter_button">Bộ lọc</string>
+    <string name="close">Đóng</string>
 
 </resources>
