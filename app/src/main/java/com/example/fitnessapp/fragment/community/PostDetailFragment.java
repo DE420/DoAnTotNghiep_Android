@@ -104,7 +104,8 @@ public class PostDetailFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         selectedEditCommentImageUri = result.getData().getData();
                         // Call the callback to update the image preview in the dialog
-                        if (editCommentImageUpdateCallback != null) {
+                        // Only if fragment is still added and callback is set
+                        if (isAdded() && editCommentImageUpdateCallback != null) {
                             editCommentImageUpdateCallback.run();
                         }
                     }
@@ -713,6 +714,11 @@ public class PostDetailFragment extends Fragment {
 
         // Function to update image preview
         Runnable updateImagePreview = () -> {
+            // Safety check - ensure fragment is still added and views are valid
+            if (!isAdded() || getContext() == null) {
+                return;
+            }
+
             if (selectedEditCommentImageUri != null) {
                 // Show new selected image
                 tvImageSectionTitle.setVisibility(View.VISIBLE);
@@ -772,7 +778,11 @@ public class PostDetailFragment extends Fragment {
         });
 
         // Cancel button
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnCancel.setOnClickListener(v -> {
+            // Clear callback when dialog is dismissed
+            editCommentImageUpdateCallback = null;
+            dialog.dismiss();
+        });
 
         // Save button
         btnSave.setOnClickListener(v -> {
@@ -784,7 +794,15 @@ public class PostDetailFragment extends Fragment {
 
             // Update comment
             updateComment(position, comment.getId(), newContent);
+
+            // Clear callback when dialog is dismissed
+            editCommentImageUpdateCallback = null;
             dialog.dismiss();
+        });
+
+        // Clear callback when dialog is dismissed by other means (back button, outside tap)
+        dialog.setOnDismissListener(d -> {
+            editCommentImageUpdateCallback = null;
         });
 
         // Show dialog
@@ -1068,6 +1086,9 @@ public class PostDetailFragment extends Fragment {
 
         // Show header and bottom navigation when leaving this fragment
         showHeaderAndBottomNavigation();
+
+        // Clear edit comment callback to prevent crashes
+        editCommentImageUpdateCallback = null;
 
         if (player != null) {
             player.stop();
