@@ -131,7 +131,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_edit_24"
+                    android:src="@drawable/ic_edit_white_24"
                     app:tint="@color/yellow"
                     android:visibility="gone"
                     android:contentDescription="@string/community_edit_comment"
