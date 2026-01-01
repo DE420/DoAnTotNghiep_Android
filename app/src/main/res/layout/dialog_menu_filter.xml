@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="false"
+    android:scrollbars="vertical"
+    android:fadeScrollbars="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:background="@color/black_370">
+
+        <!-- Dialog Title with Close Button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/menu_filter_title"
+                android:textSize="22sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+            <ImageButton
+                android:id="@+id/ib_close"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_close_24"
+                app:tint="@color/white"
+                android:contentDescription="@string/close"/>
+
+        </LinearLayout>
+
+        <!-- Fitness Goal Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fitness_goal"
+            android:textSize="16sp"
+            android:textColor="@color/yellow"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <Spinner
+            android:id="@+id/sp_fitness_goal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/filled_black_text_field"
+            android:popupBackground="@color/black_370"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Nutrition Range Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_nutrition_ranges"
+            android:textSize="16sp"
+            android:textColor="@color/yellow"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Calories Range -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/calories"
+            android:textSize="14sp"
+            android:textColor="@color/white_200"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/menu_min"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_min_calories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="@string/menu_max"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_max_calories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Protein Range -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/protein"
+            android:textSize="14sp"
+            android:textColor="@color/white_200"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/menu_min"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_min_protein"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="@string/menu_max"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_max_protein"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Carbs Range -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/carbs"
+            android:textSize="14sp"
+            android:textColor="@color/white_200"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/menu_min"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_min_carbs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="@string/menu_max"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_max_carbs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Fat Range -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fat"
+            android:textSize="14sp"
+            android:textColor="@color/white_200"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/menu_min"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_min_fat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="@string/menu_max"
+                app:boxBackgroundColor="@color/black_450"
+                app:hintTextColor="@color/white_200"
+                app:boxStrokeColor="@color/yellow">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_max_fat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:text="@string/menu_clear_filters"
+                android:textColor="@color/gray_450"
+                android:textSize="15sp"
+                android:textAllCaps="false"
+                app:backgroundTint="@android:color/transparent"
+                app:strokeColor="@color/gray_450"
+                app:strokeWidth="1dp"
+                app:cornerRadius="8dp"
+                android:layout_marginEnd="12dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_apply_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:text="@string/menu_apply_filter"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/yellow"
+                app:cornerRadius="8dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

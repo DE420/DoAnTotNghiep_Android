@@ -194,16 +194,6 @@ public class MenuDetailFragment extends Fragment {
             binding.tvMenuDescription.setVisibility(View.GONE);
         }
 
-        // Load menu image
-        if (menu.getImage() != null && !menu.getImage().isEmpty()) {
-            Glide.with(this)
-                    .load(menu.getImage())
-                    .placeholder(R.drawable.ic_empty_nutrition_96)
-                    .error(R.drawable.ic_empty_nutrition_96)
-                    .centerCrop()
-                    .into(binding.ivMenuHeaderImage);
-        }
-
         // Set creator info (only show for menus you don't own)
         boolean isOwner = menu.getIsOwner() != null && menu.getIsOwner();
         Log.d(TAG, "Creator Info Check - isOwner: " + isOwner);

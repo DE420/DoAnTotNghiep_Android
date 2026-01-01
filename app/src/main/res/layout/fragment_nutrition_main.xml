@@ -26,7 +26,20 @@
             app:titleTextColor="@color/white"
             app:navigationIcon="@drawable/ic_arrow_back_24"
             app:navigationIconTint="@color/white"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+
+            <!-- Search Dish Button -->
+            <ImageButton
+                android:id="@+id/ib_search_dish"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_white_dish_24"
+                android:contentDescription="@string/search_dish"/>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <!-- TabLayout -->
         <com.google.android.material.tabs.TabLayout
