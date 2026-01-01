@@ -102,7 +102,7 @@
                             android:padding="6dp"
                             android:src="@drawable/ic_edit_white_24"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:tint="@color/yellow"
+                            app:tint="@color/yellow"
                             android:visibility="gone"
                             android:contentDescription="Edit post"
                             tools:visibility="visible"/>
@@ -114,7 +114,7 @@
                             android:padding="6dp"
                             android:src="@drawable/ic_white_close_24"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:tint="@color/red_400"
+                            app:tint="@color/red_400"
                             android:visibility="gone"
                             android:contentDescription="Delete post"
                             tools:visibility="visible"/>
