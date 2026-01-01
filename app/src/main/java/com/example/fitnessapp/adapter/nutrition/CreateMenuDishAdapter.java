@@ -133,8 +133,7 @@ public class CreateMenuDishAdapter extends RecyclerView.Adapter<CreateMenuDishAd
             double totalCarbs = dish.getCarbs() != null ? dish.getCarbs() * item.getQuantity() : 0;
             double totalFat = dish.getFat() != null ? dish.getFat() * item.getQuantity() : 0;
 
-            String nutritionText = String.format(Locale.getDefault(),
-                    "P: %.0fg | C: %.0fg | F: %.0fg",
+            String nutritionText = context.getString(R.string.format_macros,
                     totalProtein, totalCarbs, totalFat);
             tvNutrition.setText(nutritionText);
 
@@ -181,12 +180,12 @@ public class CreateMenuDishAdapter extends RecyclerView.Adapter<CreateMenuDishAd
             btnRemove.setOnClickListener(v -> {
                 // Show confirmation dialog before removing
                 new android.app.AlertDialog.Builder(context)
-                        .setTitle("Remove Dish")
-                        .setMessage("Are you sure you want to remove \"" + item.getDish().getName() + "\" from this meal?")
-                        .setPositiveButton("Remove", (dialog, which) -> {
+                        .setTitle(R.string.dialog_remove_dish_title)
+                        .setMessage(context.getString(R.string.dialog_remove_dish_message, item.getDish().getName()))
+                        .setPositiveButton(R.string.dialog_remove_button, (dialog, which) -> {
                             removeDish(position);
                         })
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(R.string.dialog_cancel_button, null)
                         .show();
             });
         }

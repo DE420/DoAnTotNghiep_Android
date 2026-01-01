@@ -151,6 +151,19 @@ public class PublicMenusFragment extends Fragment {
             searchText.setHintTextColor(getResources().getColor(R.color.gray_450, null));
         }
 
+        // Set SearchView icons to white
+        int searchIconId = getResources().getIdentifier("android:id/search_mag_icon", null, null);
+        android.widget.ImageView searchIcon = binding.svSearch.findViewById(searchIconId);
+        if (searchIcon != null) {
+            searchIcon.setColorFilter(getResources().getColor(R.color.white, null));
+        }
+
+        int closeIconId = getResources().getIdentifier("android:id/search_close_btn", null, null);
+        android.widget.ImageView closeIcon = binding.svSearch.findViewById(closeIconId);
+        if (closeIcon != null) {
+            closeIcon.setColorFilter(getResources().getColor(R.color.white, null));
+        }
+
         binding.svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
