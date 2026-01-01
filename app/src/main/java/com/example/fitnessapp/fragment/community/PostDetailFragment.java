@@ -67,6 +67,7 @@ public class PostDetailFragment extends Fragment {
     private ActivityResultLauncher<Intent> editCommentImagePickerLauncher;
     private Uri selectedEditCommentImageUri;
     private boolean shouldRemoveEditCommentImage = false;
+    private Runnable editCommentImageUpdateCallback;
 
     public static PostDetailFragment newInstance(long postId) {
         PostDetailFragment fragment = new PostDetailFragment();
@@ -102,6 +103,10 @@ public class PostDetailFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         selectedEditCommentImageUri = result.getData().getData();
+                        // Call the callback to update the image preview in the dialog
+                        if (editCommentImageUpdateCallback != null) {
+                            editCommentImageUpdateCallback.run();
+                        }
                     }
                 }
         );
@@ -656,12 +661,12 @@ public class PostDetailFragment extends Fragment {
 
     private void showDeleteCommentConfirmation(int position) {
         new android.app.AlertDialog.Builder(requireContext())
-                .setTitle("Delete Comment")
-                .setMessage("Are you sure you want to delete this comment?")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setTitle(R.string.community_delete_comment_title)
+                .setMessage(R.string.community_confirm_delete_comment)
+                .setPositiveButton(R.string.community_delete, (dialog, which) -> {
                     deleteComment(position);
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.community_cancel, null)
                 .show();
     }
 
@@ -673,6 +678,14 @@ public class PostDetailFragment extends Fragment {
         android.app.Dialog dialog = new android.app.Dialog(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_comment, null);
         dialog.setContentView(dialogView);
+
+        // Make dialog wider
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                (int) (getResources().getDisplayMetrics().widthPixels * 0.95),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+        }
 
         // Get dialog views
         com.google.android.material.textfield.TextInputEditText etCommentContent =
@@ -697,23 +710,44 @@ public class PostDetailFragment extends Fragment {
         selectedEditCommentImageUri = null;
         shouldRemoveEditCommentImage = false;
 
-        // Show current image if exists
-        if (comment.getImageUrl() != null && !comment.getImageUrl().isEmpty()) {
-            tvImageSectionTitle.setVisibility(View.VISIBLE);
-            cvCurrentImage.setVisibility(View.VISIBLE);
-            llImageActions.setVisibility(View.VISIBLE);
-            btnAddImage.setVisibility(View.GONE);
+        // Function to update image preview
+        Runnable updateImagePreview = () -> {
+            if (selectedEditCommentImageUri != null) {
+                // Show new selected image
+                tvImageSectionTitle.setVisibility(View.VISIBLE);
+                cvCurrentImage.setVisibility(View.VISIBLE);
+                llImageActions.setVisibility(View.VISIBLE);
+                btnAddImage.setVisibility(View.GONE);
 
-            Glide.with(this)
-                    .load(comment.getImageUrl())
-                    .placeholder(R.color.gray_450)
-                    .into(ivCurrentImage);
-        } else {
-            tvImageSectionTitle.setVisibility(View.GONE);
-            cvCurrentImage.setVisibility(View.GONE);
-            llImageActions.setVisibility(View.GONE);
-            btnAddImage.setVisibility(View.VISIBLE);
-        }
+                Glide.with(this)
+                        .load(selectedEditCommentImageUri)
+                        .placeholder(R.color.gray_450)
+                        .into(ivCurrentImage);
+            } else if (!shouldRemoveEditCommentImage && comment.getImageUrl() != null && !comment.getImageUrl().isEmpty()) {
+                // Show existing image from server
+                tvImageSectionTitle.setVisibility(View.VISIBLE);
+                cvCurrentImage.setVisibility(View.VISIBLE);
+                llImageActions.setVisibility(View.VISIBLE);
+                btnAddImage.setVisibility(View.GONE);
+
+                Glide.with(this)
+                        .load(comment.getImageUrl())
+                        .placeholder(R.color.gray_450)
+                        .into(ivCurrentImage);
+            } else {
+                // No image
+                tvImageSectionTitle.setVisibility(View.GONE);
+                cvCurrentImage.setVisibility(View.GONE);
+                llImageActions.setVisibility(View.GONE);
+                btnAddImage.setVisibility(View.VISIBLE);
+            }
+        };
+
+        // Set callback for image picker result
+        editCommentImageUpdateCallback = updateImagePreview;
+
+        // Initial image display
+        updateImagePreview.run();
 
         // Change image button - pick new image
         btnChangeImage.setOnClickListener(v -> {
@@ -726,10 +760,7 @@ public class PostDetailFragment extends Fragment {
         btnRemoveImage.setOnClickListener(v -> {
             shouldRemoveEditCommentImage = true;
             selectedEditCommentImageUri = null;
-            cvCurrentImage.setVisibility(View.GONE);
-            llImageActions.setVisibility(View.GONE);
-            btnAddImage.setVisibility(View.VISIBLE);
-            tvImageSectionTitle.setVisibility(View.GONE);
+            updateImagePreview.run();
         });
 
         // Add image button - pick new image
@@ -881,12 +912,12 @@ public class PostDetailFragment extends Fragment {
 
     private void showDeleteConfirmation() {
         new android.app.AlertDialog.Builder(requireContext())
-                .setTitle("Delete Post")
-                .setMessage("Are you sure you want to delete this post?")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setTitle(R.string.community_delete_post_title)
+                .setMessage(R.string.community_confirm_delete_post)
+                .setPositiveButton(R.string.community_delete, (dialog, which) -> {
                     deletePost();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.community_cancel, null)
                 .show();
     }
 
