@@ -98,4 +98,23 @@ public class NotificationRepository {
             throw e;
         }
     }
+
+    /**
+     * Mark all notifications as read (synchronous - call from background thread)
+     */
+    public boolean markAllAsRead(Context context) throws Exception {
+        try {
+            NotificationApi api = RetrofitClient.getNotificationApi(context);
+            Response<ApiResponse<Boolean>> response = api.markAllAsRead().execute();
+
+            if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                return true;
+            } else {
+                throw new Exception("Failed to mark all notifications as read: " + response.message());
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error marking all notifications as read", e);
+            throw e;
+        }
+    }
 }

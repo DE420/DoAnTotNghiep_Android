@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,10 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.fitnessapp.MainActivity;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.adapter.NotificationAdapter;
 import com.example.fitnessapp.model.response.NotificationResponse;
 import com.example.fitnessapp.viewmodel.NotificationViewModel;
+import com.google.android.material.appbar.AppBarLayout;
 
 public class NotificationFragment extends Fragment {
 
@@ -37,6 +40,8 @@ public class NotificationFragment extends Fragment {
     private LinearLayout errorState;
     private TextView errorMessage;
     private Button retryButton;
+    private ImageButton backButton;
+    private ImageButton markAllReadButton;
 
     public static NotificationFragment newInstance() {
         return new NotificationFragment();
@@ -59,14 +64,36 @@ public class NotificationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Hide MainActivity header
+        hideMainActivityHeader();
+
         initViews(view);
         setupRecyclerView();
         setupSwipeRefresh();
+        setupButtons();
         observeViewModel();
 
         // Load notifications on start
         viewModel.loadNotifications();
         viewModel.refreshUnreadCount();
+    }
+
+    private void hideMainActivityHeader() {
+        if (getActivity() instanceof MainActivity) {
+            AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void showMainActivityHeader() {
+        if (getActivity() instanceof MainActivity) {
+            AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void initViews(View view) {
@@ -77,10 +104,27 @@ public class NotificationFragment extends Fragment {
         errorState = view.findViewById(R.id.ll_error_state);
         errorMessage = view.findViewById(R.id.tv_error_message);
         retryButton = view.findViewById(R.id.btn_retry);
+        backButton = view.findViewById(R.id.ib_back);
+        markAllReadButton = view.findViewById(R.id.ib_mark_all_read);
 
         retryButton.setOnClickListener(v -> {
             errorState.setVisibility(View.GONE);
             viewModel.loadNotifications();
+        });
+    }
+
+    private void setupButtons() {
+        // Back button
+        backButton.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
+        // Mark all read button
+        markAllReadButton.setOnClickListener(v -> {
+            viewModel.markAllAsRead();
+            Toast.makeText(getContext(), "Đã đánh dấu tất cả đã đọc", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -183,5 +227,12 @@ public class NotificationFragment extends Fragment {
         super.onResume();
         // Refresh unread count when returning to this screen
         viewModel.refreshUnreadCount();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Show MainActivity header when leaving this fragment
+        showMainActivityHeader();
     }
 }
