@@ -34,7 +34,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_notification"
-                android:tint="@color/white"
+                app:tint="@color/white"
                 android:alpha="0.6"
                 android:contentDescription="@string/notification_no_notifications_content" />
 
@@ -80,7 +80,7 @@
             android:layout_height="50dp"
             android:padding="12dp"
             android:src="@drawable/ic_arrow_back"
-            android:background="@drawable/bg_transparent_rectangle_icon_no_corner"
+            android:background="@drawable/bg_transparent_circle_icon"
             android:scaleType="centerCrop"
             app:tint="@color/white"
             android:contentDescription="@string/notification_back_button"
@@ -106,7 +106,7 @@
             android:layout_height="50dp"
             android:padding="12dp"
             android:src="@drawable/ic_mark_all_read"
-            android:background="@drawable/bg_transparent_rectangle_icon_no_corner"
+            android:background="@drawable/bg_transparent_circle_icon"
             android:scaleType="centerCrop"
             app:tint="@color/white"
             android:contentDescription="@string/notification_mark_all_read"/>

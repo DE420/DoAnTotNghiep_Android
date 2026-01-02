@@ -210,6 +210,26 @@ public class MainActivity extends AppCompatActivity {
             binding.appBarLayout.setVisibility(View.VISIBLE);
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
         }
+
+        // Handle back from NotificationFragment
+        if (current instanceof NotificationFragment) {
+            // Restore the title based on selected bottom nav item
+            int selectedItemId = preSelectedItemIditem;
+            String title = getString(R.string.app_name);
+
+            if (selectedItemId == R.id.nav_home) {
+                title = getString(R.string.nav_title_home);
+            } else if (selectedItemId == R.id.nav_plan) {
+                title = getString(R.string.nav_title_plan);
+            } else if (selectedItemId == R.id.nav_community) {
+                title = getString(R.string.nav_title_community);
+            } else if (selectedItemId == R.id.nav_other) {
+                title = getString(R.string.nav_title_other);
+            }
+
+            binding.toolbar.setTitle(title);
+        }
+
         super.onBackPressed();
 //        if (fm.getBackStackEntryCount() > 0) {
 //            fm.popBackStack();
