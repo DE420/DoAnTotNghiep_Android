@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,11 +17,9 @@ import com.example.fitnessapp.R;
 import com.example.fitnessapp.databinding.ItemPostBinding;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.community.PostResponse;
-import com.example.fitnessapp.network.ApiService;
-import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.repository.PostRepository;
-import com.example.fitnessapp.utils.CountFormatUtils;
-import com.example.fitnessapp.utils.TimeUtils;
+import com.example.fitnessapp.util.CountFormatUtil;
+import com.example.fitnessapp.util.TimeUtil;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.audio.AudioAttributes;
@@ -307,7 +304,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     private void updateLikeUI(ItemPostBinding binding, PostResponse item) {
-        binding.tvLikeCount.setText(CountFormatUtils.formatCount(item.getLikeCount()));
+        binding.tvLikeCount.setText(CountFormatUtil.formatCount(item.getLikeCount()));
 
         if (item.getLiked() != null && item.getLiked()) {
             Glide.with(binding.imgLike)
@@ -333,8 +330,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         binding.tvUserFullName.setText(item.getUserName() != null ? item.getUserName() : "Unknown User");
 
-        binding.tvPostTime.setText(TimeUtils.getTime(context, item.getCreateAt()));
-        binding.tvCommentCount.setText(CountFormatUtils.formatCount(item.getCommentCount()));
+        binding.tvPostTime.setText(TimeUtil.getTime(context, item.getCreateAt()));
+        binding.tvCommentCount.setText(CountFormatUtil.formatCount(item.getCommentCount()));
         binding.tvContent.setText(item.getContent());
 
         // Update like UI

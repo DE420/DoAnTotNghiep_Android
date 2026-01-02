@@ -34,7 +34,7 @@ import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.session.SessionManager;
-import com.example.fitnessapp.utils.StringUtil;
+import com.example.fitnessapp.util.StringUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;

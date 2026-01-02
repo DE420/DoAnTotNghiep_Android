@@ -1,6 +1,6 @@
-package com.example.fitnessapp.utils;
+package com.example.fitnessapp.util;
 
-public class CountFormatUtils {
+public class CountFormatUtil {
 
     public static String formatCount(Long count) {
 

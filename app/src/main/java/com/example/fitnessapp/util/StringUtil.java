@@ -1,4 +1,4 @@
-package com.example.fitnessapp.utils;
+package com.example.fitnessapp.util;
 
 import java.util.regex.Pattern;
 

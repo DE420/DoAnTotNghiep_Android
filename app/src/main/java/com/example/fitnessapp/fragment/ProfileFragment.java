@@ -1,11 +1,8 @@
 package com.example.fitnessapp.fragment;
 
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,19 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.example.fitnessapp.LoginActivity;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.constants.Constants;
-import com.example.fitnessapp.enums.ActivityLevel;
-import com.example.fitnessapp.enums.FitnessGoal;
-import com.example.fitnessapp.model.request.RefreshTokenRequest;
 import com.example.fitnessapp.model.request.UpdateProfileRequest;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
 import com.example.fitnessapp.session.SessionManager;
@@ -34,7 +26,7 @@ import com.example.fitnessapp.model.request.LogoutRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
-import com.example.fitnessapp.utils.DateUtil;
+import com.example.fitnessapp.util.DateUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
