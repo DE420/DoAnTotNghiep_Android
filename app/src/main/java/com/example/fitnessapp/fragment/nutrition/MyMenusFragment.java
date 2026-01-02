@@ -183,11 +183,58 @@ public class MyMenusFragment extends Fragment {
     }
 
     private void setupFilters() {
-        // Hide chip-based filters since we're using dialog now
-        binding.hsvFilters.setVisibility(View.GONE);
+        // Show chip-based filters for fitness goals
+        binding.hsvFilters.setVisibility(View.VISIBLE);
 
-        // Setup filter button click listener
+        // Setup chip click listeners
+        setupFitnessGoalChips();
+
+        // Setup filter button click listener for nutrition ranges
         binding.ibFilter.setOnClickListener(v -> showFilterDialog());
+    }
+
+    private void setupFitnessGoalChips() {
+        // All filter
+        binding.chipAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                filterByFitnessGoal(null);
+            }
+        });
+
+        // Lose Weight
+        binding.chipLoseWeight.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                filterByFitnessGoal(FitnessGoal.LOSE_WEIGHT);
+            }
+        });
+
+        // Gain Weight
+        binding.chipGainWeight.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                filterByFitnessGoal(FitnessGoal.GAIN_WEIGHT);
+            }
+        });
+
+        // Muscle Gain
+        binding.chipMuscleGain.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                filterByFitnessGoal(FitnessGoal.MUSCLE_GAIN);
+            }
+        });
+
+        // Shape Body
+        binding.chipShapeBody.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                filterByFitnessGoal(FitnessGoal.SHAPE_BODY);
+            }
+        });
+    }
+
+    private void filterByFitnessGoal(FitnessGoal goal) {
+        currentFilterGoal = goal;
+        // Reapply all filters with the new fitness goal
+        applyFilters(goal, currentMinCalories, currentMaxCalories, currentMinProtein,
+                    currentMaxProtein, currentMinCarbs, currentMaxCarbs, currentMinFat, currentMaxFat);
     }
 
     private void setupSwipeRefresh() {
@@ -255,7 +302,6 @@ public class MyMenusFragment extends Fragment {
         dialog.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         // Get filter views
-        Spinner spFitnessGoal = dialogView.findViewById(R.id.sp_fitness_goal);
         TextInputEditText etMinCalories = dialogView.findViewById(R.id.et_min_calories);
         TextInputEditText etMaxCalories = dialogView.findViewById(R.id.et_max_calories);
         TextInputEditText etMinProtein = dialogView.findViewById(R.id.et_min_protein);
@@ -268,35 +314,7 @@ public class MyMenusFragment extends Fragment {
         MaterialButton btnClear = dialogView.findViewById(R.id.btn_clear_filter);
         MaterialButton btnApply = dialogView.findViewById(R.id.btn_apply_filter);
 
-        // Setup fitness goal spinner with FitnessGoalAdapter
-        List<FitnessGoal> goalsList = Arrays.asList(FitnessGoal.values());
-        FitnessGoalAdapter goalAdapter = new FitnessGoalAdapter(requireContext(), goalsList);
-        spFitnessGoal.setAdapter(goalAdapter);
-
-        // Restore previous filter selections
-        if (currentFilterGoal != null) {
-            for (int i = 0; i < FitnessGoal.values().length; i++) {
-                if (FitnessGoal.values()[i] == currentFilterGoal) {
-                    spFitnessGoal.setSelection(i + 1);
-                    break;
-                }
-            }
-        } else {
-            spFitnessGoal.setSelection(0);
-        }
-
-        // Set selection listener for spinner
-        spFitnessGoal.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                goalAdapter.setSelectedPosition(position);
-            }
-
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {
-            }
-        });
-
+        // Restore previous filter selections for nutrition ranges
         if (currentMinCalories != null) {
             etMinCalories.setText(String.valueOf(currentMinCalories));
         }
@@ -327,7 +345,6 @@ public class MyMenusFragment extends Fragment {
 
         // Clear filter button
         btnClear.setOnClickListener(v -> {
-            spFitnessGoal.setSelection(0);
             etMinCalories.setText("");
             etMaxCalories.setText("");
             etMinProtein.setText("");
@@ -337,21 +354,14 @@ public class MyMenusFragment extends Fragment {
             etMinFat.setText("");
             etMaxFat.setText("");
 
-            // Apply default filter (no filters)
-            applyFilters(null, null, null, null, null, null, null, null, null);
+            // Apply default filter (keeping current fitness goal, clearing nutrition ranges)
+            applyFilters(currentFilterGoal, null, null, null, null, null, null, null, null);
             dialog.dismiss();
             Toast.makeText(requireContext(), R.string.menu_clear_filters, Toast.LENGTH_SHORT).show();
         });
 
         // Apply filter button
         btnApply.setOnClickListener(v -> {
-            // Get selected fitness goal
-            FitnessGoal selectedGoal = null;
-            int goalPosition = spFitnessGoal.getSelectedItemPosition();
-            if (goalPosition > 0) {
-                selectedGoal = FitnessGoal.values()[goalPosition - 1];
-            }
-
             // Parse nutrition values
             Float minCal = parseFloatFromEditText(etMinCalories);
             Float maxCal = parseFloatFromEditText(etMaxCalories);
@@ -362,8 +372,8 @@ public class MyMenusFragment extends Fragment {
             Float minFatVal = parseFloatFromEditText(etMinFat);
             Float maxFatVal = parseFloatFromEditText(etMaxFat);
 
-            // Apply filters
-            applyFilters(selectedGoal, minCal, maxCal, minProt, maxProt, minCarb, maxCarb, minFatVal, maxFatVal);
+            // Apply filters (keep current fitness goal from chips)
+            applyFilters(currentFilterGoal, minCal, maxCal, minProt, maxProt, minCarb, maxCarb, minFatVal, maxFatVal);
             dialog.dismiss();
             Toast.makeText(requireContext(), R.string.menu_apply_filter, Toast.LENGTH_SHORT).show();
         });
