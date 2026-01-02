@@ -100,7 +100,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
 
         private void setNotificationIcon(String type) {
-            // Set icon based on notification type
+            // Set icon based on notification type using existing app icons
             if (type == null) {
                 iconImageView.setImageResource(R.drawable.ic_notification);
                 return;
@@ -109,21 +109,25 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             switch (type.toUpperCase()) {
                 case "COMMENT":
                 case "REPLY":
-                    iconImageView.setImageResource(R.drawable.ic_notification_comment);
+                    // Use existing comment icon from community
+                    iconImageView.setImageResource(R.drawable.ic_comment_24);
                     break;
                 case "LIKE":
                 case "REACTION":
-                    iconImageView.setImageResource(R.drawable.ic_notification_like);
+                    // Use existing heart/like icon from community
+                    iconImageView.setImageResource(R.drawable.ic_heart_filled_24);
                     break;
                 case "FOLLOW":
                 case "FOLLOWER":
                 case "USER":
-                    iconImageView.setImageResource(R.drawable.ic_notification_user);
+                    // Use existing community icon for user-related notifications
+                    iconImageView.setImageResource(R.drawable.ic_community);
                     break;
                 case "SYSTEM":
                 case "ADMIN":
                 case "ANNOUNCEMENT":
-                    iconImageView.setImageResource(R.drawable.ic_notification_system);
+                    // Use existing notification icon for system messages
+                    iconImageView.setImageResource(R.drawable.ic_notification);
                     break;
                 default:
                     iconImageView.setImageResource(R.drawable.ic_notification);
