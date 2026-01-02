@@ -17,7 +17,14 @@ public class RetrofitClient {
 
     // ip address real device
     private static final String BASE_URL = "http://192.168.1.15:8080/api/";
-
+    private static Retrofit retrofitPlain;
+    private static Retrofit retrofitAuth;
+    private static AuthApi authApi;
+    private static PostApi postApi;
+    private static CommentApi commentApi;
+    private static UserApi userApi;
+    private static NutritionApi nutritionApi;
+    private static NotificationApi notificationApi;
 
     private static Retrofit retrofit = null;
 
@@ -31,8 +38,6 @@ public class RetrofitClient {
         return retrofit.create(ApiService.class);
     }
 
-    private static Retrofit retrofitPlain;
-
     private static Retrofit getPlainRetrofit() {
         if (retrofitPlain == null) {
             retrofitPlain = new Retrofit.Builder()
@@ -42,9 +47,6 @@ public class RetrofitClient {
         }
         return retrofitPlain;
     }
-
-
-    private static Retrofit retrofitAuth;
 
     private static Retrofit getAuthRetrofit(Context ctx) {
         if (retrofitAuth == null) {
@@ -67,29 +69,50 @@ public class RetrofitClient {
         return retrofitAuth;
     }
 
-
     public static AuthApi getAuthApi() {
-        return getPlainRetrofit().create(AuthApi.class);
+        if (authApi == null) {
+            authApi = getPlainRetrofit().create(AuthApi.class);
+        }
+        return authApi;
     }
 
     public static PostApi getPostApi(Context ctx) {
-        return getAuthRetrofit(ctx.getApplicationContext())
-                .create(PostApi.class);
+        if (postApi == null) {
+            postApi = getAuthRetrofit(ctx.getApplicationContext())
+                    .create(PostApi.class);
+        }
+        return postApi;
     }
 
     public static CommentApi getCommentApi(Context ctx) {
-        return getAuthRetrofit(ctx.getApplicationContext())
-                .create(CommentApi.class);
+        if (commentApi == null) {
+            commentApi = getAuthRetrofit(ctx.getApplicationContext())
+                    .create(CommentApi.class);
+        }
+        return commentApi;
     }
 
     public static UserApi getUserApi(Context ctx) {
-        return getAuthRetrofit(ctx.getApplicationContext())
-                .create(UserApi.class);
+        if (userApi == null) {
+            userApi = getAuthRetrofit(ctx.getApplicationContext())
+                    .create(UserApi.class);
+        }
+        return userApi;
     }
 
     public static NutritionApi getNutritionApi(Context ctx) {
-        return getAuthRetrofit(ctx.getApplicationContext())
-                .create(NutritionApi.class);
+        if (nutritionApi == null ) {
+            nutritionApi = getAuthRetrofit(ctx.getApplicationContext())
+                    .create(NutritionApi.class);
+        }
+        return nutritionApi;
+    }
+
+    public static NotificationApi getNotificationApi(Context context) {
+        if (notificationApi == null) {
+            notificationApi = getAuthRetrofit(context).create(NotificationApi.class);
+        }
+        return notificationApi;
     }
 
 }
