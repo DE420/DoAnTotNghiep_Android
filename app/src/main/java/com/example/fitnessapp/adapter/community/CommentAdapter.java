@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.databinding.ItemCommentBinding;
 import com.example.fitnessapp.model.response.community.CommentResponse;
-import com.example.fitnessapp.utils.TimeUtils;
+import com.example.fitnessapp.util.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +94,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         // Set comment date
         binding.tvCommentDate.setText(comment.getCreatedAt() != null ?
-                TimeUtils.getTime(context, comment.getCreatedAt()) : "");
+                TimeUtil.getTime(context, comment.getCreatedAt()) : "");
 
         // Set comment content
         binding.tvCommentContent.setText(comment.getContent());

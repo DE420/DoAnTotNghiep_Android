@@ -1,4 +1,4 @@
-package com.example.fitnessapp.utils;
+package com.example.fitnessapp.util;
 
 import android.content.Context;
 
@@ -6,8 +6,6 @@ import com.example.fitnessapp.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 

@@ -29,6 +29,7 @@ import com.example.fitnessapp.model.response.community.PostResponse;
 import com.example.fitnessapp.repository.CommentRepository;
 import com.example.fitnessapp.repository.PostRepository;
 import com.example.fitnessapp.session.SessionManager;
+import com.example.fitnessapp.util.TimeUtil;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
@@ -311,7 +312,7 @@ public class PostDetailFragment extends Fragment {
         }
 
         // Post date - Use TimeUtils for localized time
-        binding.tvPostDate.setText(com.example.fitnessapp.utils.TimeUtils.getTime(
+        binding.tvPostDate.setText(TimeUtil.getTime(
                 requireContext(), post.getCreateAt()));
 
         // Content
