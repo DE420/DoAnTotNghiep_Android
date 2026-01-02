@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        fakeLogin();
+//        fakeLogin();
     }
 
     private void fakeLogin() {
