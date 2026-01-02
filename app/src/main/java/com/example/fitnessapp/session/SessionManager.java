@@ -37,6 +37,9 @@ public class SessionManager {
     private static final String KEY_USER_HEIGHT = "USER_HEIGHT";
     private static final String KEY_USER_DOB = "USER_DOB";
 
+    // FCM Token Key
+    private static final String KEY_FCM_TOKEN = "fcm_token";
+
     private static SessionManager instance;
     private final SharedPreferences sharedPreferences;
 
@@ -232,6 +235,33 @@ public class SessionManager {
         editor.remove(KEY_USER_WEIGHT);
         editor.remove(KEY_USER_HEIGHT);
         editor.remove(KEY_USER_DOB);
+        editor.apply();
+    }
+
+    /**
+     * Save FCM token
+     * @param token FCM device token
+     */
+    public void saveFcmToken(String token) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_FCM_TOKEN, token);
+        editor.apply();
+    }
+
+    /**
+     * Get FCM token
+     * @return FCM token or null if not found
+     */
+    public String getFcmToken() {
+        return sharedPreferences.getString(KEY_FCM_TOKEN, null);
+    }
+
+    /**
+     * Clear FCM token (called during logout)
+     */
+    public void clearFcmToken() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(KEY_FCM_TOKEN);
         editor.apply();
     }
 
