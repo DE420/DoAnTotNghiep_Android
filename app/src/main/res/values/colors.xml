@@ -11,6 +11,7 @@
 
     <color name="yellow_500">#FFFFD600</color>
     <color name="yellow_400">#FFFFFFAA</color>
+    <color name="yellow_dark">#3D3600</color>
     <color name="white85">#D9D9D9</color>
     <color name="gray_yellow">#FFD600</color>
     <color name="red">#C42929</color>
