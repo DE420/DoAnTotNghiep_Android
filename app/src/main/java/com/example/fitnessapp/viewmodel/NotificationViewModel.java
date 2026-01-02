@@ -182,6 +182,33 @@ public class NotificationViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Mark all notifications as read
+     */
+    public void markAllAsRead() {
+        executorService.execute(() -> {
+            try {
+                boolean success = repository.markAllAsRead(getApplication());
+                if (success) {
+                    // Update local notification list - mark all as read
+                    List<NotificationResponse> currentList = notifications.getValue();
+                    if (currentList != null) {
+                        for (NotificationResponse notification : currentList) {
+                            notification.setRead(true);
+                        }
+                        notifications.postValue(currentList);
+                    }
+
+                    // Reset unread count to 0
+                    unreadCount.postValue(0);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error marking all notifications as read", e);
+                error.postValue("Failed to mark all as read: " + e.getMessage());
+            }
+        });
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

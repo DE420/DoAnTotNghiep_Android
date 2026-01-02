@@ -373,5 +373,7 @@
     <string name="notification_error_loading">Lỗi tải thông báo</string>
     <string name="notification_retry">Thử lại</string>
     <string name="notification_no_notifications_content">Không có thông báo</string>
+    <string name="notification_back_button">Quay lại</string>
+    <string name="notification_mark_all_read">Đánh dấu tất cả đã đọc</string>
 
 </resources>
