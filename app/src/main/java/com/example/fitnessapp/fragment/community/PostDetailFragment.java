@@ -28,6 +28,7 @@ import com.example.fitnessapp.model.response.community.CommentResponse;
 import com.example.fitnessapp.model.response.community.PostResponse;
 import com.example.fitnessapp.repository.CommentRepository;
 import com.example.fitnessapp.repository.PostRepository;
+import com.example.fitnessapp.session.SessionManager;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
@@ -131,6 +132,7 @@ public class PostDetailFragment extends Fragment {
         setupToolbar();
         setupRecyclerView();
         setupListeners();
+        loadUserAvatar();
 
         // Load post detail
         loadPostDetail();
@@ -209,6 +211,23 @@ public class PostDetailFragment extends Fragment {
             }
         });
         binding.rvComments.setAdapter(commentAdapter);
+    }
+
+    private void loadUserAvatar() {
+        SessionManager sessionManager = SessionManager.getInstance(requireContext());
+
+        // Load user avatar
+        String avatarUrl = sessionManager.getAvatar();
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            Glide.with(this)
+                    .load(avatarUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.img_user_default_128)
+                    .error(R.drawable.img_user_default_128)
+                    .into(binding.ivCurrentUserAvatar);
+        } else {
+            binding.ivCurrentUserAvatar.setImageResource(R.drawable.img_user_default_128);
+        }
     }
 
     private void setupListeners() {

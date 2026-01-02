@@ -82,4 +82,9 @@ public class RetrofitClient {
                 .create(CommentApi.class);
     }
 
+    public static UserApi getUserApi(Context ctx) {
+        return getAuthRetrofit(ctx.getApplicationContext())
+                .create(UserApi.class);
+    }
+
 }

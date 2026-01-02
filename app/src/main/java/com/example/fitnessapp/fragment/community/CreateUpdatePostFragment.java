@@ -23,6 +23,7 @@ import com.example.fitnessapp.databinding.FragmentCreateUpdatePostBinding;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.community.PostResponse;
 import com.example.fitnessapp.repository.PostRepository;
+import com.example.fitnessapp.session.SessionManager;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
@@ -115,6 +116,7 @@ public class CreateUpdatePostFragment extends Fragment {
 
         setupToolbar();
         setupButtons();
+        loadUserProfile();
 
         if (isEditing) {
             populateExistingPostData();
@@ -193,6 +195,29 @@ public class CreateUpdatePostFragment extends Fragment {
         binding.btnCancel.setOnClickListener(v -> {
             requireActivity().onBackPressed();
         });
+    }
+
+    private void loadUserProfile() {
+        SessionManager sessionManager = SessionManager.getInstance(requireContext());
+
+        // Load user name
+        String userName = sessionManager.getUserName();
+        if (userName != null && !userName.isEmpty()) {
+            binding.tvUserName.setText(userName);
+        }
+
+        // Load user avatar
+        String avatarUrl = sessionManager.getAvatar();
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            Glide.with(this)
+                    .load(avatarUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.img_user_default_128)
+                    .error(R.drawable.img_user_default_128)
+                    .into(binding.ivUserAvatar);
+        } else {
+            binding.ivUserAvatar.setImageResource(R.drawable.img_user_default_128);
+        }
     }
 
     private void pickImage() {

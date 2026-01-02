@@ -79,6 +79,9 @@
     <string name="nav_title_community">Cộng đồng</string>
     <string name="nav_title_other">Khác</string>
 
+    <!-- User Profile -->
+    <string name="user_avatar">Ảnh đại diện người dùng</string>
+
     <!-- ========== COMMUNITY FEATURE STRINGS (VIETNAMESE PRIMARY) ========== -->
 
     <!-- CommunityFragment -->

@@ -21,13 +21,16 @@ import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFra
 import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
+import com.example.fitnessapp.model.response.user.ProfileResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.AuthApi;
 import com.example.fitnessapp.network.RetrofitClient;
+import com.example.fitnessapp.network.UserApi;
 import com.example.fitnessapp.repository.AuthRepository;
 import com.example.fitnessapp.session.SessionManager;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
+import com.bumptech.glide.Glide;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
             // load default home fragment
             loadFragment(new HomeFragment(), "Home", false);
         }
+
+        // Load user profile and display avatar
+        loadUserProfile();
 
         binding.imageAvatar.setOnClickListener(v -> {
             loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
@@ -198,6 +204,84 @@ public class MainActivity extends AppCompatActivity {
 //        } else {
 //            super.onBackPressed();
 //        }
+    }
+
+    /**
+     * Load user profile from API and save to local storage
+     */
+    private void loadUserProfile() {
+        SessionManager sessionManager = SessionManager.getInstance(this);
+
+        // First, load avatar from local storage if available
+        String cachedAvatar = sessionManager.getAvatar();
+        if (cachedAvatar != null && !cachedAvatar.isEmpty()) {
+            loadAvatarImage(cachedAvatar);
+        }
+
+        // Then fetch fresh data from API
+        if (sessionManager.isLoggedIn()) {
+            UserApi userApi = RetrofitClient.getUserApi(this);
+            userApi.getUserProfile().enqueue(new Callback<ApiResponse<ProfileResponse>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<ProfileResponse>> call,
+                                      Response<ApiResponse<ProfileResponse>> response) {
+                    if (response.isSuccessful() && response.body() != null
+                            && response.body().isStatus()) {
+                        ProfileResponse profile = response.body().getData();
+
+                        // Save profile data to local storage
+                        sessionManager.saveUserProfile(
+                                profile.getId(),
+                                profile.getName(),
+                                profile.getUsername(),
+                                profile.getEmail(),
+                                profile.getAvatar(),
+                                profile.getSex(),
+                                profile.getWeight(),
+                                profile.getHeight(),
+                                profile.getDateOfBirth()
+                        );
+
+                        // Update avatar in UI
+                        loadAvatarImage(profile.getAvatar());
+
+                        Log.d("MainActivity", "Profile loaded: " + profile.getName());
+                    } else {
+                        Log.e("MainActivity", "Failed to load profile: " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<ProfileResponse>> call, Throwable t) {
+                    Log.e("MainActivity", "Error loading profile", t);
+                }
+            });
+        }
+    }
+
+    /**
+     * Load avatar image using Glide
+     * @param avatarUrl URL of the avatar image
+     */
+    private void loadAvatarImage(String avatarUrl) {
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            Glide.with(this)
+                    .load(avatarUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.img_user_default_128)
+                    .error(R.drawable.img_user_default_128)
+                    .into(binding.imageAvatar);
+        } else {
+            binding.imageAvatar.setImageResource(R.drawable.img_user_default_128);
+        }
+    }
+
+    /**
+     * Public method to refresh avatar - can be called from ProfileFragment after avatar update
+     */
+    public void refreshAvatar() {
+        String avatarUrl = SessionManager.getInstance(this).getAvatar();
+        loadAvatarImage(avatarUrl);
     }
 
 
