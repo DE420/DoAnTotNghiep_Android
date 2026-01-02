@@ -170,6 +170,12 @@ public class NotificationFragment extends Fragment {
             viewModel.loadNotifications();
             viewModel.refreshUnreadCount();
         });
+
+        swipeRefreshLayout.setColorSchemeResources(
+                R.color.yellow,
+                R.color.green_500,
+                R.color.red_400
+        );
     }
 
     private void observeViewModel() {

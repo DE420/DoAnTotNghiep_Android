@@ -28,8 +28,8 @@
             android:layout_height="8dp"
             android:background="@drawable/bg_unread_indicator"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/cv_icon_container"
+            app:layout_constraintTop_toTopOf="@id/cv_icon_container"
             tools:visibility="visible" />
 
         <!-- Notification Icon with Circle Background -->
@@ -37,11 +37,10 @@
             android:id="@+id/cv_icon_container"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            app:cardBackgroundColor="@color/yellow_dark"
+            app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
-            app:layout_constraintStart_toEndOf="@id/v_unread_indicator"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView

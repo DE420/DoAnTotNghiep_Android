@@ -107,26 +107,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             }
 
             switch (type.toUpperCase()) {
-                case "COMMENT":
-                case "REPLY":
-                    // Use existing comment icon from community
-                    iconImageView.setImageResource(R.drawable.ic_comment_24);
-                    break;
-                case "LIKE":
-                case "REACTION":
-                    // Use existing heart/like icon from community
-                    iconImageView.setImageResource(R.drawable.ic_heart_filled_24);
-                    break;
-                case "FOLLOW":
-                case "FOLLOWER":
-                case "USER":
-                    // Use existing community icon for user-related notifications
+                case "SOCIAL":
+                    // Backend sends "SOCIAL" for all community interactions:
+                    // post likes, comments, and comment likes
                     iconImageView.setImageResource(R.drawable.ic_community);
+                    break;
+                case "WORKOUT_REMINDER":
+                    // Use dumbbell/exercise icon for workout reminders
+                    iconImageView.setImageResource(R.drawable.ic_exercises_24);
                     break;
                 case "SYSTEM":
                 case "ADMIN":
                 case "ANNOUNCEMENT":
-                    // Use existing notification icon for system messages
+                    // Use notification icon for system messages
                     iconImageView.setImageResource(R.drawable.ic_notification);
                     break;
                 default:

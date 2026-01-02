@@ -19,7 +19,7 @@ public interface NotificationApi {
     @POST("notifications/register-token")
     Call<ApiResponse<Boolean>> registerDeviceToken(@Body RegisterTokenRequest request);
 
-    @GET("notifications/unread-count")
+    @GET("notifications/unread/count")
     Call<ApiResponse<Integer>> getUnreadCount();
 
     @GET("notifications")
