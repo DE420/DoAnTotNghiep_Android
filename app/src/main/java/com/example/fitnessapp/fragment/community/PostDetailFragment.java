@@ -1100,6 +1100,13 @@ public class PostDetailFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Ensure header and bottom navigation are hidden when fragment is resumed
+        hideHeaderAndBottomNavigation();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
