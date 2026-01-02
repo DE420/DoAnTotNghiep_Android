@@ -11,10 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.fitnessapp.databinding.ActivityMainBinding;
 import com.example.fitnessapp.fragment.CommunityFragment;
 import com.example.fitnessapp.fragment.HomeFragment;
+import com.example.fitnessapp.fragment.NotificationFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
 import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
@@ -28,6 +30,7 @@ import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.network.UserApi;
 import com.example.fitnessapp.repository.AuthRepository;
 import com.example.fitnessapp.session.SessionManager;
+import com.example.fitnessapp.viewmodel.NotificationViewModel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.bumptech.glide.Glide;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private int preSelectedItemIditem = 0;
 
     private AppBarLayout appBarLayout;
+    private NotificationViewModel notificationViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,14 @@ public class MainActivity extends AppCompatActivity {
         binding.imageAvatar.setOnClickListener(v -> {
             loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
         });
+
+        // Notification icon click listener
+        binding.iconNotification.setOnClickListener(v -> {
+            loadFragment(new com.example.fitnessapp.fragment.NotificationFragment(), "Thông báo", true);
+        });
+
+        // Set up notification badge observer
+        setupNotificationBadge();
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -282,6 +294,40 @@ public class MainActivity extends AppCompatActivity {
     public void refreshAvatar() {
         String avatarUrl = SessionManager.getInstance(this).getAvatar();
         loadAvatarImage(avatarUrl);
+    }
+
+    /**
+     * Set up notification badge observer to display unread count
+     */
+    private void setupNotificationBadge() {
+        notificationViewModel = new ViewModelProvider(this).get(NotificationViewModel.class);
+
+        // Observe unread count and update badge
+        notificationViewModel.getUnreadCount().observe(this, unreadCount -> {
+            if (unreadCount != null && unreadCount > 0) {
+                binding.tvNotificationBadge.setVisibility(View.VISIBLE);
+                // Show "9+" for counts greater than 9
+                if (unreadCount > 9) {
+                    binding.tvNotificationBadge.setText("9+");
+                } else {
+                    binding.tvNotificationBadge.setText(String.valueOf(unreadCount));
+                }
+            } else {
+                binding.tvNotificationBadge.setVisibility(View.GONE);
+            }
+        });
+
+        // Initial load of unread count
+        notificationViewModel.refreshUnreadCount();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh badge count when returning to MainActivity
+        if (notificationViewModel != null) {
+            notificationViewModel.refreshUnreadCount();
+        }
     }
 
 

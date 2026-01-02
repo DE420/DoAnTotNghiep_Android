@@ -366,4 +366,12 @@
     <string name="dialog_remove_button">Xóa</string>
     <string name="dialog_cancel_button">Hủy</string>
 
+    <!-- Notification Strings -->
+    <string name="notification_title">Thông báo</string>
+    <string name="notification_empty_title">Không có thông báo</string>
+    <string name="notification_empty_message">Bạn chưa có thông báo nào</string>
+    <string name="notification_error_loading">Lỗi tải thông báo</string>
+    <string name="notification_retry">Thử lại</string>
+    <string name="notification_no_notifications_content">Không có thông báo</string>
+
 </resources>
