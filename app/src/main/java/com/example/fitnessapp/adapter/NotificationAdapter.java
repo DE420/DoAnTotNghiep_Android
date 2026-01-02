@@ -100,8 +100,35 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
 
         private void setNotificationIcon(String type) {
-            // Default icon - can be customized based on type
-            iconImageView.setImageResource(R.drawable.ic_notification);
+            // Set icon based on notification type
+            if (type == null) {
+                iconImageView.setImageResource(R.drawable.ic_notification);
+                return;
+            }
+
+            switch (type.toUpperCase()) {
+                case "COMMENT":
+                case "REPLY":
+                    iconImageView.setImageResource(R.drawable.ic_notification_comment);
+                    break;
+                case "LIKE":
+                case "REACTION":
+                    iconImageView.setImageResource(R.drawable.ic_notification_like);
+                    break;
+                case "FOLLOW":
+                case "FOLLOWER":
+                case "USER":
+                    iconImageView.setImageResource(R.drawable.ic_notification_user);
+                    break;
+                case "SYSTEM":
+                case "ADMIN":
+                case "ANNOUNCEMENT":
+                    iconImageView.setImageResource(R.drawable.ic_notification_system);
+                    break;
+                default:
+                    iconImageView.setImageResource(R.drawable.ic_notification);
+                    break;
+            }
         }
 
         private String formatTime(String createdAt) {
