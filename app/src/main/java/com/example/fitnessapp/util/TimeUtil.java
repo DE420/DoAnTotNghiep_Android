@@ -1,4 +1,4 @@
-package com.example.fitnessapp.utils;
+package com.example.fitnessapp.util;
 
 import android.content.Context;
 
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class TimeUtils {
+public class TimeUtil {
 
     /**
      * Get time string in Vietnamese/English based on locale
