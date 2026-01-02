@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -20,6 +21,7 @@ import com.example.fitnessapp.fragment.NotificationFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
 import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
+import com.example.fitnessapp.fragment.community.PostDetailFragment;
 import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
@@ -47,6 +49,43 @@ public class MainActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private NotificationViewModel notificationViewModel;
 
+    /**
+     * Setup fragment lifecycle callbacks to automatically control header and bottom nav visibility
+     */
+    private void setupFragmentLifecycleCallbacks() {
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
+                new FragmentManager.FragmentLifecycleCallbacks() {
+                    @Override
+                    public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
+                        super.onFragmentResumed(fm, f);
+
+                        // Control header and bottom nav visibility based on fragment type
+                        if (f instanceof PostDetailFragment || f instanceof NotificationFragment) {
+                            // Hide header for PostDetailFragment and NotificationFragment
+                            appBarLayout.setVisibility(View.GONE);
+
+                            if (f instanceof PostDetailFragment) {
+                                // Hide bottom nav for PostDetailFragment
+                                binding.bottomNavigation.setVisibility(View.GONE);
+                            } else if (f instanceof NotificationFragment) {
+                                // Show bottom nav for NotificationFragment
+                                binding.bottomNavigation.setVisibility(View.VISIBLE);
+                            }
+                        } else if (f instanceof ProfileFragment) {
+                            // Hide header for ProfileFragment
+                            appBarLayout.setVisibility(View.GONE);
+                            // Keep bottom nav selection but uncheck it
+                            binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(false);
+                        } else {
+                            // Show header and bottom nav for other fragments
+                            appBarLayout.setVisibility(View.VISIBLE);
+                            binding.bottomNavigation.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }, true
+        );
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +93,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         appBarLayout = findViewById(R.id.app_bar_layout);
 
+        // Register fragment lifecycle callbacks to control header visibility
+        setupFragmentLifecycleCallbacks();
+
         if (savedInstanceState == null) {
             // load default home fragment
             loadFragment(new HomeFragment(), "Home", false);
+
+            // Handle notification deep link if opened from notification
+            handleNotificationDeepLink(getIntent());
         }
 
         // Load user profile and display avatar
@@ -182,13 +227,17 @@ public class MainActivity extends AppCompatActivity {
         if (title.equals("Profile")) {
             binding.appBarLayout.setVisibility(View.GONE);
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(false);
+        } else if (title.equals("Thông báo") || fragment instanceof NotificationFragment) {
+            // NotificationFragment has its own header, hide MainActivity header
+            binding.appBarLayout.setVisibility(View.GONE);
+            binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
         } else {
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
             binding.appBarLayout.setVisibility(View.VISIBLE);
             binding.toolbar.setTitle(title);
         }
-        // Cập nhật title của toolbar
-        if (!title.equals("Profile")) {
+        // Cập nhật title của toolbar only for non-Profile and non-Notification fragments
+        if (!title.equals("Profile") && !title.equals("Thông báo") && !(fragment instanceof NotificationFragment)) {
             binding.toolbar.setTitle(title);
         }
     }
@@ -210,26 +259,6 @@ public class MainActivity extends AppCompatActivity {
             binding.appBarLayout.setVisibility(View.VISIBLE);
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
         }
-
-        // Handle back from NotificationFragment
-        if (current instanceof NotificationFragment) {
-            // Restore the title based on selected bottom nav item
-            int selectedItemId = preSelectedItemIditem;
-            String title = getString(R.string.app_name);
-
-            if (selectedItemId == R.id.nav_home) {
-                title = getString(R.string.nav_title_home);
-            } else if (selectedItemId == R.id.nav_plan) {
-                title = getString(R.string.nav_title_plan);
-            } else if (selectedItemId == R.id.nav_community) {
-                title = getString(R.string.nav_title_community);
-            } else if (selectedItemId == R.id.nav_other) {
-                title = getString(R.string.nav_title_other);
-            }
-
-            binding.toolbar.setTitle(title);
-        }
-
         super.onBackPressed();
 //        if (fm.getBackStackEntryCount() > 0) {
 //            fm.popBackStack();
@@ -350,5 +379,80 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        // Handle notification deep link when app is already running
+        handleNotificationDeepLink(intent);
+    }
+
+    /**
+     * Handle deep link from notification when app is opened from background/killed
+     */
+    private void handleNotificationDeepLink(Intent intent) {
+        if (intent == null) {
+            return;
+        }
+
+        String link = intent.getStringExtra("notification_link");
+        String type = intent.getStringExtra("notification_type");
+
+        if (link != null && !link.isEmpty()) {
+            Log.d("MainActivity", "Handling notification deep link - Type: " + type + ", Link: " + link);
+
+            // Wait for the fragment manager to be ready
+            binding.getRoot().post(() -> {
+                try {
+                    if (link.startsWith("/posts/")) {
+                        // Extract post ID from link and navigate to post detail
+                        String[] parts = link.split("/");
+                        if (parts.length >= 3) {
+                            long postId = Long.parseLong(parts[2]);
+                            navigateToPostDetail(postId);
+                        }
+                    } else if (link.startsWith("/workouts/")) {
+                        // Navigate to workout plan
+                        navigateToWorkoutPlan();
+                    }
+                } catch (Exception e) {
+                    Log.e("MainActivity", "Error handling deep link", e);
+                    Toast.makeText(this, "Không thể mở nội dung này", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            // Clear the intent extras so we don't handle it again
+            intent.removeExtra("notification_link");
+            intent.removeExtra("notification_type");
+            intent.removeExtra("notification_id");
+        }
+    }
+
+    /**
+     * Navigate to post detail from deep link
+     */
+    private void navigateToPostDetail(long postId) {
+        PostDetailFragment fragment = PostDetailFragment.newInstance(postId);
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.slide_out
+                )
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack("PostDetail")
+                .commit();
+        Log.d("MainActivity", "Navigated to post: " + postId);
+    }
+
+    /**
+     * Navigate to workout plan from deep link
+     */
+    private void navigateToWorkoutPlan() {
+        // Switch to plan tab in bottom navigation
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_plan);
+        Log.d("MainActivity", "Navigated to workout plan");
+    }
 
 }

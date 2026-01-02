@@ -127,8 +127,7 @@ public class PostDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Hide header and bottom navigation
-        hideHeaderAndBottomNavigation();
+        // Header and bottom nav visibility is controlled by MainActivity's FragmentLifecycleCallbacks
 
         setupToolbar();
         setupRecyclerView();
@@ -137,36 +136,6 @@ public class PostDetailFragment extends Fragment {
 
         // Load post detail
         loadPostDetail();
-    }
-
-    private void hideHeaderAndBottomNavigation() {
-        if (getActivity() != null) {
-            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
-            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
-
-            if (appBarLayout != null) {
-                appBarLayout.setVisibility(View.GONE);
-            }
-
-            if (bottomNavigation != null) {
-                bottomNavigation.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void showHeaderAndBottomNavigation() {
-        if (getActivity() != null) {
-            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
-            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
-
-            if (appBarLayout != null) {
-                appBarLayout.setVisibility(View.VISIBLE);
-            }
-
-            if (bottomNavigation != null) {
-                bottomNavigation.setVisibility(View.VISIBLE);
-            }
-        }
     }
 
     private void setupToolbar() {
@@ -1101,18 +1070,10 @@ public class PostDetailFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        // Ensure header and bottom navigation are hidden when fragment is resumed
-        hideHeaderAndBottomNavigation();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        // Show header and bottom navigation when leaving this fragment
-        showHeaderAndBottomNavigation();
+        // Header and bottom nav visibility restoration is controlled by MainActivity's FragmentLifecycleCallbacks
 
         // Clear edit comment callback to prevent crashes
         editCommentImageUpdateCallback = null;

@@ -23,6 +23,7 @@ import com.example.fitnessapp.MainActivity;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.adapter.NotificationAdapter;
 import com.example.fitnessapp.model.response.NotificationResponse;
+import com.example.fitnessapp.util.NotificationNavigationHandler;
 import com.example.fitnessapp.viewmodel.NotificationViewModel;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -64,8 +65,7 @@ public class NotificationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Hide MainActivity header
-        hideMainActivityHeader();
+        // Header visibility is controlled by MainActivity's FragmentLifecycleCallbacks
 
         initViews(view);
         setupRecyclerView();
@@ -76,24 +76,6 @@ public class NotificationFragment extends Fragment {
         // Load notifications on start
         viewModel.loadNotifications();
         viewModel.refreshUnreadCount();
-    }
-
-    private void hideMainActivityHeader() {
-        if (getActivity() instanceof MainActivity) {
-            AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void showMainActivityHeader() {
-        if (getActivity() instanceof MainActivity) {
-            AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setVisibility(View.VISIBLE);
-            }
-        }
     }
 
     private void initViews(View view) {
@@ -138,8 +120,8 @@ public class NotificationFragment extends Fragment {
             if (!notification.isRead()) {
                 viewModel.markAsRead(notification.getId());
             }
-            // TODO: Handle navigation in Phase 4
-            Toast.makeText(getContext(), "Clicked: " + notification.getTitle(), Toast.LENGTH_SHORT).show();
+            // Handle navigation to the notification target
+            NotificationNavigationHandler.handleNotificationNavigation(getActivity(), notification);
         });
 
         // Pagination: load more when reaching near end
@@ -226,19 +208,5 @@ public class NotificationFragment extends Fragment {
                 errorState.setVisibility(View.GONE);
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Refresh unread count when returning to this screen
-        viewModel.refreshUnreadCount();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // Show MainActivity header when leaving this fragment
-        showMainActivityHeader();
     }
 }
