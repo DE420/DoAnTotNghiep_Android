@@ -42,24 +42,6 @@
 
         </LinearLayout>
 
-        <!-- Fitness Goal Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fitness_goal"
-            android:textSize="16sp"
-            android:textColor="@color/yellow"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp"/>
-
-        <Spinner
-            android:id="@+id/sp_fitness_goal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/filled_black_text_field"
-            android:popupBackground="@color/black_370"
-            android:layout_marginBottom="20dp"/>
-
         <!-- Nutrition Range Section -->
         <TextView
             android:layout_width="wrap_content"
