@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.NotificationResponse;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class NotificationViewModel extends AndroidViewModel {
 
@@ -32,8 +35,9 @@ public class NotificationViewModel extends AndroidViewModel {
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<Boolean> hasMore = new MutableLiveData<>(true);
 
-    private int currentPage = 0;
-    private boolean isLoadingMore = false;
+    // Thread-safe pagination state
+    private final AtomicInteger currentPage = new AtomicInteger(0);
+    private final AtomicBoolean isLoadingMore = new AtomicBoolean(false);
 
     public NotificationViewModel(@NonNull Application application) {
         super(application);
@@ -70,14 +74,14 @@ public class NotificationViewModel extends AndroidViewModel {
             return;
         }
 
-        currentPage = 0;
+        currentPage.set(0);
         isLoading.postValue(true);
         error.postValue(null);
 
         executorService.execute(() -> {
             try {
                 ApiResponse<List<NotificationResponse>> response =
-                        repository.getNotifications(getApplication(), currentPage, PAGE_SIZE);
+                        repository.getNotifications(getApplication(), currentPage.get(), PAGE_SIZE);
 
                 if (response != null && response.getData() != null) {
                     notifications.postValue(response.getData());
@@ -102,17 +106,17 @@ public class NotificationViewModel extends AndroidViewModel {
      * Load more notifications (pagination)
      */
     public void loadMoreNotifications() {
-        if (isLoadingMore || Boolean.FALSE.equals(hasMore.getValue())) {
+        if (isLoadingMore.get() || Boolean.FALSE.equals(hasMore.getValue())) {
             return;
         }
 
-        isLoadingMore = true;
-        currentPage++;
+        isLoadingMore.set(true);
+        int nextPage = currentPage.incrementAndGet();
 
         executorService.execute(() -> {
             try {
                 ApiResponse<List<NotificationResponse>> response =
-                        repository.getNotifications(getApplication(), currentPage, PAGE_SIZE);
+                        repository.getNotifications(getApplication(), nextPage, PAGE_SIZE);
 
                 if (response != null && response.getData() != null) {
                     List<NotificationResponse> currentList = notifications.getValue();
@@ -132,9 +136,9 @@ public class NotificationViewModel extends AndroidViewModel {
             } catch (Exception e) {
                 Log.e(TAG, "Error loading more notifications", e);
                 error.postValue("Failed to load more notifications: " + e.getMessage());
-                currentPage--; // Revert page increment on error
+                currentPage.decrementAndGet(); // Revert page increment on error
             } finally {
-                isLoadingMore = false;
+                isLoadingMore.set(false);
             }
         });
     }
@@ -176,9 +180,9 @@ public class NotificationViewModel extends AndroidViewModel {
                     // Refresh unread count
                     refreshUnreadCount();
 
-                    // Broadcast to update badge in MainActivity
+                    // Broadcast to update badge in MainActivity using LocalBroadcastManager
                     Intent intent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
-                    getApplication().sendBroadcast(intent);
+                    LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error marking notification as read", e);
@@ -225,9 +229,9 @@ public class NotificationViewModel extends AndroidViewModel {
                     // Reset unread count to 0
                     unreadCount.postValue(0);
 
-                    // Broadcast to update badge in MainActivity
+                    // Broadcast to update badge in MainActivity using LocalBroadcastManager
                     Intent intent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
-                    getApplication().sendBroadcast(intent);
+                    LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(intent);
 
                     Log.d(TAG, "Successfully marked " + successCount + " notifications as read");
                 }

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.fitnessapp.databinding.ActivityMainBinding;
 import com.example.fitnessapp.fragment.community.CommunityFragment;
@@ -155,21 +156,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         appBarLayout = findViewById(R.id.app_bar_layout);
 
-        Log.d("MainActivity", "onCreate called");
-        Log.d("MainActivity", "Intent action: " + getIntent().getAction());
-        Log.d("MainActivity", "Intent extras: " + getIntent().getExtras());
-        if (getIntent().getExtras() != null) {
-            for (String key : getIntent().getExtras().keySet()) {
-                Log.d("MainActivity", "  Extra key: " + key + " = " + getIntent().getExtras().get(key));
+        if (BuildConfig.DEBUG) {
+            Log.d("MainActivity", "onCreate called");
+            Log.d("MainActivity", "Intent action: " + getIntent().getAction());
+            if (getIntent().getExtras() != null) {
+                Log.d("MainActivity", "Intent has extras");
             }
         }
 
         // Register fragment lifecycle callbacks to control header visibility
 //        setupFragmentLifecycleCallbacks();
 
-        // Register BroadcastReceiver for notification badge updates
+        // Register BroadcastReceiver for notification badge updates using LocalBroadcastManager
         IntentFilter filter = new IntentFilter("com.example.fitnessapp.NOTIFICATION_RECEIVED");
-        registerReceiver(notificationReceiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, filter);
 
         // Set up notification badge observer FIRST before handling deep links
         setupNotificationBadge();
@@ -476,10 +476,14 @@ public class MainActivity extends AppCompatActivity {
         String type = intent.getStringExtra("notification_type");
         String notificationIdStr = intent.getStringExtra("notification_id");
 
-        Log.d("MainActivity", "Deep link data - Link: " + link + ", Type: " + type + ", ID: " + notificationIdStr);
+        if (BuildConfig.DEBUG) {
+            Log.d("MainActivity", "Deep link data present: " + (link != null && !link.isEmpty()));
+        }
 
         if (link != null && !link.isEmpty()) {
-            Log.d("MainActivity", "Handling notification deep link - Type: " + type + ", Link: " + link);
+            if (BuildConfig.DEBUG) {
+                Log.d("MainActivity", "Handling notification deep link - Type: " + type);
+            }
 
             // Mark notification as read if we have the notification ID
             if (notificationIdStr != null && !notificationIdStr.isEmpty()) {
@@ -487,36 +491,43 @@ public class MainActivity extends AppCompatActivity {
                     Long notificationId = Long.parseLong(notificationIdStr);
                     if (notificationViewModel != null) {
                         notificationViewModel.markAsRead(notificationId);
-                        Log.d("MainActivity", "Marked notification as read: " + notificationId);
+                        if (BuildConfig.DEBUG) {
+                            Log.d("MainActivity", "Marked notification as read");
+                        }
                     } else {
                         Log.w("MainActivity", "NotificationViewModel is null, cannot mark as read");
                     }
                 } catch (NumberFormatException e) {
-                    Log.w("MainActivity", "Invalid notification ID: " + notificationIdStr, e);
+                    Log.w("MainActivity", "Invalid notification ID format", e);
                 }
             }
 
             // Wait for the fragment manager to be ready
             binding.getRoot().post(() -> {
-                Log.d("MainActivity", "Post runnable executing for deep link navigation");
+                if (BuildConfig.DEBUG) {
+                    Log.d("MainActivity", "Executing deep link navigation");
+                }
                 try {
                     if (link.startsWith("/posts/")) {
                         // Extract post ID from link and navigate to post detail
                         String[] parts = link.split("/");
-                        Log.d("MainActivity", "Post link parts: " + java.util.Arrays.toString(parts));
                         if (parts.length >= 3) {
                             long postId = Long.parseLong(parts[2]);
-                            Log.d("MainActivity", "Navigating to post detail: " + postId);
+                            if (BuildConfig.DEBUG) {
+                                Log.d("MainActivity", "Navigating to post detail: " + postId);
+                            }
                             navigateToPostDetail(postId);
                         } else {
-                            Log.w("MainActivity", "Invalid post link format: " + link);
+                            Log.w("MainActivity", "Invalid post link format");
                         }
                     } else if (link.startsWith("/workouts/")) {
-                        Log.d("MainActivity", "Navigating to workout plan");
+                        if (BuildConfig.DEBUG) {
+                            Log.d("MainActivity", "Navigating to workout plan");
+                        }
                         // Navigate to workout plan
                         navigateToWorkoutPlan();
                     } else {
-                        Log.w("MainActivity", "Unknown link format: " + link);
+                        Log.w("MainActivity", "Unknown link format");
                     }
                 } catch (Exception e) {
                     Log.e("MainActivity", "Error handling deep link", e);
@@ -528,9 +539,13 @@ public class MainActivity extends AppCompatActivity {
             intent.removeExtra("notification_link");
             intent.removeExtra("notification_type");
             intent.removeExtra("notification_id");
-            Log.d("MainActivity", "Cleared intent extras");
+            if (BuildConfig.DEBUG) {
+                Log.d("MainActivity", "Cleared intent extras");
+            }
         } else {
-            Log.d("MainActivity", "No notification link found in intent");
+            if (BuildConfig.DEBUG) {
+                Log.d("MainActivity", "No notification link found in intent");
+            }
         }
     }
 
@@ -549,7 +564,9 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack("PostDetail")
                 .commit();
-        Log.d("MainActivity", "Navigated to post: " + postId);
+        if (BuildConfig.DEBUG) {
+            Log.d("MainActivity", "Navigated to post: " + postId);
+        }
     }
 
     /**
@@ -609,9 +626,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Unregister BroadcastReceiver to prevent memory leaks
+        // Unregister LocalBroadcastReceiver to prevent memory leaks
         try {
-            unregisterReceiver(notificationReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver);
         } catch (IllegalArgumentException e) {
             // Receiver was not registered, ignore
             Log.w("MainActivity", "Receiver not registered: " + e.getMessage());

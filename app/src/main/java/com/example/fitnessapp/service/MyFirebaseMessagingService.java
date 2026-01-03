@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.fitnessapp.MainActivity;
 import com.example.fitnessapp.R;
@@ -43,7 +44,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d(TAG, "New FCM token: " + token);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "New FCM token received");
+        }
 
         // Save token locally
         sessionManager.saveFcmToken(token);
@@ -53,9 +56,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             executorService.execute(() -> {
                 try {
                     notificationRepository.registerDeviceToken(getApplicationContext(), token, "ANDROID");
-                    Log.d(TAG, "Token registered with backend");
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "Token registered with backend");
+                    }
                 } catch (Exception e) {
-                    Log.e(TAG, "Failed to register token: " + e.getMessage(), e);
+                    Log.e(TAG, "Failed to register token: " + e.getMessage());
                 }
             });
         }
@@ -65,20 +70,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
 
-        Log.d(TAG, "Message received from: " + message.getFrom());
-        Log.d(TAG, "Message ID: " + message.getMessageId());
-        Log.d(TAG, "Message sent time: " + message.getSentTime());
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Message received from: " + message.getFrom());
+            Log.d(TAG, "Message ID: " + message.getMessageId());
+            Log.d(TAG, "Message sent time: " + message.getSentTime());
+        }
 
         // Handle notification payload
         if (message.getNotification() != null) {
-            Log.d(TAG, "Notification title: " + message.getNotification().getTitle());
-            Log.d(TAG, "Notification body: " + message.getNotification().getBody());
-            Log.d(TAG, "Notification click action: " + message.getNotification().getClickAction());
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Notification title: " + message.getNotification().getTitle());
+                Log.d(TAG, "Notification body: " + message.getNotification().getBody());
+                Log.d(TAG, "Notification click action: " + message.getNotification().getClickAction());
+            }
         }
 
         // Handle data payload (contains custom data from backend)
         if (!message.getData().isEmpty()) {
-            Log.d(TAG, "Message data: " + message.getData());
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Message data received");
+            }
 
             // When app is in foreground, we handle the notification ourselves
             // When app is in background/killed, system handles it and this might not be called
@@ -95,11 +106,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String type = data.getOrDefault("type", "SYSTEM");
         String id = data.get("id");
 
-        Log.d(TAG, "Notification data - Title: " + title);
-        Log.d(TAG, "Notification data - Body: " + body);
-        Log.d(TAG, "Notification data - Link: " + link);
-        Log.d(TAG, "Notification data - Type: " + type);
-        Log.d(TAG, "Notification data - ID: " + id);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Notification data - Type: " + type + ", ID: " + id);
+        }
 
         // Create and show notification
         showNotification(title, body, link, type, id);
@@ -108,8 +117,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotification(String title, String body, String link, String type, String id) {
         createNotificationChannel();
 
-        Log.d(TAG, "Creating notification with PendingIntent");
-        Log.d(TAG, "Intent extras - Link: " + link + ", Type: " + type + ", ID: " + id);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Creating notification with PendingIntent");
+        }
 
         // Create intent for notification tap
         Intent intent = new Intent(this, MainActivity.class);
@@ -129,7 +139,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        Log.d(TAG, "PendingIntent created with requestCode: " + requestCode);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "PendingIntent created with requestCode: " + requestCode);
+        }
 
         // Build notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -147,12 +159,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         int notificationId = (int) System.currentTimeMillis();
         notificationManager.notify(notificationId, builder.build());
 
-        Log.d(TAG, "Notification displayed with ID: " + notificationId);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Notification displayed with ID: " + notificationId);
+        }
 
-        // Broadcast to update badge count in MainActivity
+        // Broadcast to update badge count in MainActivity using LocalBroadcastManager
         Intent badgeIntent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
-        sendBroadcast(badgeIntent);
-        Log.d(TAG, "Badge update broadcast sent");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(badgeIntent);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Badge update broadcast sent");
+        }
     }
 
     private void createNotificationChannel() {
