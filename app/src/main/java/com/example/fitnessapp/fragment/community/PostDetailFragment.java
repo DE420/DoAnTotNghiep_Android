@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 
@@ -52,6 +53,7 @@ public class PostDetailFragment extends Fragment {
 
     private static final String TAG = "PostDetailFragment";
     private static final String ARG_POST_ID = "post_id";
+    private static final int COMMENTS_PAGE_SIZE = 10;
 
     private FragmentPostDetailBinding binding;
     private PostRepository repository;
@@ -60,6 +62,12 @@ public class PostDetailFragment extends Fragment {
     private ExoPlayer player;
     private long postId;
     private PostResponse currentPost;
+
+    // Comment pagination
+    private int currentCommentsPage = 0;
+    private boolean isLoadingComments = false;
+    private boolean hasMoreComments = true;
+    private LinearLayoutManager commentsLayoutManager;
 
     // Image picker for comments
     private ActivityResultLauncher<Intent> commentImagePickerLauncher;
@@ -157,7 +165,8 @@ public class PostDetailFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        binding.rvComments.setLayoutManager(new LinearLayoutManager(requireContext()));
+        commentsLayoutManager = new LinearLayoutManager(requireContext());
+        binding.rvComments.setLayoutManager(commentsLayoutManager);
         commentAdapter = new CommentAdapter(requireContext());
         commentAdapter.setItemListener(new CommentAdapter.CommentItemListener() {
             @Override
@@ -181,6 +190,44 @@ public class PostDetailFragment extends Fragment {
             }
         });
         binding.rvComments.setAdapter(commentAdapter);
+
+        // Add scroll listener for pagination
+        binding.rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int visibleItemCount = commentsLayoutManager.getChildCount();
+                int totalItemCount = commentsLayoutManager.getItemCount();
+                int firstVisibleItemPosition = commentsLayoutManager.findFirstVisibleItemPosition();
+                int lastVisibleItemPosition = firstVisibleItemPosition + visibleItemCount - 1;
+
+                Log.d(TAG, "Scroll event - dy: " + dy +
+                      ", visible: " + visibleItemCount +
+                      ", total: " + totalItemCount +
+                      ", firstVisible: " + firstVisibleItemPosition +
+                      ", lastVisible: " + lastVisibleItemPosition +
+                      ", isLoading: " + isLoadingComments +
+                      ", hasMore: " + hasMoreComments);
+
+                // Load more when reaching bottom (reduced threshold to 2 items)
+                if (!isLoadingComments && hasMoreComments) {
+                    // Trigger when last visible item is within 2 items of the end
+                    if (lastVisibleItemPosition >= totalItemCount - 3) {
+                        Log.d(TAG, "Near bottom, triggering loadMoreComments()");
+                        loadMoreComments();
+                    }
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "Scroll state changed: " + newState);
+            }
+        });
+
+        Log.d(TAG, "RecyclerView scroll listener registered");
     }
 
     private void loadUserAvatar() {
@@ -498,7 +545,11 @@ public class PostDetailFragment extends Fragment {
     private void loadComments() {
         Log.d(TAG, "Loading comments for post: " + postId);
 
-        commentRepository.getComments(postId, 0, 20, new Callback<ApiResponse<java.util.List<CommentResponse>>>() {
+        // Reset pagination state
+        currentCommentsPage = 0;
+        hasMoreComments = true;
+
+        commentRepository.getComments(postId, currentCommentsPage, COMMENTS_PAGE_SIZE, new Callback<ApiResponse<java.util.List<CommentResponse>>>() {
             @Override
             public void onResponse(Call<ApiResponse<java.util.List<CommentResponse>>> call,
                                    Response<ApiResponse<java.util.List<CommentResponse>>> response) {
@@ -516,9 +567,22 @@ public class PostDetailFragment extends Fragment {
                         commentAdapter.setComments(comments);
                         binding.rvComments.setVisibility(View.VISIBLE);
                         binding.llEmptyComments.setVisibility(View.GONE);
+
+                        // Check pagination metadata for hasMore
+                        if (response.body().getMeta() != null) {
+                            hasMoreComments = response.body().getMeta().isHasMore();
+                            Log.d(TAG, "Pagination metadata - hasMore: " + hasMoreComments +
+                                  ", page: " + response.body().getMeta().getPage() +
+                                  ", total: " + response.body().getMeta().getTotal());
+                        } else {
+                            // Fallback: check if returned less than page size
+                            hasMoreComments = comments.size() >= COMMENTS_PAGE_SIZE;
+                            Log.d(TAG, "No pagination metadata, using fallback - hasMore: " + hasMoreComments);
+                        }
                     } else {
                         binding.llEmptyComments.setVisibility(View.VISIBLE);
                         binding.rvComments.setVisibility(View.GONE);
+                        hasMoreComments = false;
                     }
                 } else {
                     Log.e(TAG, "Failed to load comments");
@@ -539,6 +603,76 @@ public class PostDetailFragment extends Fragment {
 
                 binding.llEmptyComments.setVisibility(View.VISIBLE);
                 binding.rvComments.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void loadMoreComments() {
+        if (isLoadingComments || !hasMoreComments) {
+            return;
+        }
+
+        Log.d(TAG, "Loading more comments, page: " + (currentCommentsPage + 1));
+        isLoadingComments = true;
+        currentCommentsPage++;
+
+        commentRepository.getComments(postId, currentCommentsPage, COMMENTS_PAGE_SIZE, new Callback<ApiResponse<java.util.List<CommentResponse>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<java.util.List<CommentResponse>>> call,
+                                   Response<ApiResponse<java.util.List<CommentResponse>>> response) {
+                // Check if fragment is still added before updating UI
+                if (!isAdded() || binding == null) {
+                    Log.w(TAG, "Fragment not added or binding is null, skipping more comments UI update");
+                    isLoadingComments = false;
+                    return;
+                }
+
+                isLoadingComments = false;
+
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    java.util.List<CommentResponse> newComments = response.body().getData();
+                    Log.d(TAG, "More comments loaded: " + (newComments != null ? newComments.size() : 0));
+
+                    if (newComments != null && !newComments.isEmpty()) {
+                        // Append new comments to adapter
+                        commentAdapter.addComments(newComments);
+
+                        // Check pagination metadata for hasMore
+                        if (response.body().getMeta() != null) {
+                            hasMoreComments = response.body().getMeta().isHasMore();
+                            Log.d(TAG, "Pagination metadata - hasMore: " + hasMoreComments +
+                                  ", page: " + response.body().getMeta().getPage() +
+                                  ", total: " + response.body().getMeta().getTotal());
+                        } else {
+                            // Fallback: check if returned less than page size
+                            hasMoreComments = newComments.size() >= COMMENTS_PAGE_SIZE;
+                            Log.d(TAG, "No pagination metadata, using fallback - hasMore: " + hasMoreComments);
+                        }
+                    } else {
+                        hasMoreComments = false;
+                        Log.d(TAG, "No more comments available");
+                    }
+                } else {
+                    Log.e(TAG, "Failed to load more comments");
+                    // Revert page increment on error
+                    currentCommentsPage--;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<java.util.List<CommentResponse>>> call, Throwable t) {
+                Log.e(TAG, "Error loading more comments: " + t.getMessage());
+
+                // Check if fragment is still added before updating UI
+                if (!isAdded() || binding == null) {
+                    Log.w(TAG, "Fragment not added or binding is null, skipping error UI update");
+                    isLoadingComments = false;
+                    return;
+                }
+
+                isLoadingComments = false;
+                // Revert page increment on error
+                currentCommentsPage--;
             }
         });
     }
