@@ -27,6 +27,7 @@ import com.example.fitnessapp.model.response.NotificationResponse;
 import com.example.fitnessapp.util.NotificationNavigationHandler;
 import com.example.fitnessapp.viewmodel.NotificationViewModel;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 public class NotificationFragment extends Fragment {
 
@@ -73,6 +74,13 @@ public class NotificationFragment extends Fragment {
         setupSwipeRefresh();
         setupButtons();
         observeViewModel();
+
+        // Hide empty state initially and show loading
+        emptyState.setVisibility(View.GONE);
+        errorState.setVisibility(View.GONE);
+
+        // Start with swipe refresh to show loading indicator
+        swipeRefreshLayout.setRefreshing(true);
 
         // Load notifications on start
         viewModel.loadNotifications();
@@ -167,8 +175,8 @@ public class NotificationFragment extends Fragment {
             if (notifications != null) {
                 adapter.setNotifications(notifications);
 
-                // Show empty state if no notifications
-                if (notifications.isEmpty()) {
+                // Show empty state only when list is empty AND not loading
+                if (notifications.isEmpty() && !Boolean.TRUE.equals(viewModel.getIsLoading().getValue())) {
                     emptyState.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
                 } else {
@@ -181,14 +189,11 @@ public class NotificationFragment extends Fragment {
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null) {
+                swipeRefreshLayout.setRefreshing(isLoading);
+
+                // Hide empty state while loading
                 if (isLoading) {
-                    // Only show progress bar on initial load, not when refreshing
-                    if (adapter.getItemCount() == 0 && !swipeRefreshLayout.isRefreshing()) {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    swipeRefreshLayout.setRefreshing(false);
+                    emptyState.setVisibility(View.GONE);
                 }
             }
         });
@@ -196,19 +201,25 @@ public class NotificationFragment extends Fragment {
         // Observe error
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
-                if (adapter.getItemCount() == 0) {
-                    // Show error state if no data
-                    errorMessage.setText(error);
-                    errorState.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    // Show toast if already has data
-                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                errorState.setVisibility(View.GONE);
+                showError(error);
+                viewModel.clearError();
             }
         });
+    }
+
+    /**
+     * Show error message with Snackbar
+     */
+    private void showError(String message) {
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                    .setAction("Thử lại", v -> {
+                        viewModel.loadNotifications();
+                        viewModel.refreshUnreadCount();
+                    })
+                    .setBackgroundTint(getResources().getColor(R.color.red_400, null))
+                    .show();
+        }
     }
 
     @Override
