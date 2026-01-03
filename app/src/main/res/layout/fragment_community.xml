@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_app_color"
-    tools:context=".fragment.CommunityFragment">
+    tools:context=".fragment.community.CommunityFragment">
 
     <!-- AppBarLayout with TabLayout -->
     <com.google.android.material.appbar.AppBarLayout

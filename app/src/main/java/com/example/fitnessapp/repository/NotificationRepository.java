@@ -100,21 +100,44 @@ public class NotificationRepository {
     }
 
     /**
-     * Mark all notifications as read (synchronous - call from background thread)
+     * Mark all unread notifications as read by calling markAsRead for each unread notification
+     * (synchronous - call from background thread)
+     * @param context Application context
+     * @param unreadNotifications List of unread notifications to mark as read
+     * @return Number of successfully marked notifications
      */
-    public boolean markAllAsRead(Context context) throws Exception {
-        try {
-            NotificationApi api = RetrofitClient.getNotificationApi(context);
-            Response<ApiResponse<Boolean>> response = api.markAllAsRead().execute();
-
-            if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                return true;
-            } else {
-                throw new Exception("Failed to mark all notifications as read: " + response.message());
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Error marking all notifications as read", e);
-            throw e;
+    public int markAllAsRead(Context context, List<NotificationResponse> unreadNotifications) throws Exception {
+        if (unreadNotifications == null || unreadNotifications.isEmpty()) {
+            Log.d(TAG, "No unread notifications to mark as read");
+            return 0;
         }
+
+        int successCount = 0;
+        NotificationApi api = RetrofitClient.getNotificationApi(context);
+
+        for (NotificationResponse notification : unreadNotifications) {
+            if (!notification.isRead()) {
+                try {
+                    Response<ApiResponse<Boolean>> response = api.markAsRead(notification.getId()).execute();
+
+                    if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                        successCount++;
+                        Log.d(TAG, "Marked notification as read: " + notification.getId());
+                    } else {
+                        Log.w(TAG, "Failed to mark notification as read: " + notification.getId());
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "Error marking notification " + notification.getId() + " as read", e);
+                    // Continue with other notifications instead of throwing
+                }
+            }
+        }
+
+        if (successCount == 0 && !unreadNotifications.isEmpty()) {
+            throw new Exception("Failed to mark any notifications as read");
+        }
+
+        Log.d(TAG, "Successfully marked " + successCount + " out of " + unreadNotifications.size() + " notifications as read");
+        return successCount;
     }
 }

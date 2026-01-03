@@ -1,6 +1,7 @@
 package com.example.fitnessapp.viewmodel;
 
 import android.app.Application;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -174,6 +175,10 @@ public class NotificationViewModel extends AndroidViewModel {
 
                     // Refresh unread count
                     refreshUnreadCount();
+
+                    // Broadcast to update badge in MainActivity
+                    Intent intent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
+                    getApplication().sendBroadcast(intent);
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error marking notification as read", e);
@@ -183,24 +188,48 @@ public class NotificationViewModel extends AndroidViewModel {
     }
 
     /**
-     * Mark all notifications as read
+     * Mark all notifications as read by iterating through unread notifications
      */
     public void markAllAsRead() {
         executorService.execute(() -> {
             try {
-                boolean success = repository.markAllAsRead(getApplication());
-                if (success) {
-                    // Update local notification list - mark all as read
-                    List<NotificationResponse> currentList = notifications.getValue();
-                    if (currentList != null) {
-                        for (NotificationResponse notification : currentList) {
-                            notification.setRead(true);
-                        }
-                        notifications.postValue(currentList);
+                List<NotificationResponse> currentList = notifications.getValue();
+                if (currentList == null || currentList.isEmpty()) {
+                    Log.d(TAG, "No notifications to mark as read");
+                    return;
+                }
+
+                // Filter unread notifications
+                List<NotificationResponse> unreadNotifications = new ArrayList<>();
+                for (NotificationResponse notification : currentList) {
+                    if (!notification.isRead()) {
+                        unreadNotifications.add(notification);
                     }
+                }
+
+                if (unreadNotifications.isEmpty()) {
+                    Log.d(TAG, "All notifications already marked as read");
+                    return;
+                }
+
+                // Mark all unread notifications as read
+                int successCount = repository.markAllAsRead(getApplication(), unreadNotifications);
+
+                if (successCount > 0) {
+                    // Update local notification list - mark all as read
+                    for (NotificationResponse notification : currentList) {
+                        notification.setRead(true);
+                    }
+                    notifications.postValue(currentList);
 
                     // Reset unread count to 0
                     unreadCount.postValue(0);
+
+                    // Broadcast to update badge in MainActivity
+                    Intent intent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
+                    getApplication().sendBroadcast(intent);
+
+                    Log.d(TAG, "Successfully marked " + successCount + " notifications as read");
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error marking all notifications as read", e);

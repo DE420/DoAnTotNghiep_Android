@@ -1,4 +1,4 @@
-package com.example.fitnessapp.fragment;
+package com.example.fitnessapp.fragment.community;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,8 +13,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.adapter.community.CommunityViewPagerAdapter;
 import com.example.fitnessapp.databinding.FragmentCommunityBinding;
+import com.example.fitnessapp.fragment.nutrition.MenuDetailFragment;
+import com.example.fitnessapp.fragment.nutrition.NutritionMainFragment;
 import com.example.fitnessapp.network.ApiService;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 public class CommunityFragment extends Fragment {
@@ -81,6 +82,57 @@ public class CommunityFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Hide MainActivity's app bar when this fragment becomes visible
+        showHeaderAndBottomNavigation();
+    }
+
+    private void showHeaderAndBottomNavigation() {
+        if (getActivity() != null) {
+            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
+
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.VISIBLE);
+            }
+
+            if (bottomNavigation != null) {
+                bottomNavigation.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        // Hide/show this fragment's app bar when fragment is hidden/shown
+        if (binding != null && binding.appBarLayout != null) {
+            binding.appBarLayout.setVisibility(hidden ? View.GONE : View.VISIBLE);
+        }
+
+        // When fragment becomes visible again, ensure MainActivity's app bar is hidden
+        if (!hidden) {
+            showHeaderAndBottomNavigation();
+        }
+    }
+
+
+    /**
+     * Check if a community-related fragment is in the foreground
+     */
+    private boolean isCommunityFragmentInForeground() {
+        if (getActivity() == null) return false;
+
+        Fragment currentFragment = getActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
+
+        // Check if current fragment is any nutrition-related fragment
+        return currentFragment instanceof CommunityFragment;
     }
 
     /**
@@ -155,6 +207,8 @@ public class CommunityFragment extends Fragment {
         super.onPause();
         // Stop all videos when fragment is paused (user navigates away)
         pauseAllVideosInAllFragments();
+        // Only show MainActivity's app bar if we're actually leaving the nutrition flow
+        // Check if the next fragment is also a nutrition fragment
     }
 
     @Override
