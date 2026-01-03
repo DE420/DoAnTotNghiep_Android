@@ -67,6 +67,13 @@ public class NotificationViewModel extends AndroidViewModel {
     }
 
     /**
+     * Clear error message (called after showing error to user)
+     */
+    public void clearError() {
+        error.postValue(null);
+    }
+
+    /**
      * Load first page of notifications
      */
     public void loadNotifications() {

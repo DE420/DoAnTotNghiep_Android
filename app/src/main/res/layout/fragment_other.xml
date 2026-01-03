@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="48dp"
             android:gravity="center"
-            android:text="Nutrition"
+            android:text="@string/nutrition"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
