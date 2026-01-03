@@ -66,16 +66,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(message);
 
         Log.d(TAG, "Message received from: " + message.getFrom());
+        Log.d(TAG, "Message ID: " + message.getMessageId());
+        Log.d(TAG, "Message sent time: " + message.getSentTime());
 
         // Handle notification payload
         if (message.getNotification() != null) {
-            Log.d(TAG, "Notification: " + message.getNotification().getTitle());
+            Log.d(TAG, "Notification title: " + message.getNotification().getTitle());
+            Log.d(TAG, "Notification body: " + message.getNotification().getBody());
+            Log.d(TAG, "Notification click action: " + message.getNotification().getClickAction());
         }
 
         // Handle data payload (contains custom data from backend)
         if (!message.getData().isEmpty()) {
             Log.d(TAG, "Message data: " + message.getData());
+
+            // When app is in foreground, we handle the notification ourselves
+            // When app is in background/killed, system handles it and this might not be called
             handleDataPayload(message.getData());
+        } else {
+            Log.w(TAG, "No data payload found in notification");
         }
     }
 
@@ -86,6 +95,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String type = data.getOrDefault("type", "SYSTEM");
         String id = data.get("id");
 
+        Log.d(TAG, "Notification data - Title: " + title);
+        Log.d(TAG, "Notification data - Body: " + body);
+        Log.d(TAG, "Notification data - Link: " + link);
+        Log.d(TAG, "Notification data - Type: " + type);
+        Log.d(TAG, "Notification data - ID: " + id);
+
         // Create and show notification
         showNotification(title, body, link, type, id);
     }
@@ -93,19 +108,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotification(String title, String body, String link, String type, String id) {
         createNotificationChannel();
 
+        Log.d(TAG, "Creating notification with PendingIntent");
+        Log.d(TAG, "Intent extras - Link: " + link + ", Type: " + type + ", ID: " + id);
+
         // Create intent for notification tap
         Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setAction("com.example.fitnessapp.NOTIFICATION_CLICK");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("notification_link", link);
         intent.putExtra("notification_type", type);
         intent.putExtra("notification_id", id);
 
+        // Use notification ID as request code to make each notification unique
+        int requestCode = id != null ? id.hashCode() : (int) System.currentTimeMillis();
+
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
-                (int) System.currentTimeMillis(),
+                requestCode,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
+
+        Log.d(TAG, "PendingIntent created with requestCode: " + requestCode);
 
         // Build notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -120,11 +144,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Show notification
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+        int notificationId = (int) System.currentTimeMillis();
+        notificationManager.notify(notificationId, builder.build());
+
+        Log.d(TAG, "Notification displayed with ID: " + notificationId);
 
         // Broadcast to update badge count in MainActivity
         Intent badgeIntent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
         sendBroadcast(badgeIntent);
+        Log.d(TAG, "Badge update broadcast sent");
     }
 
     private void createNotificationChannel() {
