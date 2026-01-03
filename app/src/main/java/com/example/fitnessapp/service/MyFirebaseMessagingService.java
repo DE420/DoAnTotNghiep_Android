@@ -44,7 +44,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        if (BuildConfig.DEBUG) {
+        if (com.example.fitnessapp.BuildConfig.DEBUG) {
             Log.d(TAG, "New FCM token received");
         }
 
@@ -56,7 +56,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             executorService.execute(() -> {
                 try {
                     notificationRepository.registerDeviceToken(getApplicationContext(), token, "ANDROID");
-                    if (BuildConfig.DEBUG) {
+                    if (com.example.fitnessapp.BuildConfig.DEBUG) {
                         Log.d(TAG, "Token registered with backend");
                     }
                 } catch (Exception e) {
@@ -70,7 +70,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);
 
-        if (BuildConfig.DEBUG) {
+        if (com.example.fitnessapp.BuildConfig.DEBUG) {
             Log.d(TAG, "Message received from: " + message.getFrom());
             Log.d(TAG, "Message ID: " + message.getMessageId());
             Log.d(TAG, "Message sent time: " + message.getSentTime());
@@ -78,7 +78,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Handle notification payload
         if (message.getNotification() != null) {
-            if (BuildConfig.DEBUG) {
+            if (com.example.fitnessapp.BuildConfig.DEBUG) {
                 Log.d(TAG, "Notification title: " + message.getNotification().getTitle());
                 Log.d(TAG, "Notification body: " + message.getNotification().getBody());
                 Log.d(TAG, "Notification click action: " + message.getNotification().getClickAction());
@@ -87,7 +87,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Handle data payload (contains custom data from backend)
         if (!message.getData().isEmpty()) {
-            if (BuildConfig.DEBUG) {
+            if (com.example.fitnessapp.BuildConfig.DEBUG) {
                 Log.d(TAG, "Message data received");
             }
 
@@ -106,7 +106,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String type = data.getOrDefault("type", "SYSTEM");
         String id = data.get("id");
 
-        if (BuildConfig.DEBUG) {
+        if (com.example.fitnessapp.BuildConfig.DEBUG) {
             Log.d(TAG, "Notification data - Type: " + type + ", ID: " + id);
         }
 
@@ -117,7 +117,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotification(String title, String body, String link, String type, String id) {
         createNotificationChannel();
 
-        if (BuildConfig.DEBUG) {
+        if (com.example.fitnessapp.BuildConfig.DEBUG) {
             Log.d(TAG, "Creating notification with PendingIntent");
         }
 
@@ -139,7 +139,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        if (BuildConfig.DEBUG) {
+        if (com.example.fitnessapp.BuildConfig.DEBUG) {
             Log.d(TAG, "PendingIntent created with requestCode: " + requestCode);
         }
 
@@ -159,14 +159,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         int notificationId = (int) System.currentTimeMillis();
         notificationManager.notify(notificationId, builder.build());
 
-        if (BuildConfig.DEBUG) {
+        if (com.example.fitnessapp.BuildConfig.DEBUG) {
             Log.d(TAG, "Notification displayed with ID: " + notificationId);
         }
 
         // Broadcast to update badge count in MainActivity using LocalBroadcastManager
         Intent badgeIntent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
         LocalBroadcastManager.getInstance(this).sendBroadcast(badgeIntent);
-        if (BuildConfig.DEBUG) {
+        if (com.example.fitnessapp.BuildConfig.DEBUG) {
             Log.d(TAG, "Badge update broadcast sent");
         }
     }
