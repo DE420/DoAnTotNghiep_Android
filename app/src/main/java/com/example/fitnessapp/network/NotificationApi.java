@@ -30,7 +30,4 @@ public interface NotificationApi {
 
     @PUT("notifications/{id}/read")
     Call<ApiResponse<Boolean>> markAsRead(@Path("id") Long notificationId);
-
-    @PUT("notifications/mark-all-read")
-    Call<ApiResponse<Boolean>> markAllAsRead();
 }

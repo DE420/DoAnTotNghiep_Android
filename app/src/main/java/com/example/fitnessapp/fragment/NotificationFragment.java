@@ -1,6 +1,7 @@
 package com.example.fitnessapp.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,7 +100,7 @@ public class NotificationFragment extends Fragment {
         // Back button
         backButton.setOnClickListener(v -> {
             if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                getActivity().onBackPressed();
             }
         });
 
@@ -209,4 +210,50 @@ public class NotificationFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        hideMainAppBar();
+        showBottomNavigation();
+        Log.e(TAG, "onResume");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        showMainAppBar();
+    }
+
+    private void hideMainAppBar() {
+        if (getActivity() != null) {
+            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    /**
+     * Show MainActivity's app bar when leaving nutrition screens
+     */
+    private void showMainAppBar() {
+        if (getActivity() != null) {
+            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void showBottomNavigation() {
+        if (getActivity() != null) {
+            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
+
+            if (bottomNavigation != null) {
+                bottomNavigation.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
 }
