@@ -238,6 +238,12 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<ApiResponse<PostResponse>> call,
                                    Response<ApiResponse<PostResponse>> response) {
+                // Check if fragment is still added before updating UI
+                if (!isAdded() || binding == null) {
+                    Log.w(TAG, "Fragment not added or binding is null, skipping post detail UI update");
+                    return;
+                }
+
                 binding.progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
@@ -253,6 +259,12 @@ public class PostDetailFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ApiResponse<PostResponse>> call, Throwable t) {
+                // Check if fragment is still added before updating UI
+                if (!isAdded() || binding == null) {
+                    Log.w(TAG, "Fragment not added or binding is null, skipping error UI update");
+                    return;
+                }
+
                 binding.progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Error loading post detail: " + t.getMessage());
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
@@ -490,6 +502,12 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<ApiResponse<java.util.List<CommentResponse>>> call,
                                    Response<ApiResponse<java.util.List<CommentResponse>>> response) {
+                // Check if fragment is still added before updating UI
+                if (!isAdded() || binding == null) {
+                    Log.w(TAG, "Fragment not added or binding is null, skipping comment UI update");
+                    return;
+                }
+
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                     java.util.List<CommentResponse> comments = response.body().getData();
                     Log.d(TAG, "Comments loaded: " + (comments != null ? comments.size() : 0));
@@ -512,6 +530,13 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onFailure(Call<ApiResponse<java.util.List<CommentResponse>>> call, Throwable t) {
                 Log.e(TAG, "Error loading comments: " + t.getMessage());
+
+                // Check if fragment is still added before updating UI
+                if (!isAdded() || binding == null) {
+                    Log.w(TAG, "Fragment not added or binding is null, skipping error UI update");
+                    return;
+                }
+
                 binding.llEmptyComments.setVisibility(View.VISIBLE);
                 binding.rvComments.setVisibility(View.GONE);
             }
@@ -1062,11 +1087,24 @@ public class PostDetailFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        hideHeaderAndBottomNavigation();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (player != null) {
             player.pause();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        showHeaderAndBottomNavigation();
+        Log.e(TAG, "onStop");
     }
 
     @Override
@@ -1077,12 +1115,44 @@ public class PostDetailFragment extends Fragment {
 
         // Clear edit comment callback to prevent crashes
         editCommentImageUpdateCallback = null;
-
+//        showHeaderAndBottomNavigation();
         if (player != null) {
             player.stop();
             player.release();
             player = null;
         }
         binding = null;
+        Log.e(TAG, "onDestroyView");
     }
+
+    private void hideHeaderAndBottomNavigation() {
+        if (getActivity() != null) {
+            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
+
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.GONE);
+            }
+
+            if (bottomNavigation != null) {
+                bottomNavigation.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void showHeaderAndBottomNavigation() {
+        if (getActivity() != null) {
+            View appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+            View bottomNavigation = getActivity().findViewById(R.id.bottom_navigation);
+
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.VISIBLE);
+            }
+
+            if (bottomNavigation != null) {
+                bottomNavigation.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
 }

@@ -1,7 +1,10 @@
 package com.example.fitnessapp;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,27 +18,31 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.fitnessapp.databinding.ActivityMainBinding;
-import com.example.fitnessapp.fragment.CommunityFragment;
+import com.example.fitnessapp.fragment.community.CommunityFragment;
 import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.NotificationFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
 import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
+import com.example.fitnessapp.fragment.community.CreateUpdatePostFragment;
 import com.example.fitnessapp.fragment.community.PostDetailFragment;
+import com.example.fitnessapp.fragment.nutrition.NutritionMainFragment;
+import com.example.fitnessapp.fragment.nutrition.MenuDetailFragment;
+import com.example.fitnessapp.fragment.nutrition.CreateEditMenuFragment;
 import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
-import com.example.fitnessapp.network.ApiService;
-import com.example.fitnessapp.network.AuthApi;
 import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.network.UserApi;
 import com.example.fitnessapp.repository.AuthRepository;
+import com.example.fitnessapp.repository.NotificationRepository;
 import com.example.fitnessapp.session.SessionManager;
 import com.example.fitnessapp.viewmodel.NotificationViewModel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.bumptech.glide.Glide;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,37 +56,92 @@ public class MainActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private NotificationViewModel notificationViewModel;
 
+    // BroadcastReceiver for notification badge updates
+    private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Refresh badge when new notification is received
+            if (notificationViewModel != null) {
+                notificationViewModel.refreshUnreadCount();
+            }
+        }
+    };
+
     /**
      * Setup fragment lifecycle callbacks to automatically control header and bottom nav visibility
      */
     private void setupFragmentLifecycleCallbacks() {
         getSupportFragmentManager().registerFragmentLifecycleCallbacks(
                 new FragmentManager.FragmentLifecycleCallbacks() {
-                    @Override
-                    public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
-                        super.onFragmentResumed(fm, f);
 
+                    private void updateVisibility(Fragment f) {
                         // Control header and bottom nav visibility based on fragment type
-                        if (f instanceof PostDetailFragment || f instanceof NotificationFragment) {
-                            // Hide header for PostDetailFragment and NotificationFragment
+                        if (f instanceof PostDetailFragment || f instanceof NotificationFragment || f instanceof CreateUpdatePostFragment
+                                || f instanceof MenuDetailFragment || f instanceof CreateEditMenuFragment) {
+                            // Hide header for PostDetailFragment, NotificationFragment, CreateUpdatePostFragment,
+                            // MenuDetailFragment, and CreateEditMenuFragment
                             appBarLayout.setVisibility(View.GONE);
 
-                            if (f instanceof PostDetailFragment) {
-                                // Hide bottom nav for PostDetailFragment
+                            if (f instanceof PostDetailFragment || f instanceof CreateUpdatePostFragment
+                                    || f instanceof MenuDetailFragment || f instanceof CreateEditMenuFragment) {
+                                // Hide bottom nav for PostDetailFragment, CreateUpdatePostFragment,
+                                // MenuDetailFragment, and CreateEditMenuFragment
                                 binding.bottomNavigation.setVisibility(View.GONE);
                             } else if (f instanceof NotificationFragment) {
                                 // Show bottom nav for NotificationFragment
                                 binding.bottomNavigation.setVisibility(View.VISIBLE);
                             }
-                        } else if (f instanceof ProfileFragment) {
-                            // Hide header for ProfileFragment
+                        } else if (f instanceof ProfileFragment || f instanceof NutritionMainFragment) {
+                            // Hide header for ProfileFragment and NutritionMainFragment
                             appBarLayout.setVisibility(View.GONE);
-                            // Keep bottom nav selection but uncheck it
-                            binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(false);
+                            // Keep bottom nav visible and maintain selection
+                            binding.bottomNavigation.setVisibility(View.VISIBLE);
+                            if (f instanceof ProfileFragment) {
+                                // Keep bottom nav selection but uncheck it for ProfileFragment
+                                binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(false);
+                            }
                         } else {
-                            // Show header and bottom nav for other fragments
+                            // Show header and bottom nav for other fragments (including CommunityFragment)
                             appBarLayout.setVisibility(View.VISIBLE);
                             binding.bottomNavigation.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
+                        super.onFragmentResumed(fm, f);
+                        updateVisibility(f);
+                    }
+
+                    @Override
+                    public void onFragmentStarted(@NonNull FragmentManager fm, @NonNull Fragment f) {
+                        super.onFragmentStarted(fm, f);
+                        // Also update visibility when fragment is started (handles show/hide scenarios)
+                        updateVisibility(f);
+                    }
+
+                    @Override
+                    public void onFragmentStopped(@NonNull FragmentManager fm, @NonNull Fragment f) {
+                        super.onFragmentStopped(fm, f);
+
+                        // When PostDetailFragment, CreateUpdatePostFragment, MenuDetailFragment,
+                        // or CreateEditMenuFragment is stopped (being removed),
+                        // explicitly show header and bottom nav so that whatever fragment is shown next
+                        // will have them visible by default
+                        if (f instanceof PostDetailFragment || f instanceof CreateUpdatePostFragment
+                                || f instanceof MenuDetailFragment || f instanceof CreateEditMenuFragment) {
+                            // Use post() to ensure this happens after the fragment transaction completes
+                            binding.getRoot().post(() -> {
+                                // Check if there's another special fragment still visible
+                                Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+                                if (currentFragment != null) {
+                                    updateVisibility(currentFragment);
+                                } else {
+                                    // No fragment found, default to showing header and bottom nav
+                                    appBarLayout.setVisibility(View.VISIBLE);
+                                    binding.bottomNavigation.setVisibility(View.VISIBLE);
+                                }
+                            });
                         }
                     }
                 }, true
@@ -94,7 +156,11 @@ public class MainActivity extends AppCompatActivity {
         appBarLayout = findViewById(R.id.app_bar_layout);
 
         // Register fragment lifecycle callbacks to control header visibility
-        setupFragmentLifecycleCallbacks();
+//        setupFragmentLifecycleCallbacks();
+
+        // Register BroadcastReceiver for notification badge updates
+        IntentFilter filter = new IntentFilter("com.example.fitnessapp.NOTIFICATION_RECEIVED");
+        registerReceiver(notificationReceiver, filter);
 
         if (savedInstanceState == null) {
             // load default home fragment
@@ -106,6 +172,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Load user profile and display avatar
         loadUserProfile();
+
+        // Register FCM token if logged in
+        registerFcmToken();
 
         binding.imageAvatar.setOnClickListener(v -> {
             loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
@@ -205,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (!addToBackStack) {
-            fragmentManager.popBackStack("Profile", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.popBackStack(title, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(
@@ -224,20 +293,16 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
 
         preSelectedItemIditem = binding.bottomNavigation.getSelectedItemId();
-        if (title.equals("Profile")) {
+        if (title.equals("Profile") || title.equals("Thông báo")) {
             binding.appBarLayout.setVisibility(View.GONE);
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(false);
-        } else if (title.equals("Thông báo") || fragment instanceof NotificationFragment) {
-            // NotificationFragment has its own header, hide MainActivity header
-            binding.appBarLayout.setVisibility(View.GONE);
-            binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
         } else {
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
             binding.appBarLayout.setVisibility(View.VISIBLE);
             binding.toolbar.setTitle(title);
         }
         // Cập nhật title của toolbar only for non-Profile and non-Notification fragments
-        if (!title.equals("Profile") && !title.equals("Thông báo") && !(fragment instanceof NotificationFragment)) {
+        if (!title.equals("Profile") && !title.equals("Thông báo")) {
             binding.toolbar.setTitle(title);
         }
     }
@@ -255,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
 
         Fragment current = fm.findFragmentById(R.id.fragment_container);
-        if (current instanceof ProfileFragment) {
+        if (current instanceof ProfileFragment || current instanceof NotificationFragment) {
             binding.appBarLayout.setVisibility(View.VISIBLE);
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
         }
@@ -453,6 +518,63 @@ public class MainActivity extends AppCompatActivity {
         // Switch to plan tab in bottom navigation
         binding.bottomNavigation.setSelectedItemId(R.id.nav_plan);
         Log.d("MainActivity", "Navigated to workout plan");
+    }
+
+    /**
+     * Register FCM token with backend if user is logged in
+     */
+    private void registerFcmToken() {
+        SessionManager sessionManager = SessionManager.getInstance(this);
+
+        // Only register if user is logged in
+        if (!sessionManager.isLoggedIn()) {
+            Log.d("MainActivity", "User not logged in, skipping FCM token registration");
+            return;
+        }
+
+        // Get FCM token from Firebase
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("MainActivity", "Failed to get FCM token", task.getException());
+                        return;
+                    }
+
+                    // Get new FCM token
+                    String token = task.getResult();
+                    if (token == null || token.isEmpty()) {
+                        Log.w("MainActivity", "FCM token is null or empty");
+                        return;
+                    }
+
+                    Log.d("MainActivity", "FCM token retrieved: " + token);
+
+                    // Save token locally
+                    sessionManager.saveFcmToken(token);
+
+                    // Register token with backend in background thread
+                    new Thread(() -> {
+                        try {
+                            NotificationRepository repository = new NotificationRepository();
+                            repository.registerDeviceToken(getApplicationContext(), token, "ANDROID");
+                            Log.d("MainActivity", "FCM token registered with backend successfully");
+                        } catch (Exception e) {
+                            Log.e("MainActivity", "Failed to register FCM token with backend", e);
+                        }
+                    }).start();
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister BroadcastReceiver to prevent memory leaks
+        try {
+            unregisterReceiver(notificationReceiver);
+        } catch (IllegalArgumentException e) {
+            // Receiver was not registered, ignore
+            Log.w("MainActivity", "Receiver not registered: " + e.getMessage());
+        }
     }
 
 }

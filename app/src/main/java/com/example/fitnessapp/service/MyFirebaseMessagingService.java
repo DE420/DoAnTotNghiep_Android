@@ -121,6 +121,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+
+        // Broadcast to update badge count in MainActivity
+        Intent badgeIntent = new Intent("com.example.fitnessapp.NOTIFICATION_RECEIVED");
+        sendBroadcast(badgeIntent);
     }
 
     private void createNotificationChannel() {
