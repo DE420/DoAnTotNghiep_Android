@@ -46,6 +46,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         notifyItemInserted(0);
     }
 
+    public void addComments(List<CommentResponse> newComments) {
+        if (newComments != null && !newComments.isEmpty()) {
+            int startPosition = comments.size();
+            comments.addAll(newComments);
+            notifyItemRangeInserted(startPosition, newComments.size());
+        }
+    }
+
     public void removeComment(int position) {
         if (position >= 0 && position < comments.size()) {
             comments.remove(position);
