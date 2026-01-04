@@ -218,14 +218,7 @@
                                     android:orientation="vertical"
                                     android:gravity="center">
 
-                                    <TextView
-                                        android:id="@+id/tv_weight_value"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        tools:text="65.5"
-                                        android:textColor="@color/white"
-                                        android:textSize="24sp"
-                                        android:textStyle="bold"/>
+
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -234,6 +227,15 @@
                                         android:textColor="@color/gray_450"
                                         android:textSize="14sp"
                                         android:layout_marginTop="4dp"/>
+
+                                    <TextView
+                                        android:id="@+id/tv_weight_value"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="65.5"
+                                        android:textColor="@color/white"
+                                        android:textSize="24sp"
+                                        android:textStyle="bold"/>
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -261,14 +263,7 @@
                                     android:orientation="vertical"
                                     android:gravity="center">
 
-                                    <TextView
-                                        android:id="@+id/tv_height_value"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        tools:text="1.75"
-                                        android:textColor="@color/white"
-                                        android:textSize="24sp"
-                                        android:textStyle="bold"/>
+
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -277,6 +272,15 @@
                                         android:textColor="@color/gray_450"
                                         android:textSize="14sp"
                                         android:layout_marginTop="4dp"/>
+
+                                    <TextView
+                                        android:id="@+id/tv_height_value"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="1.75"
+                                        android:textColor="@color/white"
+                                        android:textSize="24sp"
+                                        android:textStyle="bold"/>
 
                                     <TextView
                                         android:layout_width="wrap_content"
