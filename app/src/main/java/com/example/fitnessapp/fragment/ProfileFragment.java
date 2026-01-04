@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -128,8 +127,11 @@ public class ProfileFragment extends Fragment {
         // Edit button
         binding.ibEdit.setOnClickListener(v -> navigateToEditProfile());
 
-        // More menu button (shows popup with change password and logout)
-        binding.ibMore.setOnClickListener(v -> showMoreMenu(v));
+        // Change Password button
+        binding.ibChangePassword.setOnClickListener(v -> navigateToChangePassword());
+
+        // Logout button
+        binding.ibLogout.setOnClickListener(v -> showLogoutConfirmation());
 
         // Retry button (in error state)
         binding.btnRetry.setOnClickListener(v -> {
@@ -140,28 +142,6 @@ public class ProfileFragment extends Fragment {
         binding.srlProfile.setOnRefreshListener(() -> {
             viewModel.loadUserProfile();
         });
-    }
-
-    /**
-     * Show more menu with change password and logout options
-     */
-    private void showMoreMenu(View anchor) {
-        PopupMenu popup = new PopupMenu(requireContext(), anchor);
-        popup.getMenuInflater().inflate(R.menu.menu_profile_more, popup.getMenu());
-
-        popup.setOnMenuItemClickListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.action_change_password) {
-                navigateToChangePassword();
-                return true;
-            } else if (itemId == R.id.action_logout) {
-                showLogoutConfirmation();
-                return true;
-            }
-            return false;
-        });
-
-        popup.show();
     }
 
     /**
