@@ -92,9 +92,6 @@ public class ProfileFragment extends Fragment {
                     if (currentProfile == null) {
                         showLoadingState();
                     }
-                } else {
-                    // Stop refresh animation
-                    binding.srlProfile.setRefreshing(false);
                 }
             }
         });
@@ -135,11 +132,6 @@ public class ProfileFragment extends Fragment {
 
         // Retry button (in error state)
         binding.btnRetry.setOnClickListener(v -> {
-            viewModel.loadUserProfile();
-        });
-
-        // Pull to refresh
-        binding.srlProfile.setOnRefreshListener(() -> {
             viewModel.loadUserProfile();
         });
     }
