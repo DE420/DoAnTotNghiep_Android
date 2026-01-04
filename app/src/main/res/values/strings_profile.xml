@@ -34,6 +34,9 @@
     <string name="profile_active_days">Số ngày tập:</string>
     <string name="profile_avg_per_workout">Trung bình mỗi buổi:</string>
     <string name="profile_current_streak">Chuỗi ngày tập:</string>
+    <string name="profile_workouts">Buổi tập</string>
+    <string name="profile_calories">Calories</string>
+    <string name="profile_hours">Giờ</string>
 
     <!-- Input Hints -->
     <string name="profile_name_hint">Nhập họ và tên</string>
