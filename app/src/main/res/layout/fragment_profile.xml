@@ -493,7 +493,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/txt_workouts"
+                                        android:text="@string/profile_workouts"
                                         android:textColor="@color/gray_450"
                                         android:textSize="12sp"
                                         android:gravity="center"
@@ -539,7 +539,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/txt_calories"
+                                        android:text="@string/profile_calories"
                                         android:textColor="@color/gray_450"
                                         android:textSize="12sp"
                                         android:gravity="center"
@@ -585,7 +585,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/txt_hours"
+                                        android:text="@string/profile_hours"
                                         android:textColor="@color/gray_450"
                                         android:textSize="12sp"
                                         android:gravity="center"
