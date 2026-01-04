@@ -84,6 +84,7 @@
     <string name="profile_avatar_desc">Ảnh đại diện</string>
     <string name="profile_edit_desc">Chỉnh sửa hồ sơ</string>
     <string name="profile_back_desc">Quay lại</string>
+    <string name="profile_logout_icon_desc">Biểu tượng đăng xuất</string>
 
     <!-- Change Password Strings -->
     <string name="profile_change_password_title">Đổi Mật Khẩu</string>

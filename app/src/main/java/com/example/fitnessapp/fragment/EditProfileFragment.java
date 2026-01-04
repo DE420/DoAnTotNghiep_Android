@@ -294,7 +294,7 @@ public class EditProfileFragment extends Fragment {
         if (currentProfile.getHeight() != null) {
             // Convert meters to centimeters for display
             double heightInCm = currentProfile.getHeight() * 100;
-            binding.etHeight.setText(String.format("%.0f", heightInCm));
+            binding.etHeight.setText(String.format(Locale.getDefault(), "%.0f", heightInCm));
         }
 
         // Birthday
