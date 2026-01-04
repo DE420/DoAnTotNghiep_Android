@@ -76,6 +76,12 @@
     <string name="profile_logout_yes">Đăng xuất</string>
     <string name="profile_logout_no">Hủy</string>
 
+    <!-- Logout Dialog (Material Design) -->
+    <string name="profile_logout_dialog_title">Xác nhận đăng xuất</string>
+    <string name="profile_logout_dialog_message">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</string>
+    <string name="profile_logout_dialog_confirm">Đăng xuất</string>
+    <string name="profile_logout_dialog_cancel">Hủy</string>
+
     <!-- Empty States -->
     <string name="profile_no_data">Chưa có dữ liệu</string>
     <string name="profile_no_stats">Chưa có thống kê. Bắt đầu tập luyện ngay!</string>
