@@ -51,6 +51,30 @@ public class DateUtil {
         return base + suffix;
     }
 
+    /**
+     * Convert date string to Vietnamese birthday format
+     * Example: "2000-01-15" -> "Ngày 15 tháng 1 năm 2000"
+     *
+     * @param input  The input date string
+     * @param format The format of the input date string
+     * @return Vietnamese formatted birthday string
+     * @throws ParseException if date parsing fails
+     */
+    public static String convertToVietnameseBirthday(String input, String format) throws ParseException {
+        SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        Date date = inputFormat.parse(input);
+
+        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.ENGLISH);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("M", Locale.ENGLISH);
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+
+        String day = dayFormat.format(date);
+        String month = monthFormat.format(date);
+        String year = yearFormat.format(date);
+
+        return "Ngày " + day + " tháng " + month + " năm " + year;
+    }
+
     public static String getNewDateString(String input, String format, String newFormat) throws ParseException {
 
         SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.ENGLISH);
