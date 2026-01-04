@@ -75,6 +75,50 @@ public class DateUtil {
         return "Ngày " + day + " tháng " + month + " năm " + year;
     }
 
+    /**
+     * Convert English month name to Vietnamese month format
+     * Example: "January" -> "Tháng 1", "December" -> "Tháng 12"
+     *
+     * @param englishMonthName The English month name (e.g., "January", "February")
+     * @return Vietnamese month format (e.g., "Tháng 1", "Tháng 2")
+     */
+    public static String convertToVietnameseMonth(String englishMonthName) {
+        if (englishMonthName == null || englishMonthName.isEmpty()) {
+            return "";
+        }
+
+        // Map English month names to Vietnamese format
+        switch (englishMonthName.toLowerCase()) {
+            case "january":
+                return "Tháng 1";
+            case "february":
+                return "Tháng 2";
+            case "march":
+                return "Tháng 3";
+            case "april":
+                return "Tháng 4";
+            case "may":
+                return "Tháng 5";
+            case "june":
+                return "Tháng 6";
+            case "july":
+                return "Tháng 7";
+            case "august":
+                return "Tháng 8";
+            case "september":
+                return "Tháng 9";
+            case "october":
+                return "Tháng 10";
+            case "november":
+                return "Tháng 11";
+            case "december":
+                return "Tháng 12";
+            default:
+                // If not recognized, return original
+                return englishMonthName;
+        }
+    }
+
     public static String getNewDateString(String input, String format, String newFormat) throws ParseException {
 
         SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.ENGLISH);
