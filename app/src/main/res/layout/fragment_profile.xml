@@ -68,13 +68,26 @@
                     android:contentDescription="@string/profile_edit_desc"
                     android:layout_marginEnd="4dp"/>
 
-                <!-- More Options (change password, logout) -->
+                <!-- Change Password Button -->
                 <ImageButton
-                    android:id="@+id/ib_more"
+                    android:id="@+id/ib_change_password"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:padding="12dp"
-                    android:src="@drawable/ic_logout"
+                    android:src="@drawable/ic_change_password"
+                    android:background="@drawable/bg_transparent_circle_icon"
+                    android:scaleType="centerCrop"
+                    app:tint="@color/white"
+                    android:contentDescription="@string/profile_change_password_title"
+                    android:layout_marginEnd="4dp"/>
+
+                <!-- Logout Button -->
+                <ImageButton
+                    android:id="@+id/ib_logout"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_red_logout_24"
                     android:background="@drawable/bg_transparent_circle_icon"
                     android:scaleType="centerCrop"
                     app:tint="@color/white"
