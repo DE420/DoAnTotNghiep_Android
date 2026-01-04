@@ -403,11 +403,18 @@ public class EditProfileFragment extends Fragment {
         binding.tilName.setError(null);
         binding.tilWeight.setError(null);
         binding.tilHeight.setError(null);
+        binding.tilBirthday.setError(null);
 
         // Validate name
         String name = binding.etName.getText().toString().trim();
         if (name.isEmpty()) {
             binding.tilName.setError(getString(R.string.profile_name_required));
+            isValid = false;
+        } else if (name.length() < 2) {
+            binding.tilName.setError("Tên phải có ít nhất 2 ký tự");
+            isValid = false;
+        } else if (name.length() > 100) {
+            binding.tilName.setError("Tên quá dài (tối đa 100 ký tự)");
             isValid = false;
         }
 
@@ -418,6 +425,9 @@ public class EditProfileFragment extends Fragment {
                 double weight = Double.parseDouble(weightStr);
                 if (weight <= 0 || weight > 500) {
                     binding.tilWeight.setError(getString(R.string.profile_weight_invalid));
+                    isValid = false;
+                } else if (weight < 20) {
+                    binding.tilWeight.setError("Cân nặng quá nhỏ (tối thiểu 20kg)");
                     isValid = false;
                 }
             } catch (NumberFormatException e) {
@@ -434,9 +444,49 @@ public class EditProfileFragment extends Fragment {
                 if (heightCm <= 0 || heightCm > 300) {
                     binding.tilHeight.setError(getString(R.string.profile_height_invalid));
                     isValid = false;
+                } else if (heightCm < 50) {
+                    binding.tilHeight.setError("Chiều cao quá nhỏ (tối thiểu 50cm)");
+                    isValid = false;
                 }
             } catch (NumberFormatException e) {
                 binding.tilHeight.setError(getString(R.string.profile_height_invalid));
+                isValid = false;
+            }
+        }
+
+        // Validate birthday
+        String birthdayStr = binding.etBirthday.getText().toString().trim();
+        if (!birthdayStr.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                sdf.setLenient(false);
+                Date birthday = sdf.parse(birthdayStr);
+
+                if (birthday != null) {
+                    // Check if birthday is not in the future
+                    Date today = new Date();
+                    if (birthday.after(today)) {
+                        binding.tilBirthday.setError("Ngày sinh không thể là ngày trong tương lai");
+                        isValid = false;
+                    }
+
+                    // Check if age is reasonable (between 5 and 150 years old)
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(birthday);
+                    int birthYear = cal.get(Calendar.YEAR);
+                    int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                    int age = currentYear - birthYear;
+
+                    if (age < 5) {
+                        binding.tilBirthday.setError("Tuổi quá nhỏ (tối thiểu 5 tuổi)");
+                        isValid = false;
+                    } else if (age > 150) {
+                        binding.tilBirthday.setError("Ngày sinh không hợp lệ");
+                        isValid = false;
+                    }
+                }
+            } catch (ParseException e) {
+                binding.tilBirthday.setError("Định dạng ngày sinh không hợp lệ (dd/MM/yyyy)");
                 isValid = false;
             }
         }
