@@ -35,7 +35,9 @@ public class OtherFragment extends Fragment {
     private void setupClickListeners() {
         binding.buttonChallenge.setOnClickListener(v -> Toast.makeText(getContext(), "Challenge", Toast.LENGTH_SHORT).show());
 
-        binding.buttonNutrition.setOnClickListener(v -> Toast.makeText(getContext(), "Nutrition", Toast.LENGTH_SHORT).show());
+        binding.buttonNutrition.setOnClickListener(v -> {
+            loadFragmentOther(new com.example.fitnessapp.fragment.nutrition.NutritionMainFragment());
+        });
 
         binding.buttonExercises.setOnClickListener(v -> {
             loadFragmentOther(new ExercisesFragment());

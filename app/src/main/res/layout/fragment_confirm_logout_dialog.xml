@@ -1,115 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:minWidth="280dp"
-    android:maxWidth="560dp"
-    >
+    android:maxWidth="560dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_content"
+    <!-- Content View -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_content"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:padding="24dp"
-        android:background="@drawable/background_for_logout_dialog"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/black_370"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_wrap_icon_logout"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@drawable/background_for_logout_icon"
+        app:layout_constraintEnd_toEndOf="parent">
 
-            >
+        <LinearLayout
+            android:id="@+id/cl_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Logout Icon -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center_horizontal"
+                app:cardBackgroundColor="@color/red_400"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp">
+
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_red_logout_24"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:contentDescription="@string/profile_logout_icon_desc"
+                    app:tint="@color/white"/>
 
+            </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/tv_headline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Already leaving?"
-            android:textSize="24dp"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/cl_wrap_icon_logout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"/>
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tv_headline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_logout_confirm_title"
+                android:textSize="22sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginTop="16dp"/>
 
-        <TextView
-            android:id="@+id/tv_supporting_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Are you sure you want to log out?"
-            android:textSize="14sp"
-            android:lineHeight="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_headline"
-            android:textColor="@color/white_200"
-            android:layout_marginTop="16dp"/>
+            <!-- Message -->
+            <TextView
+                android:id="@+id/tv_supporting_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_logout_confirm_message"
+                android:textSize="14sp"
+                android:textColor="@color/white_200"
+                android:gravity="center"
+                android:layout_marginTop="8dp"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_confirm_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Yes, Log out"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:background="@drawable/primary_round_red_rectangle_button"
-            app:layout_constraintTop_toBottomOf="@id/tv_supporting_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="24dp"
-            />
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="end">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_cancel_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Cancel"
-            android:textSize="14sp"
-            android:textColor="@color/white_200"
-            android:background="@drawable/primary_round_black_rectangle_button"
-            app:layout_constraintTop_toTopOf="@id/btn_confirm_logout"
-            app:layout_constraintEnd_toStartOf="@id/btn_confirm_logout"
-            android:layout_marginEnd="8dp"
-            />
+                <!-- Cancel Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_cancel_logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_logout_no"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="8dp"
+                    app:backgroundTint="@color/gray_450"
+                    style="@style/Widget.Material3.Button"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Confirm Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_confirm_logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_logout_yes"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/red_400"
+                    style="@style/Widget.Material3.Button"/>
 
-    <RelativeLayout
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Loading Overlay -->
+    <androidx.cardview.widget.CardView
         android:id="@+id/rl_loading"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/black_370"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/background_for_logout_dialog"
-        android:visibility="gone">
+        app:layout_constraintBottom_toBottomOf="parent">
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminateTint="@color/gray"/>
-    </RelativeLayout>
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/yellow"/>
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

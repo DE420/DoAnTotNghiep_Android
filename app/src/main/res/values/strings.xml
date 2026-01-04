@@ -70,4 +70,307 @@
     <string name="txt_cant_blank_current_password_support">Current password can\'t blank</string>
     <string name="txt_password_support">Password must be at least 8 characters, including letters, numbers and special characters</string>
     <string name="txt_new_password_support">Confirm password don\'t match new password</string>
+    <string name="text_super_long">Từ ngày 1/1/2026, khi hộ kinh doanh chuyển sang kê khai thuế theo doanh thu, yêu cầu thông báo và giám sát tài khoản ngân hàng trở thành nội dung được quan tâm. Theo chuyên gia, đây là bước đi cần thiết để minh bạch dòng tiền kinh doanh.
+</string>
+
+    <!-- Nutrition feature strings -->
+    <string name="nutrition">Dinh dưỡng</string>
+    <string name="public_menus">Thực đơn công khai</string>
+    <string name="my_menus">Thực đơn của tôi</string>
+    <string name="create_menu">Tạo thực đơn</string>
+    <string name="edit_menu">Chỉnh sửa thực đơn</string>
+    <string name="menu_detail">Chi tiết thực đơn</string>
+    <string name="menu_name">Tên thực đơn</string>
+    <string name="menu_description">Mô tả</string>
+    <string name="fitness_goal">Mục tiêu thể hình</string>
+    <string name="calories_target">Mục tiêu calo</string>
+    <string name="make_private">Đặt thực đơn ở chế độ riêng tư</string>
+    <string name="clone_menu">Thêm vào thực đơn của tôi</string>
+    <string name="delete_menu">Xóa thực đơn</string>
+    <string name="confirm_delete_menu">Bạn có chắc muốn xóa thực đơn này?</string>
+    <string name="menu_cloned_success">Đã thêm thực đơn vào bộ sưu tập của bạn!</string>
+    <string name="menu_deleted_success">Đã xóa thực đơn</string>
+    <string name="menu_created_success">đã được tạo thành công</string>
+    <string name="menu_updated_success">đã được cập nhật thành công</string>
+
+    <!-- Meal types -->
+    <string name="breakfast">Bữa sáng</string>
+    <string name="lunch">Bữa trưa</string>
+    <string name="dinner">Bữa tối</string>
+    <string name="extra_meal">Bữa phụ</string>
+
+    <!-- Nutrition labels -->
+    <string name="calories">Calo</string>
+    <string name="protein">Protein</string>
+    <string name="carbs">Carbs</string>
+    <string name="fat">Chất béo</string>
+    <string name="cooking_time">Thời gian nấu</string>
+    <string name="ingredients">Nguyên liệu</string>
+    <string name="preparation">Cách chế biến</string>
+
+    <!-- Actions -->
+    <string name="add_dish">Thêm món ăn</string>
+    <string name="select_dish">Chọn món ăn</string>
+    <string name="view_recipe">Xem công thức</string>
+    <string name="save_menu">Lưu thực đơn</string>
+    <string name="search_menus">Tìm kiếm thực đơn...</string>
+    <string name="search_dishes">Tìm kiếm món ăn...</string>
+    <string name="search_dish">Tìm món ăn</string>
+    <string name="no_menus_found">Không tìm thấy thực đơn</string>
+    <string name="no_dishes_found">Không tìm thấy món ăn</string>
+    <string name="no_dishes_added">Chưa có món ăn nào. Nhấn \"Thêm món ăn\" để thêm.</string>
+    <string name="loading">Đang tải...</string>
+    <string name="error_loading_menus">Không thể tải thực đơn</string>
+    <string name="error_loading_dishes">Không thể tải món ăn</string>
+    <string name="choose_image">Chọn ảnh</string>
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="save">Lưu</string>
+    <string name="quantity">Số lượng</string>
+    <string name="servings">phần ăn</string>
+    <string name="total_nutrition">Tổng dinh dưỡng</string>
+    <string name="creator">Người tạo</string>
+    <string name="unknown_user">Người dùng không xác định</string>
+    <string name="dish_detail">Chi tiết món ăn</string>
+    <string name="nutrition_facts">Thông tin dinh dưỡng</string>
+    <string name="meals">Bữa ăn</string>
+    <string name="back">Quay lại</string>
+    <string name="description">Mô tả</string>
+    <string name="make_menu_private">Đặt thực đơn ở chế độ riêng tư</string>
+    <string name="menu_image">Ảnh thực đơn</string>
+    <string name="dish_image">Ảnh món ăn</string>
+    <string name="decrease_quantity">Giảm số lượng</string>
+    <string name="increase_quantity">Tăng số lượng</string>
+    <string name="remove_dish">Xóa món ăn</string>
+    <string name="snacks">Bữa phụ</string>
+    <string name="kcal">kcal</string>
+
+
+    <!-- Navigation Titles -->
+    <string name="nav_title_home">Trang chủ</string>
+    <string name="nav_title_plan">Kế hoạch</string>
+    <string name="nav_title_community">Cộng đồng</string>
+    <string name="nav_title_other">Khác</string>
+
+    <!-- User Profile -->
+    <string name="user_avatar">Ảnh đại diện người dùng</string>
+
+    <!-- ========== COMMUNITY FEATURE STRINGS (VIETNAMESE PRIMARY) ========== -->
+
+    <!-- CommunityFragment -->
+    <string name="community_tab_all_posts">Tất cả bài viết</string>
+    <string name="community_tab_my_posts">Bài viết của tôi</string>
+    <string name="community_fab_create_post">Tạo bài viết mới</string>
+
+    <!-- AllPostFragment & MyPostFragment -->
+    <string name="community_search_hint">Tìm kiếm bài viết…</string>
+    <string name="community_filter_button">Lọc</string>
+    <string name="community_empty_no_posts">Không tìm thấy bài viết</string>
+    <string name="community_empty_my_posts">Bạn chưa có bài viết nào</string>
+    <string name="community_empty_create_first">Tạo bài viết đầu tiên của bạn!</string>
+    <string name="community_error_loading">Lỗi tải bài viết</string>
+    <string name="community_loading">Đang tải…</string>
+    <string name="community_retry">Thử lại</string>
+
+    <!-- PostDetailFragment -->
+    <string name="community_post_detail_title">Chi tiết bài viết</string>
+    <string name="community_refresh">Làm mới</string>
+    <string name="community_comments_title">Bình luận</string>
+    <string name="community_comment_hint">Viết bình luận…</string>
+    <string name="community_send">Gửi</string>
+    <string name="community_add_image">Thêm ảnh</string>
+    <string name="community_no_comments">Chưa có bình luận nào</string>
+    <string name="community_be_first_comment">Hãy là người đầu tiên bình luận!</string>
+    <string name="community_comments">Bình luận</string>
+    <string name="community_comments_count">%d bình luận</string>
+
+    <!-- CreateUpdatePostFragment -->
+    <string name="community_create_post_title">Tạo bài viết</string>
+    <string name="community_edit_post_title">Chỉnh sửa bài viết</string>
+    <string name="community_post_title_hint">Tiêu đề…</string>
+    <string name="community_post_content_hint">Nội dung…</string>
+    <string name="community_add_photo">Thêm ảnh</string>
+    <string name="community_add_video">Thêm video</string>
+    <string name="community_image_preview">Xem trước ảnh</string>
+    <string name="community_video_preview">Xem trước video</string>
+    <string name="community_remove_media">Xóa</string>
+    <string name="community_post_button">Đăng</string>
+    <string name="community_update_button">Cập nhật</string>
+    <string name="community_validation_empty">Vui lòng nhập tiêu đề và nội dung</string>
+    <string name="community_select_image">Chọn ảnh</string>
+    <string name="community_select_video">Chọn video</string>
+
+    <!-- NotificationFragment -->
+    <string name="community_notifications_title">Thông báo</string>
+    <string name="community_mark_all_read">Đánh dấu tất cả đã đọc</string>
+    <string name="community_no_notifications">Không có thông báo</string>
+    <string name="community_no_notifications_desc">Bạn sẽ nhận được thông báo tại đây</string>
+
+    <!-- Post Actions (PostAdapter) -->
+    <string name="community_edit">Chỉnh sửa</string>
+    <string name="community_delete">Xóa</string>
+    <string name="community_like">Thích</string>
+    <string name="community_comment">Bình luận</string>
+    <string name="community_read_more">Xem thêm</string>
+    <string name="community_read_less">Thu gọn</string>
+    <string name="community_confirm_delete_post">Bạn có chắc muốn xóa bài viết này?</string>
+    <string name="community_yes">Có</string>
+    <string name="community_no">Không</string>
+    <string name="community_cancel">Hủy</string>
+
+    <!-- Comment Actions (CommentAdapter) -->
+    <string name="community_confirm_delete_comment">Bạn có chắc muốn xóa bình luận này?</string>
+    <string name="community_delete_comment_title">Xóa bình luận</string>
+    <string name="community_edit_comment">Chỉnh sửa bình luận</string>
+    <string name="community_delete_post_title">Xóa bài viết</string>
+
+    <!-- Filter Dialog -->
+    <string name="community_filter_title">Lọc bài viết</string>
+    <string name="community_sort_by">Sắp xếp theo</string>
+    <string name="community_sort_newest">Mới nhất</string>
+    <string name="community_sort_oldest">Cũ nhất</string>
+    <string name="community_date_range">Khoảng thời gian</string>
+    <string name="community_start_date">Ngày bắt đầu</string>
+    <string name="community_end_date">Ngày kết thúc</string>
+    <string name="community_apply">Áp dụng</string>
+    <string name="community_clear_filters">Xóa bộ lọc</string>
+    <string name="community_select_date">Chọn ngày</string>
+
+    <!-- Edit Comment Dialog -->
+    <string name="community_edit_comment_title">Chỉnh sửa bình luận</string>
+    <string name="community_comment_content_hint">Nội dung bình luận…</string>
+    <string name="community_keep_image">Giữ ảnh hiện tại</string>
+    <string name="community_change_image">Thay đổi ảnh</string>
+    <string name="community_remove_image">Xóa ảnh</string>
+    <string name="community_save">Lưu</string>
+
+    <!-- Relative Time -->
+    <string name="time_just_now">Vừa xong</string>
+    <string name="time_one_minute_ago">1 phút trước</string>
+    <string name="time_minutes_ago">%d phút trước</string>
+    <string name="time_one_hour_ago">1 giờ trước</string>
+    <string name="time_hours_ago">%d giờ trước</string>
+    <string name="time_one_day_ago">1 ngày trước</string>
+    <string name="time_days_ago">%d ngày trước</string>
+    <string name="time_one_week_ago">1 tuần trước</string>
+    <string name="time_weeks_ago">%d tuần trước</string>
+    <string name="time_one_month_ago">1 tháng trước</string>
+    <string name="time_months_ago">%d tháng trước</string>
+
+    <!-- Success Messages -->
+    <string name="success_post_created">Đã tạo bài viết</string>
+    <string name="success_post_updated">Đã cập nhật bài viết</string>
+    <string name="success_post_deleted">Đã xóa bài viết</string>
+    <string name="success_comment_posted">Đã đăng bình luận</string>
+    <string name="success_comment_updated">Đã cập nhật bình luận</string>
+    <string name="success_comment_deleted">Đã xóa bình luận</string>
+    <string name="success_liked">Đã thích</string>
+    <string name="success_unliked">Đã bỏ thích</string>
+
+    <!-- Error Messages -->
+    <string name="error_network">Lỗi kết nối. Vui lòng thử lại.</string>
+    <string name="error_upload">Lỗi tải lên file</string>
+    <string name="error_load_posts">Không thể tải bài viết</string>
+    <string name="error_load_comments">Không thể tải bình luận</string>
+    <string name="error_post_failed">Không thể đăng bài</string>
+    <string name="error_update_failed">Không thể cập nhật</string>
+    <string name="error_delete_failed">Không thể xóa</string>
+    <string name="error_generic">Đã có lỗi xảy ra</string>
+
+    <!-- Counts & Stats -->
+    <string name="community_likes_count">%d lượt thích</string>
+    <string name="community_one_like">1 lượt thích</string>
+    <string name="community_one_comment">1 bình luận</string>
+
+    <!-- Menu Filter Dialog -->
+    <string name="menu_filter_title">Bộ lọc thực đơn</string>
+    <string name="menu_nutrition_ranges">Giới hạn dinh dưỡng</string>
+    <string name="menu_min">Tối thiểu</string>
+    <string name="menu_max">Tối đa</string>
+    <string name="menu_clear_filters">Xóa bộ lọc</string>
+    <string name="menu_apply_filter">Áp dụng</string>
+    <string name="menu_filter_button">Bộ lọc</string>
+    <string name="close">Đóng</string>
+
+    <!-- ========== NUTRITION FEATURE HARDCODED TEXT STRINGS ========== -->
+
+    <!-- CreateEditMenuFragment Toast Messages -->
+    <string name="menu_load_failed">Không thể tải thực đơn</string>
+    <string name="menu_name_required">Vui lòng nhập tên thực đơn</string>
+    <string name="save_in_progress">Đang lưu, vui lòng đợi</string>
+    <string name="menu_create_failed">Không thể tạo thực đơn</string>
+    <string name="menu_update_failed_toast">Không thể cập nhật thực đơn</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_channel_menu_save">Lưu thực đơn</string>
+    <string name="notification_channel_menu_save_desc">Thông báo cho các thao tác lưu thực đơn</string>
+    <string name="notification_creating_menu">Đang tạo thực đơn</string>
+    <string name="notification_updating_menu">Đang cập nhật thực đơn</string>
+    <string name="notification_saving">Đang lưu %s...</string>
+    <string name="notification_saving_background">Đang lưu ở nền. Bạn có thể điều hướng ra ngoài.</string>
+    <string name="notification_menu_created">Đã tạo thực đơn</string>
+    <string name="notification_menu_create_failed">Không thể tạo thực đơn</string>
+    <string name="notification_could_not_create">Không thể tạo %s</string>
+    <string name="notification_menu_updated">Đã cập nhật thực đơn</string>
+    <string name="notification_menu_update_failed">Không thể cập nhật thực đơn</string>
+    <string name="notification_could_not_update">Không thể cập nhật %s</string>
+    <string name="notification_network_error">Lỗi mạng</string>
+    <string name="notification_check_connection">Kiểm tra kết nối mạng của bạn</string>
+
+    <!-- DishDetailFragment -->
+    <string name="dish_load_failed">Không thể tải thông tin món ăn</string>
+    <string name="no_ingredients_info">Không có thông tin nguyên liệu</string>
+    <string name="no_preparation_info">Không có hướng dẫn chế biến</string>
+
+    <!-- MyMenusFragment -->
+    <string name="this_is_your_menu">Đây là thực đơn của bạn</string>
+
+    <!-- Default Values (0 calories, macros) -->
+    <string name="default_zero_kcal">0 kcal</string>
+    <string name="default_zero_macros">P: 0g | C: 0g | F: 0g</string>
+    <string name="default_zero">0</string>
+    <string name="default_zero_g">0g</string>
+    <string name="default_dash">--</string>
+
+    <!-- Empty State Messages -->
+    <string name="tap_create_first_menu">Nhấn nút + để tạo\nthực đơn đầu tiên của bạn!</string>
+
+    <!-- Filter Chips -->
+    <string name="chip_all">Tất cả</string>
+
+    <!-- Separators and Symbols -->
+    <string name="separator_pipe">|</string>
+    <string name="separator_bullet"> • </string>
+
+    <!-- Time Units -->
+    <string name="minutes_unit">phút</string>
+    <string name="format_minutes">%d phút</string>
+
+    <!-- Nutrition Display Formats -->
+    <string name="format_macros">P: %.0fg | C: %.0fg | F: %.0fg</string>
+    <string name="format_protein">P: %.0fg</string>
+    <string name="format_carbs">C: %.0fg</string>
+    <string name="format_fat">F: %.0fg</string>
+    <string name="format_protein_dash">P: -</string>
+    <string name="format_carbs_dash">C: -</string>
+    <string name="format_fat_dash">F: -</string>
+    <string name="format_quantity_servings">x %d %s</string>
+
+    <!-- Dialog Messages -->
+    <string name="dialog_remove_dish_title">Xóa món ăn</string>
+    <string name="dialog_remove_dish_message">Bạn có chắc muốn xóa \"%s\" khỏi bữa ăn này?</string>
+    <string name="dialog_remove_button">Xóa</string>
+    <string name="dialog_cancel_button">Hủy</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_title">Thông báo</string>
+    <string name="notification_empty_title">Không có thông báo</string>
+    <string name="notification_empty_message">Bạn chưa có thông báo nào</string>
+    <string name="notification_error_loading">Lỗi tải thông báo</string>
+    <string name="notification_retry">Thử lại</string>
+    <string name="notification_no_notifications_content">Không có thông báo</string>
+    <string name="notification_back_button">Quay lại</string>
+    <string name="notification_mark_all_read">Đánh dấu tất cả đã đọc</string>
+
 </resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="@color/black"
+    app:cardElevation="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Dish Image -->
+        <ImageView
+            android:id="@+id/iv_dish_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_empty_nutrition_96"
+            android:contentDescription="@string/dish_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!-- Dish Name -->
+        <TextView
+            android:id="@+id/tv_dish_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="Grilled Chicken Breast"
+            app:layout_constraintTop_toTopOf="@id/iv_dish_image"
+            app:layout_constraintStart_toEndOf="@id/iv_dish_image"
+            app:layout_constraintEnd_toStartOf="@id/btn_remove"/>
+
+        <!-- Quantity Controls -->
+        <LinearLayout
+            android:id="@+id/ll_quantity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tv_dish_name"
+            app:layout_constraintStart_toEndOf="@id/iv_dish_image"
+            app:layout_constraintEnd_toStartOf="@id/btn_remove">
+
+            <ImageButton
+                android:id="@+id/btn_decrease"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_remove_24"
+                android:contentDescription="@string/decrease_quantity"
+                app:tint="@color/yellow"/>
+
+            <TextView
+                android:id="@+id/tv_quantity"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/yellow"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="1"/>
+
+            <ImageButton
+                android:id="@+id/btn_increase"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_white_add_24"
+                android:contentDescription="@string/increase_quantity"
+                app:tint="@color/yellow"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/servings"
+                android:textColor="@color/gray_450"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+        <!-- Calories -->
+        <TextView
+            android:id="@+id/tv_calories"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/yellow"
+            android:textSize="12sp"
+            tools:text="250 kcal"
+            app:layout_constraintTop_toBottomOf="@id/ll_quantity"
+            app:layout_constraintStart_toEndOf="@id/iv_dish_image"
+            app:layout_constraintEnd_toStartOf="@id/btn_remove"/>
+
+        <!-- Nutrition Info (Protein, Carbs, Fat) -->
+        <TextView
+            android:id="@+id/tv_nutrition"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/gray_450"
+            android:textSize="11sp"
+            tools:text="P: 25g | C: 30g | F: 10g"
+            app:layout_constraintTop_toBottomOf="@id/tv_calories"
+            app:layout_constraintStart_toEndOf="@id/iv_dish_image"
+            app:layout_constraintEnd_toStartOf="@id/btn_remove"/>
+
+        <!-- Remove Button -->
+        <ImageButton
+            android:id="@+id/btn_remove"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete_white_24"
+            android:contentDescription="@string/remove_dish"
+            app:tint="@color/red_400"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

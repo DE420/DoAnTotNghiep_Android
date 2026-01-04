@@ -18,7 +18,7 @@
         android:gravity="center_vertical"
         android:text="Select option"
         android:background="@drawable/item_spinner_background"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         app:layout_constraintTop_toTopOf="parent"

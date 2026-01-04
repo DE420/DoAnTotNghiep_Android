@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/black_370">
+
+    <!-- Dialog Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/community_filter_title"
+        android:textSize="22sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Sort By Section -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/community_sort_by"
+        android:textSize="16sp"
+        android:textColor="@color/yellow"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"/>
+
+    <RadioGroup
+        android:id="@+id/rg_sort_by"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <RadioButton
+            android:id="@+id/rb_newest"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/community_sort_newest"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:buttonTint="@color/yellow"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/rb_oldest"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/community_sort_oldest"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:buttonTint="@color/yellow"/>
+
+    </RadioGroup>
+
+    <!-- Date Range Section -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/community_date_range"
+        android:textSize="16sp"
+        android:textColor="@color/yellow"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Start Date -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/community_start_date"
+        android:textSize="14sp"
+        android:textColor="@color/white_200"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/filled_black_text_field"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_start_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/community_select_date"
+            android:textColor="@color/gray_450"
+            android:textSize="15sp"/>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_today"
+            app:tint="@color/yellow"/>
+
+    </LinearLayout>
+
+    <!-- End Date -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/community_end_date"
+        android:textSize="14sp"
+        android:textColor="@color/white_200"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/filled_black_text_field"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:id="@+id/tv_end_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/community_select_date"
+            android:textColor="@color/gray_450"
+            android:textSize="15sp"/>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_today"
+            app:tint="@color/yellow"/>
+
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_clear_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="@string/community_clear_filters"
+            android:textColor="@color/gray_450"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            app:backgroundTint="@android:color/transparent"
+            app:strokeColor="@color/gray_450"
+            app:strokeWidth="1dp"
+            app:cornerRadius="8dp"
+            android:layout_marginEnd="12dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_apply_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="@string/community_apply"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/yellow"
+            app:cornerRadius="8dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
