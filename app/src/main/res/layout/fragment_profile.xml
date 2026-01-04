@@ -1,734 +1,789 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_app_color"
-    tools:context=".fragment.ProfileFragment"
-    android:id="@+id/fragment_profile">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_header"
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.fitnessapp.viewmodel.ProfileViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/profile_coordinator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/white_4"
-        >
-
-        <ImageView
-            android:id="@+id/img_chevron_left"
-            android:layout_width="@dimen/icon_size_48"
-            android:layout_height="@dimen/icon_size_48"
-            android:padding="12dp"
-            android:src="@drawable/ic_arrow_back_24"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="@dimen/margin_4"
-            android:layout_marginTop="@dimen/margin_4"
-            android:layout_marginBottom="@dimen/margin_4"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Profile"
-            android:textSize="22dp"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@id/img_chevron_left"
-            app:layout_constraintTop_toTopOf="@id/img_chevron_left"
-            app:layout_constraintBottom_toBottomOf="@id/img_chevron_left"
-            android:layout_marginStart="@dimen/margin_4"/>
-
-        <ImageView
-            android:id="@+id/button_edit_profile"
-            android:layout_width="@dimen/icon_size_48"
-            android:layout_height="@dimen/icon_size_48"
-            android:padding="12dp"
-            android:src="@drawable/ic_edit_white_24"
-            app:layout_constraintEnd_toStartOf="@id/button_change_password"
-            app:layout_constraintTop_toTopOf="@id/button_change_password"
-            android:visibility="visible"/>
-
-        <ImageView
-            android:id="@+id/button_change_password"
-            android:layout_width="@dimen/icon_size_48"
-            android:layout_height="@dimen/icon_size_48"
-            android:padding="12dp"
-            android:src="@drawable/ic_change_password"
-            app:layout_constraintEnd_toStartOf="@id/button_logout"
-            app:layout_constraintTop_toTopOf="@id/button_logout"
-            />
-
-        <ImageView
-            android:id="@+id/button_logout"
-            android:layout_width="@dimen/icon_size_48"
-            android:layout_height="@dimen/icon_size_48"
-            android:padding="12dp"
-            android:src="@drawable/ic_logout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/img_chevron_left"
-            android:layout_marginEnd="@dimen/margin_4"
-            />
-
-        <View
-            android:id="@+id/view_stroke_bottom_header"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            app:layout_constraintTop_toBottomOf="@id/button_logout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="@dimen/margin_4"
-            android:background="@color/background_app_color"
-            android:translationZ="5dp"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_header"
+        android:layout_height="match_parent"
         android:background="@color/background_app_color">
-    <ScrollView
-        android:id="@+id/sv_content"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="visible">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="32dp">
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_50_percent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"/>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="@id/img_avatar"
-            app:layout_constraintBottom_toBottomOf="@id/tv_birthday"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="-16dp"
-            android:layout_marginBottom="-16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/background_item_profile"
-            />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/img_avatar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/img_user_default_128"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="32dp"/>
-
-        <TextView
-            android:id="@+id/tv_full_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/img_avatar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            />
-
-        <TextView
-            android:id="@+id/tv_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#cfcfcf"
-            android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@id/tv_full_name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="4dp"
-            />
-
-        <TextView
-            android:id="@+id/tv_birthday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_birthday"
-            android:textColor="#b6b6b6"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/tv_email"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="6dp"
-            />
-
-
-
-<!--        <View-->
-<!--            android:id="@+id/view_border"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:background="@drawable/border_no_background"-->
-<!--            app:layout_constraintTop_toTopOf="@id/tv_user_weight"-->
-<!--            app:layout_constraintBottom_toBottomOf="@id/tv_weight"-->
-<!--            app:layout_constraintStart_toStartOf="@id/tv_user_weight"-->
-<!--            app:layout_constraintEnd_toEndOf="@id/tv_user_height"-->
-<!--            android:layout_marginStart="-32dp"-->
-<!--            android:layout_marginTop="-8dp"-->
-<!--            android:layout_marginBottom="-6dp"-->
-<!--            android:layout_marginEnd="-32dp"/>-->
-
-        <View
-            android:id="@+id/view_container_weight_height"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="-16dp"
-            android:layout_marginBottom="-16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/background_item_profile"
-            app:layout_constraintTop_toTopOf="@id/tv_user_weight"
-            app:layout_constraintBottom_toBottomOf="@id/tv_weight"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="0dp"
-            android:background="@color/white_38"
-            app:layout_constraintTop_toTopOf="@id/view_container_weight_height"
-            app:layout_constraintBottom_toBottomOf="@id/view_container_weight_height"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-        <TextView
-            android:id="@+id/tv_user_weight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/tv_birthday"
-            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_50_percent"
-            android:layout_marginTop="48dp"
-            android:layout_marginEnd="48dp"
-            />
-        <TextView
-            android:id="@+id/tv_weight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_weight"
-            android:textColor="#bfbfbf"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_weight"
-            app:layout_constraintStart_toStartOf="@id/tv_user_weight"
-            app:layout_constraintEnd_toEndOf="@id/tv_user_weight"
-        />
-
-        <TextView
-            android:id="@+id/tv_user_height"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/tv_user_weight"
-            app:layout_constraintStart_toStartOf="@id/guideline_vertical_50_percent"
-            android:layout_marginStart="48dp"
-            />
-        <TextView
-            android:id="@+id/tv_height"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_height"
-            android:textColor="#bfbfbf"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_height"
-            app:layout_constraintStart_toStartOf="@id/tv_user_height"
-            app:layout_constraintEnd_toEndOf="@id/tv_user_height"
-            />
-
-        <TextView
-            android:id="@+id/tv_goal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_goal"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            app:layout_constraintTop_toBottomOf="@id/view_container_weight_height"
-            android:textColor="@color/white"
-            android:layout_marginTop="26dp"
-            app:layout_constraintStart_toStartOf="@id/view_container_weight_height"/>
-
+        <!-- Main Content -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_container_goal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_item_profile"
-            app:layout_constraintStart_toStartOf="@id/tv_goal"
-            app:layout_constraintTop_toBottomOf="@id/tv_goal"
-            app:layout_constraintEnd_toEndOf="@id/view_container_weight_height"
-            android:layout_marginTop="12dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-            <ImageView
-                android:id="@+id/img_fitness_goal"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/img_goal_32"
-                app:layout_constraintStart_toStartOf="@id/cl_container_goal"
-                app:layout_constraintTop_toTopOf="@id/cl_container_goal"
-                />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_fitness_goal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:gravity="center_horizontal"
-                android:textSize="18sp"
-                app:layout_constraintTop_toTopOf="@id/cl_container_goal"
-                app:layout_constraintBottom_toBottomOf="@id/cl_container_goal"
-                app:layout_constraintStart_toEndOf="@id/img_fitness_goal"
-                android:layout_marginStart="16dp"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/tv_activity_level_heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_activity_level"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            app:layout_constraintTop_toBottomOf="@id/cl_container_goal"
-            android:textColor="@color/white"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="@id/view_container_weight_height"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_container_activity_level"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_item_profile"
-            app:layout_constraintStart_toStartOf="@id/tv_goal"
-            app:layout_constraintTop_toBottomOf="@id/tv_activity_level_heading"
-            app:layout_constraintEnd_toEndOf="@id/view_container_weight_height"
-            android:layout_marginTop="12dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-            <ImageView
-                android:id="@+id/img_activity_level"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/img_levelup_32"
-                app:layout_constraintStart_toStartOf="@id/cl_container_activity_level"
-                app:layout_constraintTop_toTopOf="@id/cl_container_activity_level"
-                />
-
-            <TextView
-                android:id="@+id/tv_activity_level"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:gravity="center_horizontal"
-                android:textSize="18sp"
-                app:layout_constraintTop_toTopOf="@id/cl_container_activity_level"
-                app:layout_constraintBottom_toBottomOf="@id/cl_container_activity_level"
-                app:layout_constraintStart_toEndOf="@id/img_activity_level"
-                android:layout_marginStart="16dp"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-        <TextView
-            android:id="@+id/tv_my_statistics"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txt_my_statistics"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/cl_container_activity_level"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="26dp"
-            android:layout_marginStart="16dp"
-            />
-
+            <!-- Header Section (similar to notification) -->
             <LinearLayout
-                android:id="@+id/ll_container_total_stats"
-                android:layout_width="0dp"
+                android:id="@+id/ll_header"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/tv_my_statistics"
-                app:layout_constraintStart_toStartOf="@id/tv_my_statistics"
-                app:layout_constraintEnd_toEndOf="@id/cl_container_goal"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal">
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:background="@color/black_370"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <!-- Back Button -->
+                <ImageButton
+                    android:id="@+id/ib_back"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_arrow_back_24"
+                    android:background="@drawable/bg_transparent_circle_icon"
+                    android:scaleType="centerCrop"
+                    app:tint="@color/white"
+                    android:contentDescription="@string/profile_back_desc"
+                    android:layout_marginEnd="4dp"/>
+
+                <!-- Title -->
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/background_item_profile"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/cl_container_img_total_workouts"
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:background="@drawable/background_container_img_total_workouts"
+                    android:text="@string/profile_title"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Edit Button -->
+                <ImageButton
+                    android:id="@+id/ib_edit"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_edit_white_24"
+                    android:background="@drawable/bg_transparent_circle_icon"
+                    android:scaleType="centerCrop"
+                    app:tint="@color/white"
+                    android:contentDescription="@string/profile_edit_desc"
+                    android:layout_marginEnd="4dp"/>
+
+                <!-- More Options (change password, logout) -->
+                <ImageButton
+                    android:id="@+id/ib_more"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_logout"
+                    android:background="@drawable/bg_transparent_circle_icon"
+                    android:scaleType="centerCrop"
+                    app:tint="@color/white"
+                    android:contentDescription="@string/profile_logout"/>
+
+            </LinearLayout>
+
+            <!-- SwipeRefreshLayout for pull-to-refresh -->
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/srl_profile"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/ll_header"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <!-- ScrollView for content -->
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nsv_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fillViewport="true">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="32dp">
+
+                        <!-- Profile Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_profile_header"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="16dp"
+                            app:cardBackgroundColor="@color/black_370"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent">
-                            <ImageView
-                                android:id="@+id/img_total_workouts"
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="24dp">
+
+                                <!-- Avatar -->
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/iv_avatar"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:src="@drawable/img_user_default_128"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    android:contentDescription="@string/profile_avatar_desc"/>
+
+                                <!-- Full Name -->
+                                <TextView
+                                    android:id="@+id/tv_full_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Nguyễn Văn A"
+                                    android:textColor="@color/white"
+                                    android:textSize="22sp"
+                                    android:textStyle="bold"
+                                    android:layout_marginTop="12dp"
+                                    app:layout_constraintTop_toBottomOf="@id/iv_avatar"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                                <!-- Email -->
+                                <TextView
+                                    android:id="@+id/tv_email"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="email@example.com"
+                                    android:textColor="@color/gray_450"
+                                    android:textSize="15sp"
+                                    android:layout_marginTop="4dp"
+                                    app:layout_constraintTop_toBottomOf="@id/tv_full_name"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                                <!-- Birthday -->
+                                <TextView
+                                    android:id="@+id/tv_birthday"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    tools:text="01/01/1990"
+                                    android:textColor="@color/gray_450"
+                                    android:textSize="14sp"
+                                    android:layout_marginTop="6dp"
+                                    app:layout_constraintTop_toBottomOf="@id/tv_email"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Weight & Height Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_body_metrics"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="12dp"
+                            app:cardBackgroundColor="@color/black_370"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:layout_constraintTop_toBottomOf="@id/cv_profile_header"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="16dp">
+
+                                <!-- Weight Section -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center">
+
+                                    <TextView
+                                        android:id="@+id/tv_weight_value"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="65.5"
+                                        android:textColor="@color/white"
+                                        android:textSize="24sp"
+                                        android:textStyle="bold"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/profile_weight"
+                                        android:textColor="@color/gray_450"
+                                        android:textSize="14sp"
+                                        android:layout_marginTop="4dp"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/profile_unit_kg"
+                                        android:textColor="@color/yellow"
+                                        android:textSize="12sp"
+                                        android:layout_marginTop="2dp"/>
+
+                                </LinearLayout>
+
+                                <!-- Divider -->
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/white_38"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginEnd="8dp"/>
+
+                                <!-- Height Section -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center">
+
+                                    <TextView
+                                        android:id="@+id/tv_height_value"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="1.75"
+                                        android:textColor="@color/white"
+                                        android:textSize="24sp"
+                                        android:textStyle="bold"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/profile_height"
+                                        android:textColor="@color/gray_450"
+                                        android:textSize="14sp"
+                                        android:layout_marginTop="4dp"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/profile_unit_m"
+                                        android:textColor="@color/yellow"
+                                        android:textSize="12sp"
+                                        android:layout_marginTop="2dp"/>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Goal Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_goal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="12dp"
+                            app:cardBackgroundColor="@color/black_370"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:layout_constraintTop_toBottomOf="@id/cv_body_metrics"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <!-- Goal Header -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/profile_goal"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"/>
+
+                                <!-- Goal Value -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginTop="12dp">
+
+                                    <ImageView
+                                        android:layout_width="40dp"
+                                        android:layout_height="40dp"
+                                        android:src="@drawable/img_goal_32"
+                                        android:contentDescription="@string/profile_goal"/>
+
+                                    <TextView
+                                        android:id="@+id/tv_goal_value"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        tools:text="Giảm cân"
+                                        android:textColor="@color/white"
+                                        android:textSize="16sp"
+                                        android:layout_marginStart="16dp"/>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Activity Level Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_activity_level"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="12dp"
+                            app:cardBackgroundColor="@color/black_370"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:layout_constraintTop_toBottomOf="@id/cv_goal"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <!-- Activity Level Header -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/profile_activity_level"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"/>
+
+                                <!-- Activity Level Value -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginTop="12dp">
+
+                                    <ImageView
+                                        android:layout_width="40dp"
+                                        android:layout_height="40dp"
+                                        android:src="@drawable/img_levelup_32"
+                                        android:contentDescription="@string/profile_activity_level"/>
+
+                                    <TextView
+                                        android:id="@+id/tv_activity_level_value"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        tools:text="Hoạt động vừa phải"
+                                        android:textColor="@color/white"
+                                        android:textSize="16sp"
+                                        android:layout_marginStart="16dp"/>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Statistics Section -->
+                        <TextView
+                            android:id="@+id/tv_stats_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_my_stats"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="24dp"
+                            app:layout_constraintTop_toBottomOf="@id/cv_activity_level"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                        <!-- Overall Stats Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_overall_stats"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="12dp"
+                            app:cardBackgroundColor="@color/black_370"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:layout_constraintTop_toBottomOf="@id/tv_stats_header"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="16dp">
+
+                                <!-- Total Workouts -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:padding="8dp">
+
+                                    <androidx.cardview.widget.CardView
+                                        android:layout_width="56dp"
+                                        android:layout_height="56dp"
+                                        app:cardBackgroundColor="@color/yellow_dark"
+                                        app:cardCornerRadius="28dp"
+                                        app:cardElevation="0dp">
+
+                                        <ImageView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:src="@drawable/img_bargraph_32"
+                                            android:contentDescription="@string/profile_total_workouts"/>
+
+                                    </androidx.cardview.widget.CardView>
+
+                                    <TextView
+                                        android:id="@+id/tv_total_workouts"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="24"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        android:layout_marginTop="8dp"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/txt_workouts"
+                                        android:textColor="@color/gray_450"
+                                        android:textSize="12sp"
+                                        android:gravity="center"
+                                        android:layout_marginTop="4dp"/>
+
+                                </LinearLayout>
+
+                                <!-- Total Calories -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:padding="8dp">
+
+                                    <androidx.cardview.widget.CardView
+                                        android:layout_width="56dp"
+                                        android:layout_height="56dp"
+                                        app:cardBackgroundColor="#3D1E00"
+                                        app:cardCornerRadius="28dp"
+                                        app:cardElevation="0dp">
+
+                                        <ImageView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:src="@drawable/img_calories_32"
+                                            android:contentDescription="@string/profile_total_calories"/>
+
+                                    </androidx.cardview.widget.CardView>
+
+                                    <TextView
+                                        android:id="@+id/tv_total_calories"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="1250"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        android:layout_marginTop="8dp"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/txt_calories"
+                                        android:textColor="@color/gray_450"
+                                        android:textSize="12sp"
+                                        android:gravity="center"
+                                        android:layout_marginTop="4dp"/>
+
+                                </LinearLayout>
+
+                                <!-- Total Hours -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:padding="8dp">
+
+                                    <androidx.cardview.widget.CardView
+                                        android:layout_width="56dp"
+                                        android:layout_height="56dp"
+                                        app:cardBackgroundColor="#1E3D00"
+                                        app:cardCornerRadius="28dp"
+                                        app:cardElevation="0dp">
+
+                                        <ImageView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:src="@drawable/img_clock_32"
+                                            android:contentDescription="@string/profile_total_hours"/>
+
+                                    </androidx.cardview.widget.CardView>
+
+                                    <TextView
+                                        android:id="@+id/tv_total_hours"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        tools:text="12.5"
+                                        android:textColor="@color/white"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold"
+                                        android:layout_marginTop="8dp"/>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/txt_hours"
+                                        android:textColor="@color/gray_450"
+                                        android:textSize="12sp"
+                                        android:gravity="center"
+                                        android:layout_marginTop="4dp"/>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Monthly Stats Section -->
+                        <LinearLayout
+                            android:id="@+id/ll_monthly_stats_header"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="24dp"
+                            app:layout_constraintTop_toBottomOf="@id/cv_overall_stats"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/profile_monthly_stats"
+                                android:textColor="@color/white"
+                                android:textSize="20sp"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:id="@+id/tv_current_month"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/img_bargraph_32"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                        <TextView
-                            android:id="@+id/tv_total_workouts"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:textColor="@color/white"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toBottomOf="@id/cl_container_img_total_workouts"
-                            app:layout_constraintStart_toStartOf="@id/cl_container_img_total_workouts"
-                            app:layout_constraintEnd_toEndOf="@id/cl_container_img_total_workouts"
-                            android:layout_marginTop="6dp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/txt_workouts"
-                            android:gravity="center_horizontal"
-                            android:textColor="#c0c0c0"
-                            android:textSize="14dp"
-                            app:layout_constraintTop_toBottomOf="@id/tv_total_workouts"
-                            app:layout_constraintStart_toStartOf="@id/tv_total_workouts"
-                            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts"/>
+                                tools:text="Tháng 1"
+                                android:textColor="@color/gray_450"
+                                android:textSize="14sp"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        </LinearLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/background_item_profile"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cl_container_img_total_calories"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/background_container_img_total_calories"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent">
-                        <ImageView
-                            android:id="@+id/img_total_calories"
-                            android:layout_width="wrap_content"
+                        <!-- Monthly Stats Card -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_monthly_stats"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/img_calories_32"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="12dp"
+                            app:cardBackgroundColor="@color/black_370"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:layout_constraintTop_toBottomOf="@id/ll_monthly_stats_header"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            />
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <!-- Monthly Stat Items -->
+                                <TextView
+                                    android:id="@+id/tv_monthly_workouts"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Tổng số buổi tập: 15"
+                                    android:textColor="@color/white"
+                                    android:textSize="15sp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"/>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/white_10"/>
+
+                                <TextView
+                                    android:id="@+id/tv_monthly_duration"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Tổng thời gian: 450.00 phút"
+                                    android:textColor="@color/white"
+                                    android:textSize="15sp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"/>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/white_10"/>
+
+                                <TextView
+                                    android:id="@+id/tv_monthly_active_days"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Số ngày tập: 12"
+                                    android:textColor="@color/white"
+                                    android:textSize="15sp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"/>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/white_10"/>
+
+                                <TextView
+                                    android:id="@+id/tv_monthly_avg"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Trung bình mỗi buổi: 30.00 phút"
+                                    android:textColor="@color/white"
+                                    android:textSize="15sp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"/>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/white_10"/>
+
+                                <TextView
+                                    android:id="@+id/tv_monthly_streak"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Chuỗi ngày tập: 5 ngày"
+                                    android:textColor="@color/white"
+                                    android:textSize="15sp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"/>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="@color/white_10"/>
+
+                                <TextView
+                                    android:id="@+id/tv_monthly_calories"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Tổng calories: 750.00"
+                                    android:textColor="@color/white"
+                                    android:textSize="15sp"
+                                    android:paddingTop="8dp"
+                                    android:paddingBottom="8dp"/>
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                    <TextView
-                        android:id="@+id/tv_total_calories"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toBottomOf="@id/cl_container_img_total_calories"
-                        app:layout_constraintStart_toStartOf="@id/cl_container_img_total_calories"
-                        app:layout_constraintEnd_toEndOf="@id/cl_container_img_total_calories"
-                        android:layout_marginTop="6dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/txt_calories"
-                        android:gravity="center_horizontal"
-                        android:textColor="#c0c0c0"
-                        android:textSize="14dp"
-                        app:layout_constraintTop_toBottomOf="@id/tv_total_calories"
-                        app:layout_constraintStart_toStartOf="@id/tv_total_calories"
-                        app:layout_constraintEnd_toEndOf="@id/tv_total_calories"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.core.widget.NestedScrollView>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="0dp"
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <!-- Loading Progress -->
+            <ProgressBar
+                android:id="@+id/pb_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:indeterminateTint="@color/yellow"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:visibility="visible" />
+
+            <!-- Error State -->
+            <LinearLayout
+                android:id="@+id/ll_error_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="32dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:layout_width="128dp"
+                    android:layout_height="128dp"
+                    android:src="@drawable/img_error"
+                    android:alpha="0.6"
+                    android:contentDescription="@string/profile_error_load"/>
+
+                <TextView
+                    android:id="@+id/tv_error_message"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/background_item_profile"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cl_container_img_total_hours"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/background_container_img_total_hours"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent">
-                        <ImageView
-                            android:id="@+id/img_total_hours"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/img_clock_32"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                    <TextView
-                        android:id="@+id/tv_total_hours"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toBottomOf="@id/cl_container_img_total_hours"
-                        app:layout_constraintStart_toStartOf="@id/cl_container_img_total_hours"
-                        app:layout_constraintEnd_toEndOf="@id/cl_container_img_total_hours"
-                        android:layout_marginTop="6dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/txt_hours"
-                        android:gravity="center_horizontal"
-                        android:textColor="#c0c0c0"
-                        android:textSize="14dp"
-                        app:layout_constraintTop_toBottomOf="@id/tv_total_hours"
-                        app:layout_constraintStart_toStartOf="@id/tv_total_hours"
-                        app:layout_constraintEnd_toEndOf="@id/tv_total_hours"/>
+                    tools:text="@string/profile_error_load"
+                    android:textSize="16sp"
+                    android:textColor="@color/red_400"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <Button
+                    android:id="@+id/btn_retry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_retry"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/yellow"
+                    android:textColor="@color/black"/>
+
             </LinearLayout>
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/tv_monthly_stats"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="@string/txt_monthly_statistics"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/ll_container_total_stats"
-            app:layout_constraintStart_toStartOf="@id/ll_container_total_stats"
-            android:layout_marginTop="26dp"/>
-
-        <TextView
-            android:id="@+id/tv_current_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#d0d0d0"
-            app:layout_constraintBottom_toBottomOf="@id/tv_monthly_stats"
-            app:layout_constraintEnd_toEndOf="@id/ll_container_total_stats"
-            android:layout_marginTop="4dp"/>
-
-
-
-        <TextView
-            android:id="@+id/tv_total_workouts_month"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:text="@string/txt_total_workouts"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/background_item_profile"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/tv_monthly_stats"
-            app:layout_constraintStart_toStartOf="@id/tv_monthly_stats"
-            app:layout_constraintEnd_toEndOf="@id/tv_current_month"
-            android:layout_marginTop="12dp"/>
-
-
-        <TextView
-            android:id="@+id/tv_total_duration_month"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:text="@string/txt_total_duration"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/background_item_profile"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/tv_total_workouts_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
-            android:layout_marginTop="4dp"
-            />
-
-
-
-        <TextView
-            android:id="@+id/tv_active_days_month"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:text="@string/txt_active_days"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/background_item_profile"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/tv_total_duration_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
-            android:layout_marginTop="4dp"/>
-
-
-        <TextView
-            android:id="@+id/tv_avg_per_workout_month"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:text="@string/txt_avg_per_workout"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/background_item_profile"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/tv_active_days_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
-            android:layout_marginTop="4dp"/>
-
-
-        <TextView
-            android:id="@+id/tv_current_streak_month"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:text="@string/txt_current_streak"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/background_item_profile"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/tv_total_calories_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
-            android:layout_marginTop="4dp"/>
-
-        <TextView
-            android:id="@+id/tv_total_calories_month"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:text="@string/txt_total_calories"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:background="@drawable/background_item_profile"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/tv_avg_per_workout_month"
-            app:layout_constraintStart_toStartOf="@id/tv_total_workouts_month"
-            app:layout_constraintEnd_toEndOf="@id/tv_total_workouts_month"
-            android:layout_marginTop="4dp"/>
-
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    <RelativeLayout
-        android:id="@+id/rl_loading_data"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/cl_header"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="#1E1E23"
-        android:visibility="gone">
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:indeterminateTint="@color/white"/>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rl_error"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/cl_header"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="#1E1E23"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/img_error"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:src="@drawable/img_error"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="64dp"/>
-
-        <TextView
-            android:id="@+id/tv_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textColor="@color/red_500"
-            android:layout_below="@id/img_error"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"/>
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_reload_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/yellow_rectangle_button"
-            android:text="Retry"
-            android:layout_below="@id/tv_error"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"/>
-    </RelativeLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
