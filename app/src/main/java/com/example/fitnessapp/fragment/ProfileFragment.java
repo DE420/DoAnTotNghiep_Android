@@ -174,7 +174,7 @@ public class ProfileFragment extends Fragment {
         String birthdayStr = noDataStr;
         if (profile.getDateOfBirth() != null) {
             try {
-                birthdayStr = DateUtil.convertToBirthday(
+                birthdayStr = DateUtil.convertToVietnameseBirthday(
                         profile.getDateOfBirth(),
                         DateUtil.DD_MM_YYYY_DATE_FORMAT
                 );
