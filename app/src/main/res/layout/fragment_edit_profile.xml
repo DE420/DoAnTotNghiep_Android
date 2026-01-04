@@ -207,7 +207,6 @@
                         app:hintTextColor="@color/white_200"
                         app:boxStrokeColor="@color/yellow"
                         app:endIconMode="custom"
-                        app:endIconDrawable="@drawable/ic_calendar"
                         app:endIconTint="@color/yellow"
                         android:layout_marginBottom="16dp">
 
