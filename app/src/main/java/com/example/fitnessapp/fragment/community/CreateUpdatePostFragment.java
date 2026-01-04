@@ -16,29 +16,23 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.databinding.FragmentCreateUpdatePostBinding;
-import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.community.PostResponse;
-import com.example.fitnessapp.repository.PostRepository;
 import com.example.fitnessapp.session.SessionManager;
+import com.example.fitnessapp.worker.PostUploadWorker;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 
-import java.io.File;
 import java.io.Serializable;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class CreateUpdatePostFragment extends Fragment {
 
@@ -46,7 +40,6 @@ public class CreateUpdatePostFragment extends Fragment {
     private static final String ARG_POST = "post";
 
     private FragmentCreateUpdatePostBinding binding;
-    private PostRepository repository;
     private PostResponse existingPost;
     private Uri selectedImageUri;
     private Uri selectedVideoUri;
@@ -69,7 +62,6 @@ public class CreateUpdatePostFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        repository = new PostRepository(requireContext());
 
         if (getArguments() != null && getArguments().containsKey(ARG_POST)) {
             existingPost = (PostResponse) getArguments().getSerializable(ARG_POST);
@@ -372,74 +364,35 @@ public class CreateUpdatePostFragment extends Fragment {
         Log.d(TAG, "Creating post with content: " + content);
         binding.btnSubmit.setEnabled(false);
 
-        File imageFile = null;
-        File videoFile = null;
+        // Prepare input data for WorkManager
+        Data.Builder dataBuilder = new Data.Builder()
+                .putBoolean(PostUploadWorker.KEY_IS_EDITING, false)
+                .putString(PostUploadWorker.KEY_CONTENT, content);
 
-        // Prepare image if selected
+        // Add image URI if selected
         if (selectedImageUri != null) {
-            try {
-                imageFile = getFileFromUri(selectedImageUri);
-                Log.d(TAG, "Image file prepared: " + imageFile.getPath());
-            } catch (Exception e) {
-                Log.e(TAG, "Error preparing image file", e);
-                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
-                binding.btnSubmit.setEnabled(true);
-                return;
-            }
+            dataBuilder.putString(PostUploadWorker.KEY_IMAGE_URI, selectedImageUri.toString());
+            Log.d(TAG, "Image URI added: " + selectedImageUri);
         }
 
-        // Prepare video if selected
+        // Add video URI if selected
         if (selectedVideoUri != null) {
-            try {
-                videoFile = getFileFromUri(selectedVideoUri);
-                Log.d(TAG, "Video file prepared: " + videoFile.getPath());
-            } catch (Exception e) {
-                Log.e(TAG, "Error preparing video file", e);
-                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
-                binding.btnSubmit.setEnabled(true);
-                return;
-            }
+            dataBuilder.putString(PostUploadWorker.KEY_VIDEO_URI, selectedVideoUri.toString());
+            Log.d(TAG, "Video URI added: " + selectedVideoUri);
         }
 
-        // Show uploading notification and go back immediately
-        Toast.makeText(requireContext(), R.string.community_loading, Toast.LENGTH_SHORT).show();
+        // Create and enqueue work request
+        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(PostUploadWorker.class)
+                .setInputData(dataBuilder.build())
+                .build();
+
+        WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest);
+
+        // Show toast and navigate back immediately
+        Toast.makeText(requireContext(), "Đang đăng bài viết...", Toast.LENGTH_SHORT).show();
         requireActivity().onBackPressed();
 
-        repository.createPost(content, imageFile, videoFile, new Callback<ApiResponse<PostResponse>>() {
-
-
-
-            @Override
-            public void onResponse(Call<ApiResponse<PostResponse>> call,
-                                   Response<ApiResponse<PostResponse>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                    Log.d(TAG, "Post created successfully");
-                    // Show notification on main thread
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> {
-                            Toast.makeText(requireContext(), R.string.success_post_created, Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                } else {
-                    Log.e(TAG, "Failed to create post");
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> {
-                            Toast.makeText(requireContext(), R.string.error_post_failed, Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<PostResponse>> call, Throwable t) {
-                Log.e(TAG, "Error creating post: " + t.getMessage());
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        Toast.makeText(requireContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
-                    });
-                }
-            }
-        });
+        Log.d(TAG, "Post upload work enqueued");
     }
 
     private void updatePost(String content) {
@@ -448,110 +401,36 @@ public class CreateUpdatePostFragment extends Fragment {
         Log.d(TAG, "Updating post: " + existingPost.getId());
         binding.btnSubmit.setEnabled(false);
 
-        File imageFile = null;
-        File videoFile = null;
+        // Prepare input data for WorkManager
+        Data.Builder dataBuilder = new Data.Builder()
+                .putBoolean(PostUploadWorker.KEY_IS_EDITING, true)
+                .putLong(PostUploadWorker.KEY_POST_ID, existingPost.getId())
+                .putString(PostUploadWorker.KEY_CONTENT, content);
 
-        // Prepare image if selected
+        // Add image URI if selected
         if (selectedImageUri != null) {
-            try {
-                imageFile = getFileFromUri(selectedImageUri);
-                Log.d(TAG, "Image file prepared: " + imageFile.getPath());
-            } catch (Exception e) {
-                Log.e(TAG, "Error preparing image file", e);
-                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
-                binding.btnSubmit.setEnabled(true);
-                return;
-            }
+            dataBuilder.putString(PostUploadWorker.KEY_IMAGE_URI, selectedImageUri.toString());
+            Log.d(TAG, "Image URI added: " + selectedImageUri);
         }
 
-        // Prepare video if selected
+        // Add video URI if selected
         if (selectedVideoUri != null) {
-            try {
-                videoFile = getFileFromUri(selectedVideoUri);
-                Log.d(TAG, "Video file prepared: " + videoFile.getPath());
-            } catch (Exception e) {
-                Log.e(TAG, "Error preparing video file", e);
-                Toast.makeText(requireContext(), R.string.error_upload, Toast.LENGTH_SHORT).show();
-                binding.btnSubmit.setEnabled(true);
-                return;
-            }
+            dataBuilder.putString(PostUploadWorker.KEY_VIDEO_URI, selectedVideoUri.toString());
+            Log.d(TAG, "Video URI added: " + selectedVideoUri);
         }
 
-        // Show uploading notification and go back immediately
-        Toast.makeText(requireContext(), R.string.community_loading, Toast.LENGTH_SHORT).show();
+        // Create and enqueue work request
+        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(PostUploadWorker.class)
+                .setInputData(dataBuilder.build())
+                .build();
+
+        WorkManager.getInstance(requireContext()).enqueue(uploadWorkRequest);
+
+        // Show toast and navigate back immediately
+        Toast.makeText(requireContext(), "Đang cập nhật bài viết...", Toast.LENGTH_SHORT).show();
         requireActivity().onBackPressed();
 
-        repository.updatePost(existingPost.getId(), content, imageFile, videoFile,
-                new Callback<ApiResponse<PostResponse>>() {
-                    @Override
-                    public void onResponse(Call<ApiResponse<PostResponse>> call,
-                                           Response<ApiResponse<PostResponse>> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                            Log.d(TAG, "Post updated successfully");
-                            if (getActivity() != null) {
-                                getActivity().runOnUiThread(() -> {
-                                    Toast.makeText(requireContext(), R.string.success_post_updated, Toast.LENGTH_SHORT).show();
-                                });
-                            }
-                        } else {
-                            Log.e(TAG, "Failed to update post");
-                            if (getActivity() != null) {
-                                getActivity().runOnUiThread(() -> {
-                                    Toast.makeText(requireContext(), R.string.error_update_failed, Toast.LENGTH_SHORT).show();
-                                });
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ApiResponse<PostResponse>> call, Throwable t) {
-                        Log.e(TAG, "Error updating post: " + t.getMessage());
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(() -> {
-                                Toast.makeText(requireContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    }
-                });
-    }
-
-    private File getFileFromUri(Uri uri) throws Exception {
-        // Get content resolver
-        android.content.ContentResolver contentResolver = requireContext().getContentResolver();
-
-        // Create a temporary file
-        String fileName = "temp_" + System.currentTimeMillis();
-        String mimeType = contentResolver.getType(uri);
-
-        // Determine file extension
-        String extension = "";
-        if (mimeType != null) {
-            if (mimeType.startsWith("image/")) {
-                extension = ".jpg";
-            } else if (mimeType.startsWith("video/")) {
-                extension = ".mp4";
-            }
-        }
-
-        File tempFile = new File(requireContext().getCacheDir(), fileName + extension);
-
-        // Copy content to temp file
-        try (java.io.InputStream inputStream = contentResolver.openInputStream(uri);
-             java.io.FileOutputStream outputStream = new java.io.FileOutputStream(tempFile)) {
-
-            if (inputStream == null) {
-                throw new Exception("Cannot open input stream");
-            }
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            outputStream.flush();
-        }
-
-        return tempFile;
+        Log.d(TAG, "Post update work enqueued");
     }
 
     @Override
