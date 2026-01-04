@@ -72,7 +72,7 @@ public class DateUtil {
         String month = monthFormat.format(date);
         String year = yearFormat.format(date);
 
-        return "Ngày " + day + " tháng " + month + " năm " + year;
+        return day + " tháng " + month + " năm " + year;
     }
 
     /**
@@ -89,38 +89,54 @@ public class DateUtil {
         }
 
         // Extract just the month name if it contains spaces (e.g., "January 2024" -> "January")
-        String monthOnly = englishMonthName.split(" ")[0].toLowerCase().trim();
+        String[] arr = englishMonthName.split(" ");
+        String monthOnly = arr[0].toLowerCase().trim();
+        String vietnamMonth;
 
         // Map English month names to Vietnamese format
         switch (monthOnly) {
             case "january":
-                return "Tháng 1";
+                vietnamMonth =  "Tháng 1";
+                break;
             case "february":
-                return "Tháng 2";
+                vietnamMonth =  "Tháng 2";
+                break;
             case "march":
-                return "Tháng 3";
+                vietnamMonth =  "Tháng 3";
+                break;
             case "april":
-                return "Tháng 4";
+                vietnamMonth =  "Tháng 4";
+                break;
             case "may":
-                return "Tháng 5";
+                vietnamMonth =  "Tháng 5";
+                break;
             case "june":
-                return "Tháng 6";
+                vietnamMonth =  "Tháng 6";
+                break;
             case "july":
-                return "Tháng 7";
+                vietnamMonth =  "Tháng 7";
+                break;
             case "august":
-                return "Tháng 8";
+                vietnamMonth =  "Tháng 8";
+                break;
             case "september":
-                return "Tháng 9";
+                vietnamMonth =  "Tháng 9";
+                break;
             case "october":
-                return "Tháng 10";
+                vietnamMonth =  "Tháng 10";
+                break;
             case "november":
-                return "Tháng 11";
+                vietnamMonth =  "Tháng 11";
+                break;
             case "december":
-                return "Tháng 12";
+                vietnamMonth =  "Tháng 12";
+                break;
             default:
                 // If not recognized, return original
-                return englishMonthName;
+                vietnamMonth =  englishMonthName;
+
         }
+        return vietnamMonth + " " + arr[1];
     }
 
     public static String getNewDateString(String input, String format, String newFormat) throws ParseException {

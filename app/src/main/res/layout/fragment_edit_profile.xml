@@ -105,9 +105,7 @@
                                 android:id="@+id/iv_avatar"
                                 android:layout_width="120dp"
                                 android:layout_height="120dp"
-                                android:src="@drawable/img_user_default_128"
-                                app:civ_border_width="3dp"
-                                app:civ_border_color="@color/yellow"/>
+                                android:src="@drawable/img_user_default_128"/>
 
                             <!-- Change Avatar Button -->
                             <Button
@@ -181,7 +179,7 @@
                         app:boxBackgroundColor="@color/black_370"
                         app:hintTextColor="@color/white_200"
                         app:boxStrokeColor="@color/yellow"
-                        app:suffixText="@string/profile_unit_cm"
+                        app:suffixText="@string/profile_unit_m"
                         app:suffixTextColor="@color/gray_450"
                         android:layout_marginBottom="16dp">
 

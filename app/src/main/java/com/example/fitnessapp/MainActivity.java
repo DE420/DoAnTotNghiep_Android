@@ -68,6 +68,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    // BroadcastReceiver for profile updates
+    private BroadcastReceiver profileUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Refresh avatar when profile is updated
+            refreshAvatar();
+            Log.d("MainActivity", "Profile updated, refreshing avatar");
+        }
+    };
+
     /**
      * Setup fragment lifecycle callbacks to automatically control header and bottom nav visibility
      */
@@ -168,8 +178,12 @@ public class MainActivity extends AppCompatActivity {
 //        setupFragmentLifecycleCallbacks();
 
         // Register BroadcastReceiver for notification badge updates using LocalBroadcastManager
-        IntentFilter filter = new IntentFilter("com.example.fitnessapp.NOTIFICATION_RECEIVED");
-        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, filter);
+        IntentFilter notificationFilter = new IntentFilter("com.example.fitnessapp.NOTIFICATION_RECEIVED");
+        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, notificationFilter);
+
+        // Register BroadcastReceiver for profile updates using LocalBroadcastManager
+        IntentFilter profileUpdateFilter = new IntentFilter("com.example.fitnessapp.PROFILE_UPDATED");
+        LocalBroadcastManager.getInstance(this).registerReceiver(profileUpdateReceiver, profileUpdateFilter);
 
         // Set up notification badge observer FIRST before handling deep links
         setupNotificationBadge();
@@ -626,12 +640,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Unregister LocalBroadcastReceiver to prevent memory leaks
+        // Unregister LocalBroadcastReceivers to prevent memory leaks
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver);
         } catch (IllegalArgumentException e) {
             // Receiver was not registered, ignore
-            Log.w("MainActivity", "Receiver not registered: " + e.getMessage());
+            Log.w("MainActivity", "Notification receiver not registered: " + e.getMessage());
+        }
+
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(profileUpdateReceiver);
+        } catch (IllegalArgumentException e) {
+            // Receiver was not registered, ignore
+            Log.w("MainActivity", "Profile update receiver not registered: " + e.getMessage());
         }
     }
 
