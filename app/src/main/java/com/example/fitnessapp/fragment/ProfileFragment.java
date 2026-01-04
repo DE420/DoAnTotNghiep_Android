@@ -227,11 +227,10 @@ public class ProfileFragment extends Fragment {
             ProfileResponse.MonthlyStats monthlyStats = profile.getMonthlyStats();
 
             // Update month title
-            binding.tvCurrentMonth.setText(
-                    monthlyStats.getMonthName() != null
-                            ? monthlyStats.getMonthName()
-                            : noDataStr
-            );
+            String monthName = monthlyStats.getMonthName() != null
+                    ? DateUtil.convertToVietnameseMonth(monthlyStats.getMonthName())
+                    : noDataStr;
+            binding.tvCurrentMonth.setText(monthName);
 
             // Update monthly stats values
             binding.tvMonthlyWorkouts.setText(
