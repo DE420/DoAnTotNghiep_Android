@@ -322,14 +322,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String username = editTextUsername.getText().toString();
         String warningStr = "";
         if (username.isBlank()) {
-            warningStr += getString(R.string.register_error_name_blank);
+            warningStr += getString(R.string.register_error_username_blank);
         }
 
         if (username.length() < 3) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += getString(R.string.register_error_name_too_short);
+            warningStr += getString(R.string.register_error_username_too_short);
         }
 
         if (warningStr.isEmpty()) {
