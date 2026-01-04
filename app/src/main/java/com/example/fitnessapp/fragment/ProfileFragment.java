@@ -65,10 +65,27 @@ public class ProfileFragment extends Fragment {
 
         // Setup UI
         setupClickListeners();
+        setupSwipeRefresh();
         setupObservers();
 
         // Load profile data
         viewModel.loadUserProfile();
+    }
+
+    /**
+     * Setup swipe refresh functionality
+     */
+    private void setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            viewModel.loadUserProfile();
+        });
+
+        // Set refresh colors (matching AllPostFragment style)
+        binding.swipeRefresh.setColorSchemeResources(
+                R.color.yellow,
+                R.color.green_500,
+                R.color.red_400
+        );
     }
 
     /**
@@ -87,8 +104,11 @@ public class ProfileFragment extends Fragment {
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (binding != null) {
+                // Update swipe refresh indicator
+                binding.swipeRefresh.setRefreshing(Boolean.TRUE.equals(isLoading));
+
+                // Only show loading spinner if we don't have data yet
                 if (Boolean.TRUE.equals(isLoading)) {
-                    // Only show loading spinner if we don't have data yet
                     if (currentProfile == null) {
                         showLoadingState();
                     }
@@ -174,7 +194,7 @@ public class ProfileFragment extends Fragment {
                 Log.e(TAG, "Failed to format birthday: " + e.getMessage());
             }
         }
-        binding.tvBirthday.setText(birthdayStr);
+        binding.tvBirthday.setText("Ngày sinh: " + birthdayStr);
 
         // Body Metrics
         binding.tvWeightValue.setText(
