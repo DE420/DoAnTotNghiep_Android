@@ -48,6 +48,7 @@ public class ProfileViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> updateSuccess = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> passwordChangeSuccess = new MutableLiveData<>(false);
 
     public ProfileViewModel(@NonNull Application application) {
         super(application);
@@ -70,6 +71,10 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getUpdateSuccess() {
         return updateSuccess;
+    }
+
+    public LiveData<Boolean> getPasswordChangeSuccess() {
+        return passwordChangeSuccess;
     }
 
     /**
@@ -217,6 +222,51 @@ public class ProfileViewModel extends AndroidViewModel {
      */
     public void clearUpdateSuccess() {
         updateSuccess.postValue(false);
+    }
+
+    /**
+     * Clear password change success flag after handling
+     */
+    public void clearPasswordChangeSuccess() {
+        passwordChangeSuccess.postValue(false);
+    }
+
+    /**
+     * Change user password
+     *
+     * @param currentPassword User's current password
+     * @param newPassword New password to set
+     * @param confirmPassword Confirmation of new password
+     */
+    public void changePassword(String currentPassword, String newPassword, String confirmPassword) {
+        if (Boolean.TRUE.equals(isLoading.getValue())) {
+            return;
+        }
+
+        isLoading.postValue(true);
+        errorMessage.postValue(null);
+        passwordChangeSuccess.postValue(false);
+
+        executorService.execute(() -> {
+            try {
+                boolean success = repository.changePassword(
+                    getApplication(),
+                    currentPassword,
+                    newPassword,
+                    confirmPassword
+                );
+
+                if (success) {
+                    passwordChangeSuccess.postValue(true);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error changing password", e);
+                errorMessage.postValue(e.getMessage());
+                passwordChangeSuccess.postValue(false);
+            } finally {
+                isLoading.postValue(false);
+            }
+        });
     }
 
     @Override
