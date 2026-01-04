@@ -3,14 +3,14 @@ package com.example.fitnessapp.repository;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.fitnessapp.constants.Constants;
+import com.example.fitnessapp.model.request.ChangePasswordRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
-import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
-import com.example.fitnessapp.session.SessionManager;
+import com.example.fitnessapp.network.UserApi;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
@@ -26,6 +26,7 @@ import retrofit2.Response;
  * Available operations:
  * - getUserProfile(): Fetch user profile from server
  * - updateProfile(): Update profile with flexible parameter map
+ * - changePassword(): Change user password
  */
 public class ProfileRepository {
 
@@ -48,16 +49,9 @@ public class ProfileRepository {
      */
     public ProfileResponse getUserProfile(Context context) throws Exception {
         try {
-            ApiService api = RetrofitClient.getApiService();
-            SessionManager sessionManager = SessionManager.getInstance(context);
-            String token = sessionManager.getAccessToken();
+            UserApi api = RetrofitClient.getUserApi(context);
 
-            if (token == null) {
-                throw new Exception("No access token available");
-            }
-
-            Response<ApiResponse<ProfileResponse>> response =
-                api.getUserProfile(Constants.PREFIX_JWT + " " + token).execute();
+            Response<ApiResponse<ProfileResponse>> response = api.getUserProfile().execute();
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                 return response.body().getData();
@@ -93,25 +87,11 @@ public class ProfileRepository {
                                  MultipartBody.Part avatarFile,
                                  Map<String, RequestBody> fields) throws Exception {
         try {
-            ApiService api = RetrofitClient.getApiService();
-            SessionManager sessionManager = SessionManager.getInstance(context);
-            String token = sessionManager.getAccessToken();
-
-            if (token == null) {
-                throw new Exception("No access token available");
-            }
-
-            // Extract fields from map
-            RequestBody name = fields.get(KEY_NAME);
-            RequestBody weight = fields.get(KEY_WEIGHT);
-            RequestBody height = fields.get(KEY_HEIGHT);
-            RequestBody activityLevel = fields.get(KEY_ACTIVITY_LEVEL);
-            RequestBody fitnessGoal = fields.get(KEY_FITNESS_GOAL);
-            RequestBody dateOfBirth = fields.get(KEY_DATE_OF_BIRTH);
+            UserApi api = RetrofitClient.getUserApi(context);
 
             Response<ApiResponse<Boolean>> response = api.updateUserProfile(
-                Constants.PREFIX_JWT + " " + token,
-                avatarFile, name, weight, height, activityLevel, fitnessGoal, dateOfBirth
+                avatarFile,
+                fields
             ).execute();
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
@@ -136,27 +116,9 @@ public class ProfileRepository {
     public boolean updateProfileWithExistingAvatar(Context context,
                                                    Map<String, RequestBody> fields) throws Exception {
         try {
-            ApiService api = RetrofitClient.getApiService();
-            SessionManager sessionManager = SessionManager.getInstance(context);
-            String token = sessionManager.getAccessToken();
+            UserApi api = RetrofitClient.getUserApi(context);
 
-            if (token == null) {
-                throw new Exception("No access token available");
-            }
-
-            // Extract fields from map
-            RequestBody avatar = fields.get(KEY_AVATAR);
-            RequestBody name = fields.get(KEY_NAME);
-            RequestBody weight = fields.get(KEY_WEIGHT);
-            RequestBody height = fields.get(KEY_HEIGHT);
-            RequestBody activityLevel = fields.get(KEY_ACTIVITY_LEVEL);
-            RequestBody fitnessGoal = fields.get(KEY_FITNESS_GOAL);
-            RequestBody dateOfBirth = fields.get(KEY_DATE_OF_BIRTH);
-
-            Response<ApiResponse<Boolean>> response = api.updateUserProfile(
-                Constants.PREFIX_JWT + " " + token,
-                avatar, name, weight, height, activityLevel, fitnessGoal, dateOfBirth
-            ).execute();
+            Response<ApiResponse<Boolean>> response = api.updateUserProfile(fields).execute();
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                 return true;
@@ -180,26 +142,9 @@ public class ProfileRepository {
     public boolean updateProfileNoAvatar(Context context,
                                         Map<String, RequestBody> fields) throws Exception {
         try {
-            ApiService api = RetrofitClient.getApiService();
-            SessionManager sessionManager = SessionManager.getInstance(context);
-            String token = sessionManager.getAccessToken();
+            UserApi api = RetrofitClient.getUserApi(context);
 
-            if (token == null) {
-                throw new Exception("No access token available");
-            }
-
-            // Extract fields from map
-            RequestBody name = fields.get(KEY_NAME);
-            RequestBody weight = fields.get(KEY_WEIGHT);
-            RequestBody height = fields.get(KEY_HEIGHT);
-            RequestBody activityLevel = fields.get(KEY_ACTIVITY_LEVEL);
-            RequestBody fitnessGoal = fields.get(KEY_FITNESS_GOAL);
-            RequestBody dateOfBirth = fields.get(KEY_DATE_OF_BIRTH);
-
-            Response<ApiResponse<Boolean>> response = api.updateUserProfile(
-                Constants.PREFIX_JWT + " " + token,
-                name, weight, height, activityLevel, fitnessGoal, dateOfBirth
-            ).execute();
+            Response<ApiResponse<Boolean>> response = api.updateUserProfile(fields).execute();
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                 return true;
@@ -208,6 +153,48 @@ public class ProfileRepository {
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error updating profile", e);
+            throw new Exception("Network error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Change user password
+     *
+     * @param context Application context
+     * @param currentPassword Current password
+     * @param newPassword New password
+     * @param confirmPassword Confirm new password
+     * @return true if password change successful
+     * @throws Exception if change fails
+     */
+    public boolean changePassword(Context context,
+                                  String currentPassword,
+                                  String newPassword,
+                                  String confirmPassword) throws Exception {
+        try {
+            UserApi api = RetrofitClient.getUserApi(context);
+
+            ChangePasswordRequest request = new ChangePasswordRequest(
+                currentPassword,
+                newPassword,
+                confirmPassword
+            );
+
+            Response<ApiResponse<String>> response = api.changePassword(request).execute();
+
+            if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                return true;
+            } else if (response.code() == 401) {
+                throw new Exception("Unauthorized - Token expired");
+            } else if (response.body() != null && !response.body().isStatus()) {
+                // Server returned error message
+                String message = response.body().getData();
+                throw new Exception(message != null ? message : "Failed to change password");
+            } else {
+                throw new Exception("Failed to change password");
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error changing password", e);
             throw new Exception("Network error: " + e.getMessage());
         }
     }

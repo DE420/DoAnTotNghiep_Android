@@ -292,7 +292,9 @@ public class EditProfileFragment extends Fragment {
 
         // Height
         if (currentProfile.getHeight() != null) {
-            binding.etHeight.setText(String.valueOf(currentProfile.getHeight()));
+            // Convert meters to centimeters for display
+            double heightInCm = currentProfile.getHeight() * 100;
+            binding.etHeight.setText(String.format("%.0f", heightInCm));
         }
 
         // Birthday
@@ -424,12 +426,12 @@ public class EditProfileFragment extends Fragment {
             }
         }
 
-        // Validate height
+        // Validate height (in centimeters)
         String heightStr = binding.etHeight.getText().toString().trim();
         if (!heightStr.isEmpty()) {
             try {
-                double height = Double.parseDouble(heightStr);
-                if (height <= 0 || height > 3.0) {
+                double heightCm = Double.parseDouble(heightStr);
+                if (heightCm <= 0 || heightCm > 300) {
                     binding.tilHeight.setError(getString(R.string.profile_height_invalid));
                     isValid = false;
                 }
@@ -464,10 +466,12 @@ public class EditProfileFragment extends Fragment {
                 fields.put(ProfileRepository.KEY_WEIGHT, createRequestBody(weightStr));
             }
 
-            // Height
+            // Height (convert cm to meters for backend)
             String heightStr = binding.etHeight.getText().toString().trim();
             if (!heightStr.isEmpty()) {
-                fields.put(ProfileRepository.KEY_HEIGHT, createRequestBody(heightStr));
+                double heightCm = Double.parseDouble(heightStr);
+                double heightM = heightCm / 100.0;
+                fields.put(ProfileRepository.KEY_HEIGHT, createRequestBody(String.valueOf(heightM)));
             }
 
             // Birthday
