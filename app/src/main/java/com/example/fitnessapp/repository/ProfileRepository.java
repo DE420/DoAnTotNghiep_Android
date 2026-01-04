@@ -8,6 +8,7 @@ import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
 import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.network.UserApi;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -96,8 +97,26 @@ public class ProfileRepository {
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                 return true;
+            } else if (response.code() == 401) {
+                throw new Exception("Unauthorized - Token expired");
             } else {
-                throw new Exception("Failed to update profile");
+                // Extract error message from error body
+                String errorMessage = "Failed to update profile";
+                if (response.errorBody() != null) {
+                    try {
+                        ApiResponse<String> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                ApiResponse.class
+                        );
+                        if (errorResponse != null && errorResponse.getData() != null) {
+                            errorMessage = errorResponse.getData().toString();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing error body", e);
+                    }
+                }
+                Log.e(TAG, "Update profile failed - Code: " + response.code() + ", Message: " + errorMessage);
+                throw new Exception(errorMessage);
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error updating profile", e);
@@ -122,8 +141,26 @@ public class ProfileRepository {
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                 return true;
+            } else if (response.code() == 401) {
+                throw new Exception("Unauthorized - Token expired");
             } else {
-                throw new Exception("Failed to update profile");
+                // Extract error message from error body
+                String errorMessage = "Failed to update profile";
+                if (response.errorBody() != null) {
+                    try {
+                        ApiResponse<String> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                ApiResponse.class
+                        );
+                        if (errorResponse != null && errorResponse.getData() != null) {
+                            errorMessage = errorResponse.getData().toString();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing error body", e);
+                    }
+                }
+                Log.e(TAG, "Update profile failed - Code: " + response.code() + ", Message: " + errorMessage);
+                throw new Exception(errorMessage);
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error updating profile", e);
@@ -148,8 +185,26 @@ public class ProfileRepository {
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                 return true;
+            } else if (response.code() == 401) {
+                throw new Exception("Unauthorized - Token expired");
             } else {
-                throw new Exception("Failed to update profile");
+                // Extract error message from error body
+                String errorMessage = "Failed to update profile";
+                if (response.errorBody() != null) {
+                    try {
+                        ApiResponse<String> errorResponse = new Gson().fromJson(
+                                response.errorBody().charStream(),
+                                ApiResponse.class
+                        );
+                        if (errorResponse != null && errorResponse.getData() != null) {
+                            errorMessage = errorResponse.getData().toString();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing error body", e);
+                    }
+                }
+                Log.e(TAG, "Update profile failed - Code: " + response.code() + ", Message: " + errorMessage);
+                throw new Exception(errorMessage);
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error updating profile", e);

@@ -56,8 +56,89 @@ public class ChangePasswordFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         // Setup UI
+        setupTextWatchers();
         setupClickListeners();
         setupObservers();
+    }
+
+    /**
+     * Setup real-time validation with TextWatchers
+     */
+    private void setupTextWatchers() {
+        // Current Password TextWatcher
+        binding.etCurrentPassword.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                String currentPassword = s.toString().trim();
+                if (currentPassword.isEmpty()) {
+                    binding.tilCurrentPassword.setError(getString(R.string.profile_password_requirements));
+                } else {
+                    binding.tilCurrentPassword.setError(null);
+                }
+            }
+        });
+
+        // New Password TextWatcher
+        binding.etNewPassword.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                String newPassword = s.toString().trim();
+                if (newPassword.isEmpty()) {
+                    binding.tilNewPassword.setError(getString(R.string.profile_password_requirements));
+                } else if (newPassword.length() < 8) {
+                    binding.tilNewPassword.setError(getString(R.string.profile_password_too_short));
+                } else if (!isPasswordStrong(newPassword)) {
+                    binding.tilNewPassword.setError(getString(R.string.profile_password_weak));
+                } else {
+                    binding.tilNewPassword.setError(null);
+                }
+
+                // Also revalidate confirm password if it has content
+                String confirmPassword = binding.etConfirmPassword.getText().toString().trim();
+                if (!confirmPassword.isEmpty()) {
+                    if (!confirmPassword.equals(newPassword)) {
+                        binding.tilConfirmPassword.setError(getString(R.string.profile_password_mismatch));
+                    } else {
+                        binding.tilConfirmPassword.setError(null);
+                    }
+                }
+            }
+        });
+
+        // Confirm Password TextWatcher
+        binding.etConfirmPassword.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                String confirmPassword = s.toString().trim();
+                String newPassword = binding.etNewPassword.getText().toString().trim();
+
+                if (confirmPassword.isEmpty()) {
+                    binding.tilConfirmPassword.setError(getString(R.string.profile_password_requirements));
+                } else if (!confirmPassword.equals(newPassword)) {
+                    binding.tilConfirmPassword.setError(getString(R.string.profile_password_mismatch));
+                } else {
+                    binding.tilConfirmPassword.setError(null);
+                }
+            }
+        });
     }
 
     /**
@@ -160,14 +241,14 @@ public class ChangePasswordFragment extends Fragment {
         // Validate current password
         String currentPassword = binding.etCurrentPassword.getText().toString().trim();
         if (currentPassword.isEmpty()) {
-            binding.tilCurrentPassword.setError(getString(R.string.profile_name_required));
+            binding.tilCurrentPassword.setError(getString(R.string.profile_password_requirements));
             isValid = false;
         }
 
         // Validate new password
         String newPassword = binding.etNewPassword.getText().toString().trim();
         if (newPassword.isEmpty()) {
-            binding.tilNewPassword.setError(getString(R.string.profile_name_required));
+            binding.tilNewPassword.setError(getString(R.string.profile_password_requirements));
             isValid = false;
         } else if (newPassword.length() < 8) {
             binding.tilNewPassword.setError(getString(R.string.profile_password_too_short));
@@ -180,7 +261,7 @@ public class ChangePasswordFragment extends Fragment {
         // Validate confirm password
         String confirmPassword = binding.etConfirmPassword.getText().toString().trim();
         if (confirmPassword.isEmpty()) {
-            binding.tilConfirmPassword.setError(getString(R.string.profile_name_required));
+            binding.tilConfirmPassword.setError(getString(R.string.profile_password_requirements));
             isValid = false;
         } else if (!confirmPassword.equals(newPassword)) {
             binding.tilConfirmPassword.setError(getString(R.string.profile_password_mismatch));

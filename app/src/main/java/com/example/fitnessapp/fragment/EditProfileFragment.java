@@ -24,6 +24,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import com.bumptech.glide.Glide;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.adapter.ActivityLevelAdapter;
@@ -35,6 +41,7 @@ import com.example.fitnessapp.model.request.UpdateProfileRequest;
 import com.example.fitnessapp.repository.ProfileRepository;
 import com.example.fitnessapp.util.DateUtil;
 import com.example.fitnessapp.viewmodel.ProfileViewModel;
+import com.example.fitnessapp.worker.ProfileUpdateWorker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -136,8 +143,8 @@ public class EditProfileFragment extends Fragment {
 
         // Setup UI
         setupViews();
+        setupTextWatchers();
         setupClickListeners();
-        setupObservers();
 
         // Load current profile data
         populateFields();
@@ -199,6 +206,136 @@ public class EditProfileFragment extends Fragment {
     }
 
     /**
+     * Setup real-time validation with TextWatchers
+     */
+    private void setupTextWatchers() {
+        // Name TextWatcher
+        binding.etName.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                String name = s.toString().trim();
+                if (name.isEmpty()) {
+                    binding.tilName.setError(getString(R.string.profile_name_required));
+                } else if (name.length() < 2) {
+                    binding.tilName.setError("Tên phải có ít nhất 2 ký tự");
+                } else if (name.length() > 100) {
+                    binding.tilName.setError("Tên quá dài (tối đa 100 ký tự)");
+                } else {
+                    binding.tilName.setError(null);
+                }
+            }
+        });
+
+        // Weight TextWatcher
+        binding.etWeight.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                String weightStr = s.toString().trim();
+                if (!weightStr.isEmpty()) {
+                    try {
+                        double weight = Double.parseDouble(weightStr);
+                        if (weight <= 0 || weight > 500) {
+                            binding.tilWeight.setError(getString(R.string.profile_weight_invalid));
+                        } else {
+                            binding.tilWeight.setError(null);
+                        }
+                    } catch (NumberFormatException e) {
+                        binding.tilWeight.setError(getString(R.string.profile_weight_invalid));
+                    }
+                } else {
+                    binding.tilWeight.setError(null);
+                }
+            }
+        });
+
+        // Height TextWatcher
+        binding.etHeight.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                String heightStr = s.toString().trim();
+                if (!heightStr.isEmpty()) {
+                    try {
+                        double heightCm = Double.parseDouble(heightStr);
+                        if (heightCm <= 0 || heightCm > 300) {
+                            binding.tilHeight.setError(getString(R.string.profile_height_invalid));
+                        } else {
+                            binding.tilHeight.setError(null);
+                        }
+                    } catch (NumberFormatException e) {
+                        binding.tilHeight.setError(getString(R.string.profile_height_invalid));
+                    }
+                } else {
+                    binding.tilHeight.setError(null);
+                }
+            }
+        });
+
+        // Birthday TextWatcher (validates when text changes from DatePicker)
+        binding.etBirthday.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                String birthdayStr = s.toString().trim();
+                if (!birthdayStr.isEmpty()) {
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                        sdf.setLenient(false);
+                        Date birthday = sdf.parse(birthdayStr);
+
+                        if (birthday != null) {
+                            // Check if birthday is not in the future
+                            Date today = new Date();
+                            if (birthday.after(today)) {
+                                binding.tilBirthday.setError("Ngày sinh không thể là ngày trong tương lai");
+                            } else {
+                                // Check age range (5-150 years)
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(birthday);
+                                int birthYear = cal.get(Calendar.YEAR);
+                                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                                int age = currentYear - birthYear;
+
+                                if (age > 150 || age < 0) {
+                                    binding.tilBirthday.setError("Ngày sinh không hợp lệ");
+                                } else {
+                                    binding.tilBirthday.setError(null);
+                                }
+                            }
+                        }
+                    } catch (ParseException e) {
+                        binding.tilBirthday.setError("Định dạng ngày sinh không hợp lệ (dd/MM/yyyy)");
+                    }
+                } else {
+                    binding.tilBirthday.setError(null);
+                }
+            }
+        });
+    }
+
+    /**
      * Setup click listeners
      */
     private void setupClickListeners() {
@@ -218,49 +355,6 @@ public class EditProfileFragment extends Fragment {
         // Birthday field (opens date picker)
         binding.etBirthday.setOnClickListener(v -> datePickerDialog.show());
         binding.tilBirthday.setEndIconOnClickListener(v -> datePickerDialog.show());
-    }
-
-    /**
-     * Setup ViewModel observers
-     */
-    private void setupObservers() {
-        // Observe loading state
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if (binding == null) return;
-
-            if (Boolean.TRUE.equals(isLoading)) {
-                binding.pbLoading.setVisibility(View.VISIBLE);
-                binding.btnSave.setEnabled(false);
-            } else {
-                binding.pbLoading.setVisibility(View.GONE);
-                binding.btnSave.setEnabled(true);
-            }
-        });
-
-        // Observe update success
-        viewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
-            if (Boolean.TRUE.equals(success)) {
-                Toast.makeText(requireContext(),
-                        R.string.profile_update_success,
-                        Toast.LENGTH_SHORT).show();
-                viewModel.clearUpdateSuccess();
-
-                // Navigate back to profile
-                if (getActivity() != null) {
-                    getActivity().onBackPressed();
-                }
-            }
-        });
-
-        // Observe errors
-        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
-            if (errorMessage != null && !errorMessage.isEmpty()) {
-                Toast.makeText(requireContext(),
-                        errorMessage,
-                        Toast.LENGTH_LONG).show();
-                viewModel.clearError();
-            }
-        });
     }
 
     /**
@@ -290,24 +384,34 @@ public class EditProfileFragment extends Fragment {
             binding.etWeight.setText(String.valueOf(currentProfile.getWeight()));
         }
 
-        // Height
+        // Height (in meters)
         if (currentProfile.getHeight() != null) {
-            // Convert meters to centimeters for display
-            double heightInCm = currentProfile.getHeight() * 100;
-            binding.etHeight.setText(String.format(Locale.getDefault(), "%.0f", heightInCm));
+            // Backend stores in meters, display as-is
+            binding.etHeight.setText(String.format(Locale.getDefault(), "%.2f", currentProfile.getHeight()));
         }
 
         // Birthday
         if (currentProfile.getDateOfBirth() != null) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                // Try parsing with dd/MM/yyyy format first (server format)
+                SimpleDateFormat sdf = new SimpleDateFormat(DateUtil.DD_MM_YYYY_DATE_FORMAT, Locale.getDefault());
                 Date date = sdf.parse(currentProfile.getDateOfBirth());
                 if (date != null) {
                     selectedDate.setTimeInMillis(date.getTime());
                     updateBirthdayField();
                 }
             } catch (ParseException e) {
-                Log.e(TAG, "Error parsing birthday: " + e.getMessage());
+                // If that fails, try yyyy-MM-dd format
+                try {
+                    SimpleDateFormat sdf2 = new SimpleDateFormat(DateUtil.YYYY_MM_DD_DATE_FORMAT, Locale.getDefault());
+                    Date date = sdf2.parse(currentProfile.getDateOfBirth());
+                    if (date != null) {
+                        selectedDate.setTimeInMillis(date.getTime());
+                        updateBirthdayField();
+                    }
+                } catch (ParseException e2) {
+                    Log.e(TAG, "Error parsing birthday: " + e.getMessage());
+                }
             }
         }
 
@@ -426,9 +530,6 @@ public class EditProfileFragment extends Fragment {
                 if (weight <= 0 || weight > 500) {
                     binding.tilWeight.setError(getString(R.string.profile_weight_invalid));
                     isValid = false;
-                } else if (weight < 20) {
-                    binding.tilWeight.setError("Cân nặng quá nhỏ (tối thiểu 20kg)");
-                    isValid = false;
                 }
             } catch (NumberFormatException e) {
                 binding.tilWeight.setError(getString(R.string.profile_weight_invalid));
@@ -436,16 +537,13 @@ public class EditProfileFragment extends Fragment {
             }
         }
 
-        // Validate height (in centimeters)
+        // Validate height (in meters)
         String heightStr = binding.etHeight.getText().toString().trim();
         if (!heightStr.isEmpty()) {
             try {
-                double heightCm = Double.parseDouble(heightStr);
-                if (heightCm <= 0 || heightCm > 300) {
+                double heightM = Double.parseDouble(heightStr);
+                if (heightM <= 0 || heightM > 3.0) {
                     binding.tilHeight.setError(getString(R.string.profile_height_invalid));
-                    isValid = false;
-                } else if (heightCm < 50) {
-                    binding.tilHeight.setError("Chiều cao quá nhỏ (tối thiểu 50cm)");
                     isValid = false;
                 }
             } catch (NumberFormatException e) {
@@ -477,10 +575,7 @@ public class EditProfileFragment extends Fragment {
                     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                     int age = currentYear - birthYear;
 
-                    if (age < 5) {
-                        binding.tilBirthday.setError("Tuổi quá nhỏ (tối thiểu 5 tuổi)");
-                        isValid = false;
-                    } else if (age > 150) {
+                    if (age > 150 || age < 0) {
                         binding.tilBirthday.setError("Ngày sinh không hợp lệ");
                         isValid = false;
                     }
@@ -495,7 +590,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     /**
-     * Save profile to server
+     * Save profile in background using WorkManager
      */
     private void saveProfile() {
         if (!validateForm()) {
@@ -503,102 +598,84 @@ public class EditProfileFragment extends Fragment {
         }
 
         try {
-            // Prepare field map
-            Map<String, RequestBody> fields = new HashMap<>();
+            // Prepare data for WorkManager
+            Data.Builder dataBuilder = new Data.Builder();
 
             // Name
             String name = binding.etName.getText().toString().trim();
-            fields.put(ProfileRepository.KEY_NAME, createRequestBody(name));
+            dataBuilder.putString(ProfileUpdateWorker.KEY_NAME, name);
 
             // Weight
             String weightStr = binding.etWeight.getText().toString().trim();
             if (!weightStr.isEmpty()) {
-                fields.put(ProfileRepository.KEY_WEIGHT, createRequestBody(weightStr));
+                dataBuilder.putString(ProfileUpdateWorker.KEY_WEIGHT, weightStr);
             }
 
-            // Height (convert cm to meters for backend)
+            // Height (in meters, send as-is to backend)
             String heightStr = binding.etHeight.getText().toString().trim();
             if (!heightStr.isEmpty()) {
-                double heightCm = Double.parseDouble(heightStr);
-                double heightM = heightCm / 100.0;
-                fields.put(ProfileRepository.KEY_HEIGHT, createRequestBody(String.valueOf(heightM)));
+                dataBuilder.putString(ProfileUpdateWorker.KEY_HEIGHT, heightStr);
             }
 
             // Birthday
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             String birthday = sdf.format(selectedDate.getTime());
-            fields.put(ProfileRepository.KEY_DATE_OF_BIRTH, createRequestBody(birthday));
+            dataBuilder.putString(ProfileUpdateWorker.KEY_DATE_OF_BIRTH, birthday);
 
             // Activity Level
             if (selectedActivityLevel != null) {
-                fields.put(ProfileRepository.KEY_ACTIVITY_LEVEL,
-                        createRequestBody(selectedActivityLevel.name()));
+                dataBuilder.putString(ProfileUpdateWorker.KEY_ACTIVITY_LEVEL, selectedActivityLevel.name());
             }
 
             // Fitness Goal
             if (selectedFitnessGoal != null) {
-                fields.put(ProfileRepository.KEY_FITNESS_GOAL,
-                        createRequestBody(selectedFitnessGoal.name()));
+                dataBuilder.putString(ProfileUpdateWorker.KEY_FITNESS_GOAL, selectedFitnessGoal.name());
             }
 
             // Handle avatar
             if (avatarChanged && selectedAvatarUri != null) {
                 // Upload with new avatar file
-                MultipartBody.Part avatarPart = prepareAvatarPart(selectedAvatarUri);
-                viewModel.updateProfileWithNewAvatar(avatarPart, fields);
+                dataBuilder.putString(ProfileUpdateWorker.KEY_AVATAR_URI, selectedAvatarUri.toString());
+                dataBuilder.putBoolean(ProfileUpdateWorker.KEY_HAS_NEW_AVATAR, true);
             } else if (currentProfile != null && currentProfile.getAvatar() != null) {
                 // Keep existing avatar URL
-                fields.put(ProfileRepository.KEY_AVATAR,
-                        createRequestBody(currentProfile.getAvatar()));
-                viewModel.updateProfileWithExistingAvatar(fields);
+                dataBuilder.putString(ProfileUpdateWorker.KEY_AVATAR_URL, currentProfile.getAvatar());
+                dataBuilder.putBoolean(ProfileUpdateWorker.KEY_HAS_NEW_AVATAR, false);
             } else {
                 // No avatar
-                viewModel.updateProfileNoAvatar(fields);
+                dataBuilder.putBoolean(ProfileUpdateWorker.KEY_HAS_NEW_AVATAR, false);
+            }
+
+            // Create constraints (require network)
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build();
+
+            // Create work request
+            OneTimeWorkRequest updateRequest = new OneTimeWorkRequest.Builder(ProfileUpdateWorker.class)
+                    .setInputData(dataBuilder.build())
+                    .setConstraints(constraints)
+                    .build();
+
+            // Enqueue work
+            WorkManager.getInstance(requireContext()).enqueue(updateRequest);
+
+            // Show confirmation toast and navigate back
+            Toast.makeText(requireContext(),
+                    "Đang cập nhật hồ sơ trong nền...",
+                    Toast.LENGTH_SHORT).show();
+
+            // Navigate back to profile screen
+            if (getActivity() != null) {
+                getActivity().onBackPressed();
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "Error saving profile: " + e.getMessage(), e);
+            Log.e(TAG, "Error preparing profile update: " + e.getMessage(), e);
             Toast.makeText(requireContext(),
-                    R.string.profile_error_update,
+                    "Lỗi khi chuẩn bị cập nhật hồ sơ",
                     Toast.LENGTH_SHORT).show();
         }
-    }
-
-    /**
-     * Prepare avatar file part for multipart upload
-     */
-    private MultipartBody.Part prepareAvatarPart(Uri uri) throws IOException {
-        InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-        if (inputStream == null) {
-            throw new FileNotFoundException("Could not open image");
-        }
-
-        // Read and compress image
-        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-        inputStream.close();
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
-        byte[] imageBytes = byteArrayOutputStream.toByteArray();
-
-        // Check size
-        if (imageBytes.length > MAX_IMAGE_SIZE) {
-            throw new IOException("Image too large. Maximum size is 5MB");
-        }
-
-        RequestBody requestFile = RequestBody.create(
-                MediaType.parse("image/jpeg"),
-                imageBytes
-        );
-
-        return MultipartBody.Part.createFormData("avatar", "avatar.jpg", requestFile);
-    }
-
-    /**
-     * Create RequestBody from string
-     */
-    private RequestBody createRequestBody(String value) {
-        return RequestBody.create(MediaType.parse("text/plain"), value);
     }
 
     @Override
