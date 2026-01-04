@@ -78,8 +78,9 @@ public class DateUtil {
     /**
      * Convert English month name to Vietnamese month format
      * Example: "January" -> "Tháng 1", "December" -> "Tháng 12"
+     * Also handles formats like "January 2024" or "JANUARY"
      *
-     * @param englishMonthName The English month name (e.g., "January", "February")
+     * @param englishMonthName The English month name (e.g., "January", "February", "January 2024")
      * @return Vietnamese month format (e.g., "Tháng 1", "Tháng 2")
      */
     public static String convertToVietnameseMonth(String englishMonthName) {
@@ -87,8 +88,11 @@ public class DateUtil {
             return "";
         }
 
+        // Extract just the month name if it contains spaces (e.g., "January 2024" -> "January")
+        String monthOnly = englishMonthName.split(" ")[0].toLowerCase().trim();
+
         // Map English month names to Vietnamese format
-        switch (englishMonthName.toLowerCase()) {
+        switch (monthOnly) {
             case "january":
                 return "Tháng 1";
             case "february":
