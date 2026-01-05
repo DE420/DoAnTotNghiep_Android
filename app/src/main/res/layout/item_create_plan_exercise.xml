@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#222222">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Exercise Label -->
+        <TextView
+            android:id="@+id/tv_exercise_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Exercise:"
+            android:textColor="@color/white85"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <!-- Regular Spinner (disabled, just for display) -->
+        <Spinner
+            android:id="@+id/spinner_exercise"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_search_box"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintStart_toEndOf="@id/tv_exercise_label"
+            app:layout_constraintEnd_toStartOf="@id/btn_search_exercise"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.55" />
+
+        <!-- Search Button -->
+        <ImageView
+            android:id="@+id/btn_search_exercise"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_search"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Search Exercise"
+            app:tint="@color/white85"
+            app:layout_constraintEnd_toStartOf="@id/btn_delete_exercise"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.10" />
+
+        <!-- Delete Button -->
+        <ImageView
+            android:id="@+id/btn_delete_exercise"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_delete_red"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete Exercise"
+            app:tint="@color/white85"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.10" />
+
+        <!-- Sets -->
+        <TextView
+            android:id="@+id/tv_sets_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Sets:"
+            android:textColor="@color/white85"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_exercise"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <EditText
+            android:id="@+id/et_sets"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_search_box"
+            android:padding="8dp"
+            android:hint="3"
+            android:textColorHint="#8A8A8A"
+            android:textColor="@android:color/white"
+            android:inputType="number"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/tv_sets_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_exercise"
+            app:layout_constraintWidth_percent="0.70" />
+
+        <!-- Reps -->
+        <TextView
+            android:id="@+id/tv_reps_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Reps:"
+            android:textColor="@color/white85"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_sets"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <EditText
+            android:id="@+id/et_reps"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_search_box"
+            android:padding="8dp"
+            android:hint="10"
+            android:textColorHint="#8A8A8A"
+            android:textColor="@android:color/white"
+            android:inputType="number"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/tv_reps_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_sets"
+            app:layout_constraintWidth_percent="0.70" />
+
+        <!-- Duration (optional) -->
+        <TextView
+            android:id="@+id/tv_duration_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Duration (s):"
+            android:textColor="@color/white85"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_reps"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <EditText
+            android:id="@+id/et_duration_exercise"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_search_box"
+            android:padding="8dp"
+            android:hint="30"
+            android:textColorHint="#8A8A8A"
+            android:textColor="@android:color/white"
+            android:inputType="number"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/tv_duration_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_reps"
+            app:layout_constraintWidth_percent="0.70" />
+
+        <!-- Weight (optional) -->
+        <TextView
+            android:id="@+id/tv_weight_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Weight (kg):"
+            android:textColor="@color/white85"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_duration_exercise"
+            app:layout_constraintWidth_percent="0.25" />
+
+        <EditText
+            android:id="@+id/et_weight_exercise"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_search_box"
+            android:padding="8dp"
+            android:hint="10"
+            android:textColorHint="#8A8A8A"
+            android:textColor="@android:color/white"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/tv_weight_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_duration_exercise"
+            app:layout_constraintWidth_percent="0.70" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/black">
+
+    <TextView
+        android:id="@+id/tv_plan_day_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Saturday"
+        android:textColor="@color/white85"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingVertical="8dp"
+        android:background="#333333"
+        android:layout_marginBottom="4dp" /> <!-- Nền màu xám đậm cho tiêu đề ngày -->
+
+    <!-- RecyclerView con cho các bài tập của ngày này (sẽ được thêm vào động trong adapter) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_day_exercises"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        tools:itemCount="3"
+        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:orientation="vertical"
+        tools:listitem="@layout/item_plan_exercise" />
+
+</LinearLayout>

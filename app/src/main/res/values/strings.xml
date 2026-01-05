@@ -46,6 +46,9 @@
     <string name="acitvity_level_moderately_active">Moderately active</string>
     <string name="acitvity_level_very_active">Very active</string>
     <string name="acitvity_level_extra_active">Extra active</string>
+    <string name="difficulty_level_beginner">Beginner</string>
+    <string name="difficulty_level_intermediate">Intermediate</string>
+    <string name="difficulty_level_advanced">Advanced</string>
     <string name="txt_min">min</string>
     <string name="txt_days">days</string>
     <string name="txt_birthday">Birthday</string>

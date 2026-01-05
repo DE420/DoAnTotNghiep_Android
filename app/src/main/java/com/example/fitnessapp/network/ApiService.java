@@ -1,7 +1,10 @@
 package com.example.fitnessapp.network;
 
 import com.example.fitnessapp.constants.Constants;
+import com.example.fitnessapp.enums.DifficultyLevel;
+import com.example.fitnessapp.enums.FitnessGoal;
 import com.example.fitnessapp.model.request.ChangePasswordRequest;
+import com.example.fitnessapp.model.request.CreatePlanRequest;
 import com.example.fitnessapp.model.request.ForgotPasswordRequest;
 import com.example.fitnessapp.model.request.GoogleLoginRequest;
 import com.example.fitnessapp.model.request.LoginRequest;
@@ -12,6 +15,8 @@ import com.example.fitnessapp.model.request.UpdateProfileRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.ExerciseResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
+import com.example.fitnessapp.model.response.PlanDetailResponse;
+import com.example.fitnessapp.model.response.PlanResponse;
 import com.example.fitnessapp.model.response.RegisterResponse;
 import com.example.fitnessapp.model.response.SelectOptions;
 
@@ -22,6 +27,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -126,4 +132,57 @@ public interface ApiService {
     Call<ApiResponse<String>> changePassword(
             @Header(Constants.KEY_AUTHORIZATION) String authorization,
             @Body ChangePasswordRequest request);
+
+    @GET("workout-plan/samples")
+    Call<ApiResponse<List<PlanResponse>>> getSampleWorkoutPlans(
+            @Header("Authorization") String authorizationHeader,
+            @Query("keyword") String keyword,
+            @Query("goal") FitnessGoal goal,
+            @Query("level") DifficultyLevel level,
+            @Query("duration") Integer duration,
+            @Query("page") Integer page,
+            @Query("limit") Integer limit
+    );
+
+    @GET("workout-plan/mine")
+    Call<ApiResponse<List<PlanResponse>>> getMyWorkoutPlans(
+            @Header("Authorization") String authorizationHeader,
+            @Query("keyword") String keyword,
+            @Query("goal") FitnessGoal goal,
+            @Query("level") DifficultyLevel level,
+            @Query("duration") Integer duration,
+            @Query("page") Integer page,
+            @Query("limit") Integer limit
+    );
+
+    @GET("workout-plan/{id}")
+    Call<ApiResponse<PlanDetailResponse>> getPlanDetail(
+            @Header("Authorization") String authorizationHeader,
+            @Path("id") Long planId
+    );
+
+    @POST("workout-plan")
+    Call<ApiResponse<Long>> createPlan(
+            @Header("Authorization") String authorizationHeader,
+            @Body CreatePlanRequest request
+    );
+
+    @PUT("workout-plan/{id}")
+    Call<ApiResponse<Long>> updatePlan(
+            @Header("Authorization") String authorizationHeader,
+            @Path("id") Long planId,
+            @Body CreatePlanRequest request
+    );
+
+    @POST("workout-plan/{id}/copy")
+    Call<ApiResponse<Long>> copyPlan(
+            @Header("Authorization") String authorizationHeader,
+            @Path("id") Long planId
+    );
+
+    @DELETE("workout-plan/{id}")
+    Call<ApiResponse<Boolean>> deletePlan(
+            @Header("Authorization") String authorizationHeader,
+            @Path("id") Long planId
+    );
 }
