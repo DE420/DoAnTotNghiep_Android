@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Checked state with checkmark -->
+    <item android:state_checked="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <stroke android:width="2dp" android:color="@color/white85" />
+                    <corners android:radius="3dp" />
+                    <size android:width="18dp" android:height="18dp" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/ic_check"
+                android:gravity="center"
+                android:width="12dp"
+                android:height="12dp"/>
+        </layer-list>
+    </item>
+
+    <!-- Unchecked state -->
+    <item android:state_checked="false">
+        <shape android:shape="rectangle">
+            <stroke android:width="2dp" android:color="@color/white85" />
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="3dp" />
+            <size android:width="18dp" android:height="18dp" />
+        </shape>
+    </item>
+</selector>

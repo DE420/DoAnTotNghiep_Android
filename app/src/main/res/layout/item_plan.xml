@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/white85"> <!-- Màu nền xám nhạt cho card item -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Plan Name -->
+        <TextView
+            android:id="@+id/tv_plan_item_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            tools:text="Beginner training plan"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Start Date (Only for My Plan) -->
+        <TextView
+            android:id="@+id/tv_plan_item_start_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            tools:text="Start from 01/01/2000"
+            android:textColor="#555555"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_plan_item_name" />
+
+        <!-- Tags: Level, Goal -->
+        <LinearLayout
+            android:id="@+id/layout_plan_tags"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_plan_item_start_date">
+
+            <!-- Level Tag -->
+            <TextView
+                android:id="@+id/tv_plan_item_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Beginner"
+                android:background="@drawable/bg_level_beginner"
+                android:textColor="@android:color/black"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Goal Tag -->
+            <TextView
+                android:id="@+id/tv_plan_item_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Weight loss"
+                android:background="@drawable/bg_goal_tag"
+                android:textColor="@android:color/black"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Details: Duration, Days per Week -->
+        <LinearLayout
+            android:id="@+id/layout_plan_details"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_plan_tags">
+
+            <!-- Duration -->
+            <TextView
+                android:id="@+id/tv_plan_item_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_calendar_black"
+                android:drawablePadding="4dp"
+                tools:text="4 weeks"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginEnd="16dp" />
+
+            <!-- Days per Week -->
+            <TextView
+                android:id="@+id/tv_plan_item_days_per_week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_refresh_black"
+                android:drawablePadding="4dp"
+                tools:text="2 days / week"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
