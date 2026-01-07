@@ -1,17 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/community_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@android:color/black">
+    android:background="@color/background_app_color"
+    tools:context=".fragment.community.CommunityFragment">
 
-    <TextView
+    <!-- AppBarLayout with TabLayout -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
+
+        <!-- Modern TabLayout with scroll flags -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/black_370"
+            android:elevation="2dp"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/yellow"
+            app:tabIndicatorHeight="3dp"
+            app:tabIndicatorFullWidth="false"
+            app:tabSelectedTextColor="@color/yellow"
+            app:tabTextColor="@color/gray_450"
+            app:tabTextAppearance="@style/TabTextStyle"
+            app:tabRippleColor="@color/white_10"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- ViewPager2 with app bar scrolling behavior -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_create_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Community screen"
-        android:textColor="#BDBDBD"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"/>
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/community_fab_create_post"
+        android:src="@drawable/ic_black_add_24"
+        app:backgroundTint="@color/yellow"
+        app:tint="@color/black"
+        app:shapeAppearanceOverlay="@style/fab_3_rounded"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

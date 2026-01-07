@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_app_color">
+
+    <!-- App Bar with Back Button and Submit -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black_370"
+        app:elevation="4dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/black_370"
+            app:navigationIcon="@drawable/ic_arrow_back_24"
+            app:title="Create Post"
+            app:titleTextColor="@color/white">
+
+            <!-- Submit Button in Toolbar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="12dp"
+                android:text="Post"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/yellow"
+                app:cornerRadius="18dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Main Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Content Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="What's on your mind?"
+                app:boxBackgroundMode="outline"
+                app:boxBackgroundColor="@color/black_370"
+                app:boxStrokeColor="@color/yellow"
+                app:hintTextColor="@color/gray_450"
+                app:boxCornerRadiusTopStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusBottomEnd="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="150dp"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="2000"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:padding="12dp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Character Count -->
+            <TextView
+                android:id="@+id/tv_char_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="0/2000"
+                android:textColor="@color/gray_450"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"/>
+
+            <!-- Media Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Media"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Media Type Selection -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_image"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Add Image"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:icon="@drawable/ic_image_24"
+                    app:iconTint="@color/yellow"
+                    app:iconGravity="start"
+                    app:backgroundTint="@color/black_370"
+                    app:strokeColor="@color/yellow"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_video"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Add Video"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:icon="@drawable/ic_video_24"
+                    app:iconTint="@color/yellow"
+                    app:iconGravity="start"
+                    app:backgroundTint="@color/black_370"
+                    app:strokeColor="@color/yellow"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"/>
+
+            </LinearLayout>
+
+            <!-- Media Preview Section -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_media_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/black_370"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                tools:visibility="visible">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- Image Preview -->
+                    <ImageView
+                        android:id="@+id/iv_media_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        android:contentDescription="Media preview"
+                        tools:src="@color/gray_450"
+                        tools:visibility="visible"/>
+
+                    <!-- Video Preview -->
+                    <com.google.android.exoplayer2.ui.PlayerView
+                        android:id="@+id/player_view_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:visibility="gone"
+                        app:controller_layout_id="@layout/custom_player_control"
+                        app:resize_mode="fit"
+                        app:use_controller="true"
+                        app:show_buffering="when_playing"
+                        tools:visibility="gone"/>
+
+                    <!-- Remove Media Button -->
+                    <ImageButton
+                        android:id="@+id/ib_remove_media"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/filled_black_text_field"
+                        android:src="@drawable/ic_close_24"
+                        app:tint="@color/white"
+                        android:contentDescription="Remove media"/>
+
+                </FrameLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Media Info -->
+            <TextView
+                android:id="@+id/tv_media_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You can add one image or one video"
+                android:textColor="@color/gray_450"
+                android:textSize="13sp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:indeterminateTint="@color/yellow"
+        tools:visibility="visible"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

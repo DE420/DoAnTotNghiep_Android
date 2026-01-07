@@ -75,7 +75,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void handleOnBackPressed() {
                 // Do nothing → back button disabled
-                Toast.makeText(getApplicationContext(), "Please wait...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.register_please_wait), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -147,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 && checkValidPassword() && checkValidConfirmPassword()) {
                 registerAccount();
             } else {
-                Toast.makeText(this, "Input invalid", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.register_error_invalid_input), Toast.LENGTH_SHORT).show();
             }
         } else if (view.getId() == R.id.tv_login_now) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -177,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (response.isSuccessful()) {
                     ApiResponse<RegisterResponse> apiResponse = response.body();
                     RegisterResponse registeredUser = apiResponse.getData();
-                    Snackbar.make(containerLayout, "Register success\nReturn to login", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(containerLayout, getString(R.string.register_success), Snackbar.LENGTH_SHORT)
                             .setBackgroundTint(
                                     getResources()
                                             .getColor(R.color.green_500, null)
@@ -205,7 +205,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         Log.e(TAG, "Lỗi API: " + errorMessage);
 
                     } catch (Exception e) {
-                        Snackbar.make(containerLayout, "Register fail", Snackbar.LENGTH_SHORT)
+                        Snackbar.make(containerLayout, getString(R.string.register_fail), Snackbar.LENGTH_SHORT)
                                 .setBackgroundTint(
                                         getResources()
                                                 .getColor(R.color.red_400, null)
@@ -220,7 +220,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             public void onFailure(Call<ApiResponse<RegisterResponse>> call, Throwable t) {
                 backPressedCallback.setEnabled(false);
                 disableLoading();
-                Snackbar.make(containerLayout, "Register fail", Snackbar.LENGTH_SHORT)
+                Snackbar.make(containerLayout, getString(R.string.register_fail), Snackbar.LENGTH_SHORT)
                                 .setBackgroundTint(
                                         getResources()
                                         .getColor(R.color.red_400, null)
@@ -300,14 +300,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String email = editTextEmail.getText().toString();
         String warningStr = "";
         if (email.isBlank()) {
-            warningStr += "Email can't blank.";
+            warningStr += getString(R.string.register_error_email_blank);
         }
 
         if (!Constants.patternMatches(email, Constants.EMAIL_PATTERN)) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Email is invalid.";
+            warningStr += getString(R.string.register_error_email_invalid);
         }
         if (warningStr.isEmpty()) {
             clearWarning(textViewEmailWarning);
@@ -322,14 +322,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String username = editTextUsername.getText().toString();
         String warningStr = "";
         if (username.isBlank()) {
-            warningStr += "Full name can't blank.";
+            warningStr += getString(R.string.register_error_username_blank);
         }
 
         if (username.length() < 3) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Use at least 3 characters.";
+            warningStr += getString(R.string.register_error_username_too_short);
         }
 
         if (warningStr.isEmpty()) {
@@ -345,14 +345,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String password = editTextPassword.getText().toString();
         String warningStr = "";
         if (password.isBlank()) {
-            warningStr += "Password can't blank.";
+            warningStr += getString(R.string.register_error_password_blank);
         }
 
         if (!Constants.patternMatches(password, Constants.PASSWORD_PATTERN)) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Password must be at least 8 characters, including letters, numbers and special characters.";
+            warningStr += getString(R.string.register_error_password_weak);
         }
 
         if (warningStr.isEmpty()) {
@@ -369,14 +369,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String confirmPassword = editTextConfirmPassword.getText().toString();
         String warningStr = "";
         if (confirmPassword.isBlank()) {
-            warningStr += "Confirm password can't blank.";
+            warningStr += getString(R.string.register_error_confirm_blank);
         }
 
         if (!confirmPassword.equals(password)) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Password and Confirm Password does not mat.";
+            warningStr += getString(R.string.register_error_password_mismatch);
         }
 
         if (warningStr.isEmpty()) {

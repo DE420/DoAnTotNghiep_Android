@@ -1,11 +1,7 @@
 package com.example.fitnessapp.fragment;
 
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,44 +9,45 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.fitnessapp.LoginActivity;
 import com.example.fitnessapp.R;
-import com.example.fitnessapp.constants.Constants;
-import com.example.fitnessapp.enums.ActivityLevel;
-import com.example.fitnessapp.enums.FitnessGoal;
-import com.example.fitnessapp.model.request.RefreshTokenRequest;
+import com.example.fitnessapp.databinding.FragmentProfileBinding;
 import com.example.fitnessapp.model.request.UpdateProfileRequest;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
 import com.example.fitnessapp.session.SessionManager;
-import com.example.fitnessapp.databinding.FragmentProfileBinding;
-import com.example.fitnessapp.model.request.LogoutRequest;
-import com.example.fitnessapp.model.response.ApiResponse;
-import com.example.fitnessapp.network.ApiService;
-import com.example.fitnessapp.network.RetrofitClient;
-import com.example.fitnessapp.utils.DateUtil;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.fitnessapp.util.DateUtil;
+import com.example.fitnessapp.viewmodel.ProfileViewModel;
 
-import java.io.IOException;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
+/**
+ * Profile Fragment - MVVM Architecture
+ *
+ * Displays user profile information with following sections:
+ * - Profile Header: Avatar, Name, Email, Birthday
+ * - Body Metrics: Weight, Height
+ * - Fitness Info: Goal, Activity Level
+ * - Overall Statistics: Total workouts, calories, hours
+ * - Monthly Statistics: Current month stats
+ *
+ * Features:
+ * - Pull to refresh
+ * - Edit profile navigation
+ * - Change password navigation
+ * - Logout functionality
+ * - Loading/Error states
+ */
 public class ProfileFragment extends Fragment {
 
-    public static final String TAG = ProfileFragment.class.getSimpleName();
+    private static final String TAG = "ProfileFragment";
 
     private FragmentProfileBinding binding;
-    private ApiService apiService;
-    private int shortAnimationDuration = 100;
-    private ProfileResponse profileResponse;
+    private ProfileViewModel viewModel;
+    private ProfileResponse currentProfile;
 
     @Nullable
     @Override
@@ -63,363 +60,357 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
-//        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-
-
-        apiService = RetrofitClient.getApiService();
-
-
-        binding.buttonEditProfile.setVisibility(View.GONE);
-        binding.svContent.setVisibility(View.GONE);
-        binding.rlLoadingData.setVisibility(View.VISIBLE);
+        // Setup UI
         setupClickListeners();
+        setupSwipeRefresh();
+        setupObservers();
 
-        loadUserProfileData();
-
-        binding.swipeRefreshLayout.setOnRefreshListener(this::loadUserProfileData);
-
+        // Load profile data
+        viewModel.loadUserProfile();
     }
 
+    /**
+     * Setup swipe refresh functionality
+     */
+    private void setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            viewModel.loadUserProfile();
+        });
 
+        // Set refresh colors (matching AllPostFragment style)
+        binding.swipeRefresh.setColorSchemeResources(
+                R.color.yellow,
+                R.color.green_500,
+                R.color.red_400
+        );
+    }
 
-    private void loadUserProfileData() {
-        SessionManager sessionManager = SessionManager.getInstance(getActivity());
-        String accessToken = sessionManager.getAccessToken();
-        if (accessToken == null) {
-            Snackbar.make(binding.fragmentProfile, "Redirect to login", Snackbar.LENGTH_SHORT).show();
-            Log.e(TAG, "accessToken null");
-            return;
-//            Log.e(TAG, "access tokens null");
-//            if (sessionManager.refreshToken()) {
-//                accessToken = sessionManager.getAccessToken();
-//            } else {
-//                Intent intent = new Intent(getActivity(), LoginActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                startActivity(intent);
-//
-//                // Kết thúc Activity chứa Fragment này (MainActivity)
-//                if (getActivity() != null) {
-//                    getActivity().finish();
-//                }
-//                return;
-//            }
-        }
+    /**
+     * Setup LiveData observers for ViewModel
+     */
+    private void setupObservers() {
+        // Observe profile data
+        viewModel.getProfileData().observe(getViewLifecycleOwner(), profile -> {
+            if (profile != null) {
+                currentProfile = profile;
+                updateUI(profile);
+                showContentState();
+            }
+        });
 
-        Log.e(TAG, accessToken);
+        // Observe loading state
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (binding != null) {
+                // Update swipe refresh indicator
+                binding.swipeRefresh.setRefreshing(Boolean.TRUE.equals(isLoading));
 
-        apiService.getUserProfile(Constants.PREFIX_JWT + " " + accessToken).enqueue(new Callback<ApiResponse<ProfileResponse>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<ProfileResponse>> call, Response<ApiResponse<ProfileResponse>> response) {
-                if (binding != null) {
-                    binding.swipeRefreshLayout.setRefreshing(false);
-                }
-                if (response.isSuccessful() && response.body() != null) {
-                    if (response.body().isStatus()) {
-                        profileResponse = response.body().getData();
-                        Log.e(TAG, profileResponse.toString());
-                        if (binding != null) {
-                            showContentView(binding.rlLoadingData);
-                        }
-                    } else {
-                        String error = response.body().getData().toString();
-                        showErrorView(binding.rlLoadingData, error);
-                        Log.e(TAG, error);
+                // Only show loading spinner if we don't have data yet
+                if (Boolean.TRUE.equals(isLoading)) {
+                    if (currentProfile == null) {
+                        showLoadingState();
                     }
+                }
+            }
+        });
+
+        // Observe error messages
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                // Handle specific error cases
+                if (errorMessage.contains("Unauthorized") || errorMessage.contains("Token expired")) {
+                    handleUnauthorized();
                 } else {
-                    if (response.code() == 401) {
-                        if (binding != null) {
-                            Snackbar.make(binding.fragmentProfile, "Redirect to login", Snackbar.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        String error = response.body() != null ? response.body().getData().toString() : getString(R.string.txt_error_loading_data);
-                        if (binding != null) {
-                            showErrorView(binding.rlLoadingData, error);
-                        }
-                        try {
-                            Log.e(TAG, "code: " + response.code() + "message: +" + (response.errorBody() != null ? response.errorBody().string() : "error loading data unknown."));
-                        } catch (IOException e) {
-                            Log.e(TAG, e.getMessage());
-                        }
-                    }
-
+                    showErrorState(errorMessage);
                 }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<ProfileResponse>> call, Throwable t) {
-                if (binding != null) {
-                    binding.swipeRefreshLayout.setRefreshing(false);
-                }
-                String error = "Sorry, something went wrong.\nPlease check your network.";
-                if (binding != null) {
-                    showErrorView(binding.rlLoadingData, error);
-                }
-                Log.e(TAG, "error cant loading data: " + t.getMessage());
+                viewModel.clearError();
             }
         });
     }
 
-
-
-    @SuppressLint("DefaultLocale")
-    private void setProfileDataToContentView() {
-        if (profileResponse == null) {
-            showErrorView(binding.svContent, "No data found.\nPlease retry.");
-        } else {
-            String noDataStr = getString(R.string.txt_no_data);
-            Glide.with(requireActivity())
-                    .load(profileResponse.getAvatar())
-                    .error(R.drawable.img_user_default_128)
-                    .into(binding.imgAvatar);
-            binding.tvFullName.setText(
-                    profileResponse.getName() != null ? profileResponse.getName() : noDataStr
-            );
-            binding.tvEmail.setText(
-                    profileResponse.getEmail() != null ? profileResponse.getEmail() : noDataStr
-            );
-
-            String birthdayStr = noDataStr;
-            if (profileResponse.getDateOfBirth() != null) {
-                try {
-                    birthdayStr = DateUtil.convertToBirthday(
-                            profileResponse.getDateOfBirth(),
-                            DateUtil.DD_MM_YYYY_DATE_FORMAT
-                    );
-                } catch (Exception e) {
-                    Log.e(TAG, "Fail to convert birthday of user: " + e.getMessage());
-                }
-            }
-            binding.tvBirthday.setText(birthdayStr);
-            binding.tvUserWeight.setText(
-                    profileResponse.getWeight() != null
-                            ? String.format("%.2f kg", profileResponse.getWeight())
-                            : noDataStr
-            );
-            binding.tvUserHeight.setText(
-                    profileResponse.getHeight() != null
-                            ? String.format("%.2f m", profileResponse.getHeight())
-                            : noDataStr
-            );
-
-            String fitnessGoalStr = profileResponse.getFitnessGoal() != null
-                    ? getString(profileResponse.getFitnessGoal().getResId())
-                    :getString(R.string.txt_not_selected_goal);
-
-            binding.tvFitnessGoal.setText(fitnessGoalStr);
-
-            String activityLevelStr = profileResponse.getActivityLevel() != null
-                    ? getString(profileResponse.getActivityLevel().getResId())
-                    : getString(R.string.txt_not_selected_activity_level);
-            binding.tvActivityLevel.setText(activityLevelStr);
-
-            binding.tvTotalWorkouts.setText(
-                    Integer.toString(profileResponse.getTotalWorkouts())
-            );
-
-            binding.tvTotalCalories.setText(
-                    String.format("%.2f", profileResponse.getTotalCalories())
-            );
-
-            binding.tvTotalHours.setText(
-                    String.format("%.2f", profileResponse.getTotalHours())
-            );
-
-            String minStr = getString(R.string.txt_min);
-            String dayStr = getString(R.string.txt_days);
-
-            if (profileResponse.getMonthlyStats() == null) {
-                setVisibilityForMonthlyStatistic(View.GONE);
-
-            } else {
-                setVisibilityForMonthlyStatistic(View.VISIBLE);
-                ProfileResponse.MonthlyStats monthlyStats = profileResponse.getMonthlyStats();
-                binding.tvCurrentMonth.setText(
-                        monthlyStats.getMonthName() != null
-                                ? monthlyStats.getMonthName()
-                                : noDataStr
-                );
-                binding.tvTotalWorkoutsMonth.setText(
-                        getString(R.string.txt_total_workouts)
-                        + " " + monthlyStats.getTotalWorkouts()
-                );
-                binding.tvTotalDurationMonth.setText(
-                        String.format("%s %.2f %s",
-                                getString(R.string.txt_total_duration),
-                                monthlyStats.getTotalDurationMin(),
-                                minStr)
-                );
-                binding.tvActiveDaysMonth.setText(
-                        getString(R.string.txt_active_days) + " " + monthlyStats.getActiveDays()
-                );
-                binding.tvAvgPerWorkoutMonth.setText(
-                        String.format("%s %.2f %s",
-                                getString(R.string.txt_avg_per_workout),
-                                monthlyStats.getAvgDurationMin(),
-                                minStr)
-                );
-                binding.tvCurrentStreakMonth.setText(
-                        String.format("%s %d %s",
-                                getString(R.string.txt_current_streak),
-                                monthlyStats.getCurrentStreak(),
-                                dayStr)
-                );
-                binding.tvTotalCaloriesMonth.setText(
-                        String.format("%s %,3.2f",
-                                getString(R.string.txt_total_calories),
-                                monthlyStats.getTotalCalories())
-                );
-            }
-        }
-    }
-
-    private void setVisibilityForMonthlyStatistic(int visibility) {
-        binding.tvMonthlyStats.setVisibility(visibility);
-        binding.tvCurrentMonth.setVisibility(visibility);
-        binding.tvTotalWorkoutsMonth.setVisibility(visibility);
-        binding.tvTotalDurationMonth.setVisibility(visibility);
-        binding.tvActiveDaysMonth.setVisibility(visibility);
-        binding.tvAvgPerWorkoutMonth.setVisibility(visibility);
-        binding.tvTotalCaloriesMonth.setVisibility(visibility);
-        binding.tvCurrentStreakMonth.setVisibility(visibility);
-
-    }
-
-
+    /**
+     * Setup click listeners for all interactive elements
+     */
     private void setupClickListeners() {
-        binding.btnReloadData.setOnClickListener(view -> {
-//            crossfadeFromErrorViewToLoadingView();
-            showLoadingView(binding.rlError);
-            loadUserProfileData();
+        // Back button
+        binding.ibBack.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().onBackPressed();
+            }
         });
 
-        binding.buttonEditProfile.setOnClickListener(v -> {
-            UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest.Builder()
-                    .avatar(profileResponse.getAvatar())
-                    .name(profileResponse.getName())
-                    .height(profileResponse.getHeight())
-                    .weight(profileResponse.getWeight())
-                    .activityLevel(profileResponse.getActivityLevel())
-                    .fitnessGoal(profileResponse.getFitnessGoal())
-                    .dateOfBirth(profileResponse.getDateOfBirth())
-                    .build();
+        // Edit button
+        binding.ibEdit.setOnClickListener(v -> navigateToEditProfile());
 
+        // Change Password button
+        binding.ibChangePassword.setOnClickListener(v -> navigateToChangePassword());
 
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(UpdateProfileRequest.KEY_UPDATE_PROFILE_REQUEST, updateProfileRequest);
-            getParentFragmentManager().beginTransaction()
-                    .setCustomAnimations(
-                            R.anim.slide_in, // enter
-                            R.anim.fade_out, // exit
-                            R.anim.fade_in, // popEnter
-                            R.anim.slide_out // popExit
-                    )
-                    .replace(R.id.fragment_container, EditProfileFragment.class, bundle)
-                    .addToBackStack(null)
-                    .commit();
+        // Logout button
+        binding.ibLogout.setOnClickListener(v -> showLogoutConfirmation());
 
-        });
-
-        binding.buttonChangePassword.setOnClickListener(v -> {
-            getParentFragmentManager().beginTransaction()
-                    .setCustomAnimations(
-                            R.anim.slide_in, // enter
-                            R.anim.fade_out, // exit
-                            R.anim.fade_in, // popEnter
-                            R.anim.slide_out // popExit
-                    )
-                    .replace(R.id.fragment_container, ChangePasswordFragment.class, null)
-                    .addToBackStack(null)
-                    .commit();
-        });
-
-        binding.imgChevronLeft.setOnClickListener(view -> {
-            getActivity().onBackPressed();
-        });
-
-        binding.buttonLogout.setOnClickListener(v -> {
-//            handleLogout();
-
-            new ConfirmLogoutDialogFragment().show(getParentFragmentManager(), null);
+        // Retry button (in error state)
+        binding.btnRetry.setOnClickListener(v -> {
+            viewModel.loadUserProfile();
         });
     }
 
-    private void handleLogout() {
-        // Sử dụng requireActivity() để lấy Context một cách an toàn
-        String refreshToken = SessionManager.getInstance(requireActivity()).getRefreshToken();
-
-        if (refreshToken == null) {
-            Toast.makeText(getContext(), "No active session found.", Toast.LENGTH_SHORT).show();
-            clearUserDataAndNavigateToLogin();
+    /**
+     * Update UI with profile data
+     */
+    @SuppressLint("DefaultLocale")
+    private void updateUI(ProfileResponse profile) {
+        if (binding == null || profile == null) {
             return;
         }
 
-        binding.buttonLogout.setEnabled(false);
+        String noDataStr = getString(R.string.profile_no_data);
 
-        LogoutRequest logoutRequest = new LogoutRequest(refreshToken);
+        // Avatar
+        Glide.with(this)
+                .load(profile.getAvatar())
+                .error(R.drawable.img_user_default_128)
+                .placeholder(R.drawable.img_user_default_128)
+                .into(binding.ivAvatar);
 
-        apiService.logout(logoutRequest).enqueue(new Callback<ApiResponse<String>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
-                Toast.makeText(getContext(), "Logged out successfully.", Toast.LENGTH_SHORT).show();
-                clearUserDataAndNavigateToLogin();
+        // Basic Info
+        binding.tvFullName.setText(
+                profile.getName() != null ? profile.getName() : noDataStr
+        );
+        binding.tvEmail.setText(
+                profile.getEmail() != null ? profile.getEmail() : noDataStr
+        );
+
+        // Birthday
+        String birthdayStr = noDataStr;
+        if (profile.getDateOfBirth() != null) {
+            try {
+                birthdayStr = DateUtil.convertToVietnameseBirthday(
+                        profile.getDateOfBirth(),
+                        DateUtil.DD_MM_YYYY_DATE_FORMAT
+                );
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to format birthday: " + e.getMessage());
             }
+        }
+        binding.tvBirthday.setText("Ngày sinh: " + birthdayStr);
 
-            @Override
-            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                Toast.makeText(getContext(), "Logged out (offline).", Toast.LENGTH_SHORT).show();
-                clearUserDataAndNavigateToLogin();
-            }
-        });
+        // Body Metrics
+        binding.tvWeightValue.setText(
+                profile.getWeight() != null
+                        ? String.format("%.1f", profile.getWeight())
+                        : noDataStr
+        );
+        binding.tvHeightValue.setText(
+                profile.getHeight() != null
+                        ? String.format("%.2f", profile.getHeight())
+                        : noDataStr
+        );
+
+        // Fitness Goal
+        String fitnessGoalStr = profile.getFitnessGoal() != null
+                ? getString(profile.getFitnessGoal().getResId())
+                : noDataStr;
+        binding.tvGoalValue.setText(fitnessGoalStr);
+
+        // Activity Level
+        String activityLevelStr = profile.getActivityLevel() != null
+                ? getString(profile.getActivityLevel().getResId())
+                : noDataStr;
+        binding.tvActivityLevelValue.setText(activityLevelStr);
+
+        // Overall Statistics
+        binding.tvTotalWorkouts.setText(
+                String.valueOf(profile.getTotalWorkouts())
+        );
+        binding.tvTotalCalories.setText(
+                String.format("%.0f", profile.getTotalCalories())
+        );
+        binding.tvTotalHours.setText(
+                String.format("%.1f", profile.getTotalHours())
+        );
+
+        // Monthly Statistics
+        if (profile.getMonthlyStats() == null) {
+            binding.cvMonthlyStats.setVisibility(View.GONE);
+        } else {
+            binding.cvMonthlyStats.setVisibility(View.VISIBLE);
+            ProfileResponse.MonthlyStats monthlyStats = profile.getMonthlyStats();
+
+            // Update month title
+            String monthName = monthlyStats.getMonthName() != null
+                    ? DateUtil.convertToVietnameseMonth(monthlyStats.getMonthName())
+                    : noDataStr;
+            binding.tvCurrentMonth.setText(monthName);
+
+            // Update monthly stats values
+            binding.tvMonthlyWorkouts.setText(
+                    String.format("%s %d",
+                            getString(R.string.profile_total_workouts),
+                            monthlyStats.getTotalWorkouts())
+            );
+            binding.tvMonthlyDuration.setText(
+                    String.format("%s %.0f %s",
+                            getString(R.string.profile_total_duration),
+                            monthlyStats.getTotalDurationMin(),
+                            getString(R.string.profile_unit_min))
+            );
+            binding.tvMonthlyActiveDays.setText(
+                    String.format("%s %d %s",
+                            getString(R.string.profile_active_days),
+                            monthlyStats.getActiveDays(),
+                            getString(R.string.profile_unit_days))
+            );
+            binding.tvMonthlyAvg.setText(
+                    String.format("%s %.0f %s",
+                            getString(R.string.profile_avg_per_workout),
+                            monthlyStats.getAvgDurationMin(),
+                            getString(R.string.profile_unit_min))
+            );
+            binding.tvMonthlyStreak.setText(
+                    String.format("%s %d %s",
+                            getString(R.string.profile_current_streak),
+                            monthlyStats.getCurrentStreak(),
+                            getString(R.string.profile_unit_days))
+            );
+            binding.tvMonthlyCalories.setText(
+                    String.format("%s %.0f",
+                            getString(R.string.profile_total_calories),
+                            monthlyStats.getTotalCalories())
+            );
+        }
     }
 
-    private void clearUserDataAndNavigateToLogin() {
+    /**
+     * Show loading state
+     */
+    private void showLoadingState() {
+        if (binding == null) return;
+
+        binding.pbLoading.setVisibility(View.VISIBLE);
+        binding.nsvContent.setVisibility(View.GONE);
+        binding.llErrorState.setVisibility(View.GONE);
+    }
+
+    /**
+     * Show content state
+     */
+    private void showContentState() {
+        if (binding == null) return;
+
+        binding.pbLoading.setVisibility(View.GONE);
+        binding.nsvContent.setVisibility(View.VISIBLE);
+        binding.llErrorState.setVisibility(View.GONE);
+    }
+
+    /**
+     * Show error state
+     */
+    private void showErrorState(String errorMessage) {
+        if (binding == null) return;
+
+        binding.pbLoading.setVisibility(View.GONE);
+        binding.nsvContent.setVisibility(View.GONE);
+        binding.llErrorState.setVisibility(View.VISIBLE);
+
+        String message = errorMessage != null && !errorMessage.isEmpty()
+                ? errorMessage
+                : getString(R.string.profile_error_load);
+        binding.tvErrorMessage.setText(message);
+    }
+
+    /**
+     * Navigate to Edit Profile screen
+     */
+    private void navigateToEditProfile() {
+        if (currentProfile == null) {
+            Toast.makeText(requireContext(),
+                    R.string.profile_error_load,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest.Builder()
+                .avatar(currentProfile.getAvatar())
+                .name(currentProfile.getName())
+                .height(currentProfile.getHeight())
+                .weight(currentProfile.getWeight())
+                .activityLevel(currentProfile.getActivityLevel())
+                .fitnessGoal(currentProfile.getFitnessGoal())
+                .dateOfBirth(currentProfile.getDateOfBirth())
+                .build();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(UpdateProfileRequest.KEY_UPDATE_PROFILE_REQUEST, updateProfileRequest);
+
+        getParentFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.slide_out
+                )
+                .replace(R.id.fragment_container, EditProfileFragment.class, bundle)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Navigate to Change Password screen
+     */
+    private void navigateToChangePassword() {
+        getParentFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.slide_out
+                )
+                .replace(R.id.fragment_container, ChangePasswordFragment.class, null)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Show logout confirmation dialog
+     */
+    private void showLogoutConfirmation() {
+        new ConfirmLogoutDialogFragment().show(getParentFragmentManager(), "logout_dialog");
+    }
+
+    /**
+     * Handle unauthorized error (token expired)
+     */
+    private void handleUnauthorized() {
+        Toast.makeText(requireContext(),
+                R.string.profile_error_unauthorized,
+                Toast.LENGTH_LONG).show();
+
+        // Clear session and redirect to login
         SessionManager.getInstance(requireActivity()).logout();
 
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 
-        // Kết thúc Activity chứa Fragment này (MainActivity)
         if (getActivity() != null) {
             getActivity().finish();
         }
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Reload profile when returning from edit screen
+        if (currentProfile != null) {
+            viewModel.loadUserProfile();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Quan trọng để tránh rò rỉ bộ nhớ
+        binding = null;
     }
-
-    private void showLoadingView(View from) {
-        if (binding != null) {
-            binding.buttonEditProfile.setVisibility(View.GONE);
-            from.setVisibility(View.GONE);
-            binding.rlLoadingData.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void showContentView(View from) {
-        if (binding != null) {
-            setProfileDataToContentView();
-            from.setVisibility(View.GONE);
-            binding.svContent.setVisibility(View.VISIBLE);
-            binding.buttonEditProfile.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void showErrorView(View from, String error) {
-        if (binding != null) {
-            binding.buttonEditProfile.setVisibility(View.GONE);
-            binding.tvError.setText(error);
-            from.setVisibility(View.GONE);
-            binding.rlError.setVisibility(View.VISIBLE);
-        }
-    }
-
-
-
-
 }
