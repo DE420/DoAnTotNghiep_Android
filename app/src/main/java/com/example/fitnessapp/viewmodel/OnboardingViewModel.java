@@ -174,78 +174,83 @@ public class OnboardingViewModel extends AndroidViewModel {
 
     /**
      * Load existing profile data to populate onboarding screens
-     * Priority: 1) Local draft data, 2) API profile data
+     * Hybrid approach: 1) Load from local draft, 2) Fill missing fields from API
      * Called when user wants to edit their onboarding information
      */
     public void loadExistingProfileData() {
         Log.d("OnboardingViewModel", "Loading existing profile data...");
 
-        // First, try to load from local draft storage
-        if (loadFromLocalDraft()) {
-            Log.d("OnboardingViewModel", "Loaded data from local draft storage");
-            return;
+        // First, load any available data from local draft storage
+        boolean hasLocalDraft = loadFromLocalDraft();
+        if (hasLocalDraft) {
+            Log.d("OnboardingViewModel", "Loaded some data from local draft storage");
         }
 
-        // If no draft data, load from API
-        Log.d("OnboardingViewModel", "No local draft found, loading from API...");
+        // Always call API to fill in missing fields (fields not in local draft)
+        Log.d("OnboardingViewModel", "Loading profile from API to fill missing fields...");
         isLoading.setValue(true);
 
         repository.getUserProfileData(getApplication(), new OnboardingRepository.ProfileDataCallback() {
             @Override
             public void onSuccess(ProfileResponse profile) {
-                Log.d("OnboardingViewModel", "Profile data loaded successfully");
+                Log.d("OnboardingViewModel", "Profile data loaded from API successfully");
 
-                // Populate sex
-                if (profile.getSex() != null) {
+                // Only populate fields that are NOT already set from local draft
+                // Populate sex (only if not in draft)
+                if (sex.getValue() == null && profile.getSex() != null) {
                     sex.postValue(profile.getSex());
-                    Log.d("OnboardingViewModel", "Sex: " + profile.getSex());
+                    Log.d("OnboardingViewModel", "API filled sex: " + profile.getSex());
                 }
 
-                // Populate date of birth
-                if (profile.getDateOfBirth() != null && !profile.getDateOfBirth().isEmpty()) {
+                // Populate date of birth (only if not in draft)
+                if (dateOfBirth.getValue() == null && profile.getDateOfBirth() != null && !profile.getDateOfBirth().isEmpty()) {
                     try {
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                         Date dob = sdf.parse(profile.getDateOfBirth());
                         dateOfBirth.postValue(dob);
-                        Log.d("OnboardingViewModel", "Date of Birth: " + profile.getDateOfBirth());
+                        Log.d("OnboardingViewModel", "API filled date of birth: " + profile.getDateOfBirth());
                     } catch (ParseException e) {
                         Log.e("OnboardingViewModel", "Failed to parse date: " + profile.getDateOfBirth(), e);
                     }
                 }
 
-                // Populate weight
-                if (profile.getWeight() != null) {
+                // Populate weight (only if not in draft)
+                if (weight.getValue() == null && profile.getWeight() != null) {
                     weight.postValue(profile.getWeight());
-                    Log.d("OnboardingViewModel", "Weight: " + profile.getWeight());
+                    Log.d("OnboardingViewModel", "API filled weight: " + profile.getWeight());
                 }
 
-                // Populate height
-                if (profile.getHeight() != null) {
+                // Populate height (only if not in draft)
+                if (height.getValue() == null && profile.getHeight() != null) {
                     height.postValue(profile.getHeight());
-                    Log.d("OnboardingViewModel", "Height: " + profile.getHeight());
+                    Log.d("OnboardingViewModel", "API filled height: " + profile.getHeight());
                 }
 
-                // Populate fitness goal
-                if (profile.getFitnessGoal() != null) {
+                // Populate fitness goal (only if not in draft)
+                if (fitnessGoal.getValue() == null && profile.getFitnessGoal() != null) {
                     fitnessGoal.postValue(profile.getFitnessGoal());
-                    Log.d("OnboardingViewModel", "Fitness Goal: " + profile.getFitnessGoal());
+                    Log.d("OnboardingViewModel", "API filled fitness goal: " + profile.getFitnessGoal());
                 }
 
-                // Populate activity level
-                if (profile.getActivityLevel() != null) {
+                // Populate activity level (only if not in draft)
+                if (activityLevel.getValue() == null && profile.getActivityLevel() != null) {
                     activityLevel.postValue(profile.getActivityLevel());
-                    Log.d("OnboardingViewModel", "Activity Level: " + profile.getActivityLevel());
+                    Log.d("OnboardingViewModel", "API filled activity level: " + profile.getActivityLevel());
                 }
 
                 isLoading.postValue(false);
-                Log.d("OnboardingViewModel", "All profile data populated to LiveData");
+                Log.d("OnboardingViewModel", "Profile data loading complete (draft + API)");
             }
 
             @Override
             public void onError(String error) {
-                Log.e("OnboardingViewModel", "Failed to load profile data: " + error);
+                Log.e("OnboardingViewModel", "Failed to load profile data from API: " + error);
+                // Even if API fails, we still have draft data loaded
                 isLoading.postValue(false);
-                errorMessage.postValue(error);
+                // Only show error if we don't have any draft data
+                if (!hasLocalDraft) {
+                    errorMessage.postValue(error);
+                }
             }
         });
     }
