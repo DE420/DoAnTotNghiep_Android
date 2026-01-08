@@ -1,4 +1,4 @@
-package com.example.fitnessapp.fragment;
+package com.example.fitnessapp.fragment.profile;
 
 import android.os.Bundle;
 import android.os.Handler;

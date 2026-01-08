@@ -24,7 +24,7 @@ import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.NotificationFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
-import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
+import com.example.fitnessapp.fragment.profile.ProfileFragment; // <-- Import ProfileFragment
 import com.example.fitnessapp.fragment.community.CreateUpdatePostFragment;
 import com.example.fitnessapp.fragment.community.PostDetailFragment;
 import com.example.fitnessapp.fragment.nutrition.NutritionMainFragment;
