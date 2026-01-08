@@ -607,10 +607,10 @@ public class MenuViewModel extends AndroidViewModel {
      * Delete a menu
      */
     public void deleteMenu(Long menuId, OnMenuDeletedListener listener) {
-        repository.deleteMenu(menuId, new Callback<ApiResponse<Void>>() {
+        repository.deleteMenu(menuId, new Callback<ApiResponse<String>>() {
             @Override
-            public void onResponse(Call<ApiResponse<Void>> call,
-                                 Response<ApiResponse<Void>> response) {
+            public void onResponse(Call<ApiResponse<String>> call,
+                                 Response<ApiResponse<String>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isStatus()) {
                         listener.onSuccess();
@@ -623,7 +623,7 @@ public class MenuViewModel extends AndroidViewModel {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 listener.onError("Network error: " + t.getMessage());
             }
         });

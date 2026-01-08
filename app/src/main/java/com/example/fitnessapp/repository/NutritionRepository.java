@@ -73,7 +73,7 @@ public class NutritionRepository {
     }
 
     public void deleteMenu(Long id,
-                          Callback<ApiResponse<Void>> callback) {
+                          Callback<ApiResponse<String>> callback) {
         Log.d(TAG, "Deleting menu ID: " + id);
         api.deleteMenu(id).enqueue(callback);
     }
