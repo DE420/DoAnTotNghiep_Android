@@ -46,6 +46,8 @@ public class PostUploadWorker extends Worker {
     public static final String KEY_CONTENT = "content";
     public static final String KEY_IMAGE_URI = "imageUri";
     public static final String KEY_VIDEO_URI = "videoUri";
+    public static final String KEY_DELETE_IMAGE = "deleteImage";
+    public static final String KEY_DELETE_VIDEO = "deleteVideo";
 
     // Broadcast action
     public static final String ACTION_POST_UPLOADED = "com.example.fitnessapp.POST_UPLOADED";
@@ -70,6 +72,8 @@ public class PostUploadWorker extends Worker {
         String content = inputData.getString(KEY_CONTENT);
         String imageUriString = inputData.getString(KEY_IMAGE_URI);
         String videoUriString = inputData.getString(KEY_VIDEO_URI);
+        boolean deleteImage = inputData.getBoolean(KEY_DELETE_IMAGE, false);
+        boolean deleteVideo = inputData.getBoolean(KEY_DELETE_VIDEO, false);
 
         // Validate content
         if (content == null || content.trim().isEmpty()) {
@@ -104,7 +108,8 @@ public class PostUploadWorker extends Worker {
             PostResponse postResponse = null;
 
             if (isEditing) {
-                success = repository.updatePostSync(getApplicationContext(), postId, content, imageFile, videoFile);
+                success = repository.updatePostSync(getApplicationContext(), postId, content, imageFile, videoFile,
+                        deleteImage, deleteVideo);
             } else {
                 postResponse = repository.createPostSync(getApplicationContext(), content, imageFile, videoFile);
                 success = postResponse != null;

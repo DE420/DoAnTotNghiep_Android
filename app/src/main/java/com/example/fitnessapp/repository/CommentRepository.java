@@ -62,9 +62,10 @@ public class CommentRepository {
     }
 
     /**
-     * Update a comment with optional image
+     * Update a comment with optional image and deletion flag
      */
-    public void updateComment(long commentId, String content, File imageFile, Callback<ApiResponse<CommentResponse>> callback) {
+    public void updateComment(long commentId, String content, File imageFile, boolean deleteImage,
+                             Callback<ApiResponse<CommentResponse>> callback) {
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"), content);
 
         MultipartBody.Part imagePart = null;
@@ -73,7 +74,17 @@ public class CommentRepository {
             imagePart = MultipartBody.Part.createFormData("image", imageFile.getName(), imageBody);
         }
 
-        commentApi.updateComment(commentId, contentBody, imagePart).enqueue(callback);
+        RequestBody deleteImageBody = RequestBody.create(MediaType.parse("text/plain"),
+                String.valueOf(deleteImage));
+
+        commentApi.updateComment(commentId, contentBody, imagePart, deleteImageBody).enqueue(callback);
+    }
+
+    /**
+     * Update a comment with optional image (backward compatibility)
+     */
+    public void updateComment(long commentId, String content, File imageFile, Callback<ApiResponse<CommentResponse>> callback) {
+        updateComment(commentId, content, imageFile, false, callback);
     }
 
     /**
