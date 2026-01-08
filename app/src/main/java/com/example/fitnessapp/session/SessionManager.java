@@ -40,6 +40,14 @@ public class SessionManager {
     // FCM Token Key
     private static final String KEY_FCM_TOKEN = "fcm_token";
 
+    // Onboarding Draft Keys (for saving form state when user navigates back/cancels)
+    private static final String KEY_ONBOARDING_DRAFT_SEX = "ONBOARDING_DRAFT_SEX";
+    private static final String KEY_ONBOARDING_DRAFT_DOB = "ONBOARDING_DRAFT_DOB";
+    private static final String KEY_ONBOARDING_DRAFT_WEIGHT = "ONBOARDING_DRAFT_WEIGHT";
+    private static final String KEY_ONBOARDING_DRAFT_HEIGHT = "ONBOARDING_DRAFT_HEIGHT";
+    private static final String KEY_ONBOARDING_DRAFT_FITNESS_GOAL = "ONBOARDING_DRAFT_FITNESS_GOAL";
+    private static final String KEY_ONBOARDING_DRAFT_ACTIVITY_LEVEL = "ONBOARDING_DRAFT_ACTIVITY_LEVEL";
+
     private static SessionManager instance;
     private final SharedPreferences sharedPreferences;
 
@@ -263,6 +271,165 @@ public class SessionManager {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(KEY_FCM_TOKEN);
         editor.apply();
+    }
+
+    // ==================== Onboarding Draft Data Methods ====================
+
+    /**
+     * Save onboarding draft sex
+     * @param sex Gender (male/female)
+     */
+    public void saveOnboardingDraftSex(String sex) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_ONBOARDING_DRAFT_SEX, sex);
+        editor.apply();
+        Log.d(TAG, "Saved onboarding draft sex: " + sex);
+    }
+
+    /**
+     * Save onboarding draft date of birth
+     * @param dateOfBirth Date of birth in dd/MM/yyyy format
+     */
+    public void saveOnboardingDraftDateOfBirth(String dateOfBirth) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_ONBOARDING_DRAFT_DOB, dateOfBirth);
+        editor.apply();
+        Log.d(TAG, "Saved onboarding draft DOB: " + dateOfBirth);
+    }
+
+    /**
+     * Save onboarding draft weight
+     * @param weight Weight in kg
+     */
+    public void saveOnboardingDraftWeight(Double weight) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (weight != null) {
+            editor.putFloat(KEY_ONBOARDING_DRAFT_WEIGHT, weight.floatValue());
+        } else {
+            editor.remove(KEY_ONBOARDING_DRAFT_WEIGHT);
+        }
+        editor.apply();
+        Log.d(TAG, "Saved onboarding draft weight: " + weight);
+    }
+
+    /**
+     * Save onboarding draft height
+     * @param height Height in cm
+     */
+    public void saveOnboardingDraftHeight(Double height) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (height != null) {
+            editor.putFloat(KEY_ONBOARDING_DRAFT_HEIGHT, height.floatValue());
+        } else {
+            editor.remove(KEY_ONBOARDING_DRAFT_HEIGHT);
+        }
+        editor.apply();
+        Log.d(TAG, "Saved onboarding draft height: " + height);
+    }
+
+    /**
+     * Save onboarding draft fitness goal
+     * @param fitnessGoal Fitness goal enum name
+     */
+    public void saveOnboardingDraftFitnessGoal(String fitnessGoal) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_ONBOARDING_DRAFT_FITNESS_GOAL, fitnessGoal);
+        editor.apply();
+        Log.d(TAG, "Saved onboarding draft fitness goal: " + fitnessGoal);
+    }
+
+    /**
+     * Save onboarding draft activity level
+     * @param activityLevel Activity level enum name
+     */
+    public void saveOnboardingDraftActivityLevel(String activityLevel) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_ONBOARDING_DRAFT_ACTIVITY_LEVEL, activityLevel);
+        editor.apply();
+        Log.d(TAG, "Saved onboarding draft activity level: " + activityLevel);
+    }
+
+    /**
+     * Get onboarding draft sex
+     * @return Sex or null
+     */
+    public String getOnboardingDraftSex() {
+        return sharedPreferences.getString(KEY_ONBOARDING_DRAFT_SEX, null);
+    }
+
+    /**
+     * Get onboarding draft date of birth
+     * @return Date of birth in dd/MM/yyyy format or null
+     */
+    public String getOnboardingDraftDateOfBirth() {
+        return sharedPreferences.getString(KEY_ONBOARDING_DRAFT_DOB, null);
+    }
+
+    /**
+     * Get onboarding draft weight
+     * @return Weight or null if not set
+     */
+    public Double getOnboardingDraftWeight() {
+        if (sharedPreferences.contains(KEY_ONBOARDING_DRAFT_WEIGHT)) {
+            return (double) sharedPreferences.getFloat(KEY_ONBOARDING_DRAFT_WEIGHT, 0.0f);
+        }
+        return null;
+    }
+
+    /**
+     * Get onboarding draft height
+     * @return Height or null if not set
+     */
+    public Double getOnboardingDraftHeight() {
+        if (sharedPreferences.contains(KEY_ONBOARDING_DRAFT_HEIGHT)) {
+            return (double) sharedPreferences.getFloat(KEY_ONBOARDING_DRAFT_HEIGHT, 0.0f);
+        }
+        return null;
+    }
+
+    /**
+     * Get onboarding draft fitness goal
+     * @return Fitness goal enum name or null
+     */
+    public String getOnboardingDraftFitnessGoal() {
+        return sharedPreferences.getString(KEY_ONBOARDING_DRAFT_FITNESS_GOAL, null);
+    }
+
+    /**
+     * Get onboarding draft activity level
+     * @return Activity level enum name or null
+     */
+    public String getOnboardingDraftActivityLevel() {
+        return sharedPreferences.getString(KEY_ONBOARDING_DRAFT_ACTIVITY_LEVEL, null);
+    }
+
+    /**
+     * Clear all onboarding draft data
+     * Call this when onboarding is successfully submitted
+     */
+    public void clearOnboardingDraft() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(KEY_ONBOARDING_DRAFT_SEX);
+        editor.remove(KEY_ONBOARDING_DRAFT_DOB);
+        editor.remove(KEY_ONBOARDING_DRAFT_WEIGHT);
+        editor.remove(KEY_ONBOARDING_DRAFT_HEIGHT);
+        editor.remove(KEY_ONBOARDING_DRAFT_FITNESS_GOAL);
+        editor.remove(KEY_ONBOARDING_DRAFT_ACTIVITY_LEVEL);
+        editor.apply();
+        Log.d(TAG, "Cleared all onboarding draft data");
+    }
+
+    /**
+     * Check if any onboarding draft data exists
+     * @return true if any draft data is saved
+     */
+    public boolean hasOnboardingDraft() {
+        return sharedPreferences.contains(KEY_ONBOARDING_DRAFT_SEX) ||
+               sharedPreferences.contains(KEY_ONBOARDING_DRAFT_DOB) ||
+               sharedPreferences.contains(KEY_ONBOARDING_DRAFT_WEIGHT) ||
+               sharedPreferences.contains(KEY_ONBOARDING_DRAFT_HEIGHT) ||
+               sharedPreferences.contains(KEY_ONBOARDING_DRAFT_FITNESS_GOAL) ||
+               sharedPreferences.contains(KEY_ONBOARDING_DRAFT_ACTIVITY_LEVEL);
     }
 
 }

@@ -41,6 +41,9 @@ public class OnboardingActivity extends AppCompatActivity {
         setupViewPager();
         setupNavigation();
         observeViewModel();
+
+        // Load existing profile data to populate onboarding screens
+        viewModel.loadExistingProfileData();
     }
 
     private void initViews() {
