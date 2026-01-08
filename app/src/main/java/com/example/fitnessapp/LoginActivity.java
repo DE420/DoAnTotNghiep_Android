@@ -10,13 +10,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fitnessapp.activity.OnboardingActivity;
 import com.example.fitnessapp.databinding.ActivityLoginBinding;
 import com.example.fitnessapp.model.request.GoogleLoginRequest;
 import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
+import com.example.fitnessapp.model.response.BasicInfoResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
+import com.example.fitnessapp.repository.OnboardingRepository;
 import com.example.fitnessapp.session.SessionManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -239,11 +242,34 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToMainApp() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        // Call API to check onboarding status before navigating
+        OnboardingRepository.getInstance().checkOnboardingStatus(this, new OnboardingRepository.OnboardingStatusCallback() {
+            @Override
+            public void onSuccess(BasicInfoResponse response) {
+                Intent intent;
+                if (!response.isOnboardingCompleted()) {
+                    // Onboarding not completed -> OnboardingActivity
+                    intent = new Intent(LoginActivity.this, OnboardingActivity.class);
+                } else {
+                    // Onboarding completed -> MainActivity
+                    intent = new Intent(LoginActivity.this, MainActivity.class);
+                }
 
-        // Các dòng này rất quan trọng để xóa các activity cũ khỏi stack
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+                // Các dòng này rất quan trọng để xóa các activity cũ khỏi stack
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // On error, go to MainActivity as fallback
+                Log.e("LoginActivity", "Failed to check onboarding status: " + errorMessage);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }
