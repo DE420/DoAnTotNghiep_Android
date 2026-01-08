@@ -169,7 +169,7 @@
                     </LinearLayout>
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
-                        <CheckBox android:id="@+id/cb_sun" style="@style/DayCheckBoxVertical" android:tag="7" />
+                        <CheckBox android:id="@+id/cb_sun" style="@style/DayCheckBoxVertical" android:tag="0" />
                         <TextView style="@style/DayLabel" android:text="S" />
                     </LinearLayout>
 
