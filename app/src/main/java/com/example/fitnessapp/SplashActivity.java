@@ -40,7 +40,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         // Logged in -> Check onboarding status
-        OnboardingRepository.getInstance().checkOnboardingStatus(new OnboardingRepository.OnboardingStatusCallback() {
+        OnboardingRepository.getInstance().checkOnboardingStatus(this, new OnboardingRepository.OnboardingStatusCallback() {
             @Override
             public void onSuccess(com.example.fitnessapp.model.response.BasicInfoResponse response) {
                 Intent intent;

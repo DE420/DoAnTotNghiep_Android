@@ -1,8 +1,11 @@
 package com.example.fitnessapp.viewmodel;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.fitnessapp.enums.ActivityLevel;
 import com.example.fitnessapp.enums.FitnessGoal;
@@ -14,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class OnboardingViewModel extends ViewModel {
+public class OnboardingViewModel extends AndroidViewModel {
     private final OnboardingRepository repository;
 
     // Data fields
@@ -30,7 +33,8 @@ public class OnboardingViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> onboardingComplete = new MutableLiveData<>(false);
 
-    public OnboardingViewModel() {
+    public OnboardingViewModel(@NonNull Application application) {
+        super(application);
         this.repository = OnboardingRepository.getInstance();
     }
 
@@ -131,7 +135,7 @@ public class OnboardingViewModel extends ViewModel {
         request.setFitnessGoal(fitnessGoal.getValue());
         request.setActivityLevel(activityLevel.getValue());
 
-        repository.submitOnboarding(request, new OnboardingRepository.OnboardingSubmitCallback() {
+        repository.submitOnboarding(getApplication(), request, new OnboardingRepository.OnboardingSubmitCallback() {
             @Override
             public void onSuccess(UserResponse user) {
                 isLoading.postValue(false);
