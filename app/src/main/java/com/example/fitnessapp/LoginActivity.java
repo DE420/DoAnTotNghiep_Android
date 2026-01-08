@@ -242,29 +242,44 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToMainApp() {
+        Log.d("LoginActivity", "=== NAVIGATION: Starting onboarding status check ===");
+
         // Call API to check onboarding status before navigating
         OnboardingRepository.getInstance().checkOnboardingStatus(this, new OnboardingRepository.OnboardingStatusCallback() {
             @Override
             public void onSuccess(BasicInfoResponse response) {
+                Log.d("LoginActivity", "=== API SUCCESS ===");
+                Log.d("LoginActivity", "Response: " + response.toString());
+                Log.d("LoginActivity", "User ID: " + response.getId());
+                Log.d("LoginActivity", "Username: " + response.getUsername());
+                Log.d("LoginActivity", "Name: " + response.getName());
+                Log.d("LoginActivity", "isOnboardingCompleted: " + response.isOnboardingCompleted());
+
                 Intent intent;
                 if (!response.isOnboardingCompleted()) {
                     // Onboarding not completed -> OnboardingActivity
+                    Log.d("LoginActivity", ">>> DECISION: Opening OnboardingActivity (onboarding not completed)");
                     intent = new Intent(LoginActivity.this, OnboardingActivity.class);
                 } else {
                     // Onboarding completed -> MainActivity
+                    Log.d("LoginActivity", ">>> DECISION: Opening MainActivity (onboarding completed)");
                     intent = new Intent(LoginActivity.this, MainActivity.class);
                 }
 
                 // Các dòng này rất quan trọng để xóa các activity cũ khỏi stack
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                Log.d("LoginActivity", "Navigation started, finishing LoginActivity");
                 finish();
             }
 
             @Override
             public void onError(String errorMessage) {
                 // On error, go to MainActivity as fallback
-                Log.e("LoginActivity", "Failed to check onboarding status: " + errorMessage);
+                Log.e("LoginActivity", "=== API ERROR ===");
+                Log.e("LoginActivity", "Error: " + errorMessage);
+                Log.e("LoginActivity", ">>> FALLBACK: Opening MainActivity");
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
