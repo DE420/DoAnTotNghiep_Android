@@ -1,5 +1,6 @@
 package com.example.fitnessapp.fragment.onboarding;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -46,6 +48,20 @@ public class OnboardingStep2Fragment extends Fragment {
         etHeight = view.findViewById(R.id.et_height);
         tilWeight = view.findViewById(R.id.til_weight);
         tilHeight = view.findViewById(R.id.til_height);
+
+        // FIX: Force white hint color for both focused and unfocused states
+        // Material Design 3 TextInputLayout doesn't respect app:hintTextColor in XML for unfocused state
+        // We need to set both defaultHintTextColor (unfocused) and hintTextColor (focused) programmatically
+        int whiteColor = ContextCompat.getColor(requireContext(), R.color.white);
+        ColorStateList whiteColorStateList = ColorStateList.valueOf(whiteColor);
+
+        // Set unfocused hint color (when label is resting/expanded)
+        tilWeight.setDefaultHintTextColor(whiteColorStateList);
+        tilHeight.setDefaultHintTextColor(whiteColorStateList);
+
+        // Set focused hint color (when label is floating/collapsed)
+        tilWeight.setHintTextColor(whiteColorStateList);
+        tilHeight.setHintTextColor(whiteColorStateList);
     }
 
     private void setupInputListeners() {
