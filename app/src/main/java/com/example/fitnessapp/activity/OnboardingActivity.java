@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.fitnessapp.MainActivity;
@@ -55,6 +56,17 @@ public class OnboardingActivity extends AppCompatActivity {
         pagerAdapter = new OnboardingPagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setUserInputEnabled(false); // Disable swipe
+
+        // FIX: Prevent ViewPager2's internal RecyclerView from stealing focus during IME resize
+        // This solves the focus loss issue on Step 2 input fields when keyboard appears with adjustResize
+        View child = viewPager.getChildAt(0);
+        if (child instanceof RecyclerView) {
+            child.setFocusable(false);
+            child.setFocusableInTouchMode(false);
+        }
+
+        // Reduce fragment recreation churn during page changes
+        viewPager.setOffscreenPageLimit(1);
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
