@@ -7,7 +7,7 @@ public class BasicInfoResponse {
     private String name;
     private String avatar;
     private RoleResponse role;
-    private boolean isOnboardingCompleted;
+    private boolean onboardingCompleted;
 
     public static class RoleResponse {
         private Long id;
@@ -87,11 +87,11 @@ public class BasicInfoResponse {
     }
 
     public boolean isOnboardingCompleted() {
-        return isOnboardingCompleted;
+        return onboardingCompleted;
     }
 
     public void setOnboardingCompleted(boolean onboardingCompleted) {
-        isOnboardingCompleted = onboardingCompleted;
+        this.onboardingCompleted = onboardingCompleted;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class BasicInfoResponse {
                 ", name='" + name + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", role=" + role +
-                ", isOnboardingCompleted=" + isOnboardingCompleted +
+                ", onboardingCompleted=" + onboardingCompleted +
                 '}';
     }
 }

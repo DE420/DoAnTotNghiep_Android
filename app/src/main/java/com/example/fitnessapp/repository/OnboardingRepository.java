@@ -1,6 +1,7 @@
 package com.example.fitnessapp.repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.fitnessapp.model.request.OnboardingRequest;
 import com.example.fitnessapp.model.response.BasicInfoResponse;
@@ -39,18 +40,42 @@ public class OnboardingRepository {
      * Calls GET /auth/me via authenticated AuthApi
      */
     public void checkOnboardingStatus(Context context, OnboardingStatusCallback callback) {
+        Log.d("OnboardingRepository", "Calling GET /auth/me...");
         RetrofitClient.getAuthApiAuthenticated(context).getBasicInfo().enqueue(new Callback<ApiResponse<BasicInfoResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<BasicInfoResponse>> call, Response<ApiResponse<BasicInfoResponse>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                    callback.onSuccess(response.body().getData());
+                Log.d("OnboardingRepository", "API Response Code: " + response.code());
+                Log.d("OnboardingRepository", "Is Successful: " + response.isSuccessful());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("OnboardingRepository", "Response Body: " + response.body());
+                    Log.d("OnboardingRepository", "Response Status: " + response.body().isStatus());
+
+                    if (response.body().isStatus()) {
+                        BasicInfoResponse data = response.body().getData();
+                        Log.d("OnboardingRepository", "BasicInfoResponse Data: " + data);
+                        callback.onSuccess(data);
+                    } else {
+                        Log.e("OnboardingRepository", "Response status is false");
+                        callback.onError("Không thể kiểm tra trạng thái onboarding");
+                    }
                 } else {
+                    Log.e("OnboardingRepository", "Response unsuccessful or body null");
+                    if (response.errorBody() != null) {
+                        try {
+                            Log.e("OnboardingRepository", "Error Body: " + response.errorBody().string());
+                        } catch (Exception e) {
+                            Log.e("OnboardingRepository", "Cannot read error body", e);
+                        }
+                    }
                     callback.onError("Không thể kiểm tra trạng thái onboarding");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<BasicInfoResponse>> call, Throwable t) {
+                Log.e("OnboardingRepository", "API Call Failed", t);
+                Log.e("OnboardingRepository", "Error Message: " + t.getMessage());
                 callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
