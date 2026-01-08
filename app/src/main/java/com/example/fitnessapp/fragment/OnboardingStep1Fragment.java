@@ -102,12 +102,10 @@ public class OnboardingStep1Fragment extends Fragment {
 
     private void observeViewModel() {
         viewModel.getSex().observe(getViewLifecycleOwner(), sex -> {
-            if (sex != null) {
-                if (sex.equals("MALE")) {
-                    selectGender("MALE", cardMale, cardFemale);
-                } else {
-                    selectGender("FEMALE", cardFemale, cardMale);
-                }
+            if (sex != null && !sex.equals(selectedSex)) {
+                // Only update UI if sex changed from outside (prevents infinite loop)
+                selectedSex = sex;
+                updateGenderUI(sex);
             }
         });
 
@@ -117,5 +115,19 @@ public class OnboardingStep1Fragment extends Fragment {
                 etDob.setText(sdf.format(date));
             }
         });
+    }
+
+    private void updateGenderUI(String sex) {
+        if (sex.equals("MALE")) {
+            cardMale.setStrokeColor(ContextCompat.getColor(requireContext(), R.color.yellow));
+            cardMale.setStrokeWidth(4);
+            cardFemale.setStrokeColor(ContextCompat.getColor(requireContext(), R.color.gray_400));
+            cardFemale.setStrokeWidth(2);
+        } else {
+            cardFemale.setStrokeColor(ContextCompat.getColor(requireContext(), R.color.yellow));
+            cardFemale.setStrokeWidth(4);
+            cardMale.setStrokeColor(ContextCompat.getColor(requireContext(), R.color.gray_400));
+            cardMale.setStrokeWidth(2);
+        }
     }
 }
