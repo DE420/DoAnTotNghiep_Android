@@ -1,5 +1,7 @@
 package com.example.fitnessapp.repository;
 
+import android.content.Context;
+
 import com.example.fitnessapp.model.request.OnboardingRequest;
 import com.example.fitnessapp.model.response.BasicInfoResponse;
 import com.example.fitnessapp.model.response.user.UserResponse;
@@ -34,10 +36,10 @@ public class OnboardingRepository {
 
     /**
      * Check if user has completed onboarding
-     * Calls GET /auth/me via AuthApi
+     * Calls GET /auth/me via authenticated AuthApi
      */
-    public void checkOnboardingStatus(OnboardingStatusCallback callback) {
-        RetrofitClient.getAuthApi().getBasicInfo().enqueue(new Callback<ApiResponse<BasicInfoResponse>>() {
+    public void checkOnboardingStatus(Context context, OnboardingStatusCallback callback) {
+        RetrofitClient.getAuthApiAuthenticated(context).getBasicInfo().enqueue(new Callback<ApiResponse<BasicInfoResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<BasicInfoResponse>> call, Response<ApiResponse<BasicInfoResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
@@ -58,8 +60,8 @@ public class OnboardingRepository {
      * Submit onboarding information
      * Calls PUT /user/onboarding via UserApi
      */
-    public void submitOnboarding(OnboardingRequest request, OnboardingSubmitCallback callback) {
-        RetrofitClient.getUserApi().updateOnboarding(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
+    public void submitOnboarding(Context context, OnboardingRequest request, OnboardingSubmitCallback callback) {
+        RetrofitClient.getUserApi(context).updateOnboarding(request).enqueue(new Callback<ApiResponse<UserResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<UserResponse>> call, Response<ApiResponse<UserResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
