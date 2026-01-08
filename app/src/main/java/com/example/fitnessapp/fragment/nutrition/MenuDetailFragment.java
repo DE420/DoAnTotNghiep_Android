@@ -22,6 +22,7 @@ import com.example.fitnessapp.adapter.nutrition.MealAdapter;
 import com.example.fitnessapp.databinding.FragmentMenuDetailBinding;
 import com.example.fitnessapp.model.response.nutrition.MealDishResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
+import com.example.fitnessapp.session.SessionManager;
 import com.example.fitnessapp.viewmodel.MenuDetailViewModel;
 
 import java.util.Locale;
@@ -37,6 +38,8 @@ public class MenuDetailFragment extends Fragment {
     private Long menuId;
     private Menu toolbarMenu;
     private MenuResponse currentMenu;
+
+    private long currentUserId;
 
     public static MenuDetailFragment newInstance(Long menuId) {
         MenuDetailFragment fragment = new MenuDetailFragment();
@@ -68,6 +71,10 @@ public class MenuDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        SessionManager sessionManager = SessionManager.getInstance(requireActivity().getApplicationContext());
+
+        currentUserId = sessionManager.getUserId();
 
         // Setup Toolbar
         setupToolbar();
@@ -195,7 +202,7 @@ public class MenuDetailFragment extends Fragment {
         }
 
         // Set creator info (only show for menus you don't own)
-        boolean isOwner = menu.getIsOwner() != null && menu.getIsOwner();
+        boolean isOwner = menu.getCreatorId() != null && menu.getCreatorId() == currentUserId;
         Log.d(TAG, "Creator Info Check - isOwner: " + isOwner);
         Log.d(TAG, "Creator Info Check - creatorName: " + menu.getCreatorName());
         Log.d(TAG, "Creator Info Check - creatorAvatar: " + menu.getCreatorAvatar());
@@ -259,7 +266,7 @@ public class MenuDetailFragment extends Fragment {
 
     private void setupActionButtons(MenuResponse menu) {
         // Check if user is owner
-        boolean isOwner = menu.getIsOwner() != null && menu.getIsOwner();
+        boolean isOwner = menu.getCreatorId() != null && menu.getCreatorId() == currentUserId;
 
         if (isOwner) {
             // Show edit and delete buttons, hide clone
@@ -366,7 +373,8 @@ public class MenuDetailFragment extends Fragment {
             if (cloneMenuItem != null) {
                 if (currentMenu != null) {
                     // Show clone button only if user doesn't own this menu
-                    boolean isOwner = currentMenu.getIsOwner() != null && currentMenu.getIsOwner();
+                    boolean isOwner = currentMenu.getCreatorId() != null
+                            && currentMenu.getCreatorId() == currentUserId;
                     cloneMenuItem.setVisible(!isOwner);
                 } else {
                     // Hide clone button until we know menu ownership

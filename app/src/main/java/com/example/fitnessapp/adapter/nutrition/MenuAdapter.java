@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.fitnessapp.R;
+import com.example.fitnessapp.model.response.nutrition.MenuListResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 import com.google.android.material.card.MaterialCardView;
 
@@ -24,7 +25,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder> {
 
     private final Context context;
-    private List<MenuResponse> menuList;
+    private List<MenuListResponse> menuList;
     private OnMenuClickListener listener;
 
     public MenuAdapter(Context context) {
@@ -32,7 +33,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
         this.menuList = new ArrayList<>();
     }
 
-    public void setMenuList(List<MenuResponse> menuList) {
+    public void setMenuList(List<MenuListResponse> menuList) {
         this.menuList = menuList != null ? menuList : new ArrayList<>();
         notifyDataSetChanged();
     }
@@ -51,7 +52,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MenuViewHolder holder, int position) {
-        MenuResponse menu = menuList.get(position);
+        MenuListResponse menu = menuList.get(position);
         holder.bind(menu);
     }
 
@@ -64,9 +65,12 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
         private final MaterialCardView cardMenu;
         private final TextView tvMenuName;
         private final TextView tvCalories;
+
+        private final TextView tvProtein;
+        private final TextView tvCarbs;
+        private final TextView tvFat;
+
         private final TextView tvFitnessGoal;
-        private final CircleImageView civCreatorAvatar;
-        private final TextView tvCreatorName;
 
         public MenuViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -74,11 +78,12 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
             tvMenuName = itemView.findViewById(R.id.tv_menu_name);
             tvCalories = itemView.findViewById(R.id.tv_calories);
             tvFitnessGoal = itemView.findViewById(R.id.tv_fitness_goal);
-            civCreatorAvatar = itemView.findViewById(R.id.civ_creator_avatar);
-            tvCreatorName = itemView.findViewById(R.id.tv_creator_name);
+            tvProtein = itemView.findViewById(R.id.tv_protein);
+            tvCarbs = itemView.findViewById(R.id.tv_carbs);
+            tvFat = itemView.findViewById(R.id.tv_fat);
         }
 
-        public void bind(MenuResponse menu) {
+        public void bind(MenuListResponse menu) {
             // Set menu name
             tvMenuName.setText(menu.getName());
 
@@ -89,42 +94,30 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
                 tvCalories.setText("-- kcal");
             }
 
+            if (menu.getProtein() != null) {
+                tvProtein.setText(context.getString(R.string.format_protein, menu.getProtein()));
+            } else {
+                tvProtein.setText(context.getString(R.string.format_protein_dash));
+            }
+
+            if (menu.getCarbs() != null) {
+                tvCarbs.setText(context.getString(R.string.format_carbs, menu.getCarbs()));
+            } else {
+                tvCarbs.setText(context.getString(R.string.format_carbs_dash));
+            }
+
+            if (menu.getFat() != null) {
+                tvFat.setText(context.getString(R.string.format_fat, menu.getFat()));
+            } else {
+                tvFat.setText(context.getString(R.string.format_fat_dash));
+            }
+
             // Set fitness goal
             if (menu.getFitnessGoal() != null) {
                 int goalStringRes = menu.getFitnessGoal().getResId();
                 tvFitnessGoal.setText(context.getString(goalStringRes));
             } else {
                 tvFitnessGoal.setText("");
-            }
-
-            // Set creator info (only show for menus you don't own)
-            boolean isOwner = menu.getIsOwner() != null && menu.getIsOwner();
-
-            if (!isOwner) {
-                tvCreatorName.setVisibility(View.VISIBLE);
-                civCreatorAvatar.setVisibility(View.VISIBLE);
-
-                // Set creator name - show "Unknown User" if null/empty
-                if (menu.getCreatorName() != null && !menu.getCreatorName().isEmpty()) {
-                    tvCreatorName.setText(menu.getCreatorName());
-                } else {
-                    tvCreatorName.setText(R.string.unknown_user);
-                }
-
-                // Load creator avatar - use default if null/empty
-                if (menu.getCreatorAvatar() != null && !menu.getCreatorAvatar().isEmpty()) {
-                    Glide.with(context)
-                            .load(menu.getCreatorAvatar())
-                            .placeholder(R.drawable.img_user_default_128)
-                            .error(R.drawable.img_user_default_128)
-                            .centerCrop()
-                            .into(civCreatorAvatar);
-                } else {
-                    civCreatorAvatar.setImageResource(R.drawable.img_user_default_128);
-                }
-            } else {
-                tvCreatorName.setVisibility(View.GONE);
-                civCreatorAvatar.setVisibility(View.GONE);
             }
 
             // Click listener
@@ -137,7 +130,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
     }
 
     public interface OnMenuClickListener {
-        void onMenuClick(MenuResponse menu);
-        void onCloneClick(MenuResponse menu);
+        void onMenuClick(MenuListResponse menu);
+        void onCloneClick(MenuListResponse menu);
     }
 }
