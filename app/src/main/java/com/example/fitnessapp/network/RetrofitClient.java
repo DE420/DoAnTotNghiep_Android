@@ -7,6 +7,8 @@ import com.example.fitnessapp.network.interceptor.AuthInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -59,6 +61,11 @@ public class RetrofitClient {
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(new AuthInterceptor(ctx.getApplicationContext()))
                     .authenticator(new TokenAuthenticator(ctx.getApplicationContext()))
+                    // Increase timeouts for large file uploads (images and videos)
+                    .connectTimeout(30, TimeUnit.SECONDS)      // Time to establish connection
+                    .readTimeout(120, TimeUnit.SECONDS)        // Time to read response (2 minutes for video processing)
+                    .writeTimeout(120, TimeUnit.SECONDS)       // Time to upload data (2 minutes for video uploads)
+                    .callTimeout(180, TimeUnit.SECONDS)        // Total time for entire call (3 minutes)
                     .build();
 
             retrofitAuth = new Retrofit.Builder()

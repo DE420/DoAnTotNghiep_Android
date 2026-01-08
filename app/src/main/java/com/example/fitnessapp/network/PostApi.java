@@ -49,7 +49,9 @@ public interface PostApi {
             @Path("postId") long postId,
             @Part("content") RequestBody content,
             @Part MultipartBody.Part image,
-            @Part MultipartBody.Part video
+            @Part MultipartBody.Part video,
+            @Part("deleteImage") RequestBody deleteImage,
+            @Part("deleteVideo") RequestBody deleteVideo
     );
 
     @DELETE("posts/{postId}")

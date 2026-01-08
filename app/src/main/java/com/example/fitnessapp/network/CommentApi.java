@@ -61,7 +61,8 @@ public interface CommentApi {
     Call<ApiResponse<CommentResponse>> updateComment(
             @Path("id") long commentId,
             @Part("content") RequestBody content,
-            @Part MultipartBody.Part image
+            @Part MultipartBody.Part image,
+            @Part("deleteImage") RequestBody deleteImage
     );
 
     /**
