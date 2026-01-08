@@ -1,11 +1,9 @@
-package com.example.fitnessapp.fragment;
+package com.example.fitnessapp.fragment.profile;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,29 +36,18 @@ import com.example.fitnessapp.databinding.FragmentEditProfileBinding;
 import com.example.fitnessapp.enums.ActivityLevel;
 import com.example.fitnessapp.enums.FitnessGoal;
 import com.example.fitnessapp.model.request.UpdateProfileRequest;
-import com.example.fitnessapp.repository.ProfileRepository;
 import com.example.fitnessapp.util.DateUtil;
 import com.example.fitnessapp.viewmodel.ProfileViewModel;
 import com.example.fitnessapp.worker.ProfileUpdateWorker;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 /**
  * Edit Profile Fragment - MVVM Architecture
@@ -387,7 +374,7 @@ public class EditProfileFragment extends Fragment {
         // Height (in meters)
         if (currentProfile.getHeight() != null) {
             // Backend stores in meters, display as-is
-            binding.etHeight.setText(String.format(Locale.getDefault(), "%.2f", currentProfile.getHeight()));
+            binding.etHeight.setText(String.valueOf(currentProfile.getHeight()));
         }
 
         // Birthday
