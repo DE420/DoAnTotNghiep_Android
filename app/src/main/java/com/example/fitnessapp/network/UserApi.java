@@ -1,8 +1,10 @@
 package com.example.fitnessapp.network;
 
 import com.example.fitnessapp.model.request.ChangePasswordRequest;
+import com.example.fitnessapp.model.request.OnboardingRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
+import com.example.fitnessapp.model.response.user.UserResponse;
 
 import java.util.Map;
 
@@ -61,4 +63,13 @@ public interface UserApi {
      */
     @POST("user/change-password")
     Call<ApiResponse<String>> changePassword(@Body ChangePasswordRequest request);
+
+    /**
+     * Submit onboarding information
+     * Authorization header is automatically added by AuthInterceptor
+     * @param request Onboarding request with user information
+     * @return User response data
+     */
+    @PUT("user/onboarding")
+    Call<ApiResponse<UserResponse>> updateOnboarding(@Body OnboardingRequest request);
 }
