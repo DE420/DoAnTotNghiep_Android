@@ -22,8 +22,8 @@
     <string name="onboarding_weight_hint">Nhập cân nặng (kg)</string>
     <string name="onboarding_weight_unit">kg</string>
     <string name="onboarding_height_label">Chiều cao</string>
-    <string name="onboarding_height_hint">Nhập chiều cao (cm)</string>
-    <string name="onboarding_height_unit">cm</string>
+    <string name="onboarding_height_hint">Nhập chiều cao (m)</string>
+    <string name="onboarding_height_unit">m</string>
 
     <!-- Step 3: Fitness Goal -->
     <string name="onboarding_goal_label">Mục tiêu tập luyện</string>

@@ -44,7 +44,6 @@
                 android:id="@+id/et_weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/onboarding_weight_hint"
                 android:textColor="@color/white"
                 android:textColorHint="@color/gray_text_color_hint"
                 android:inputType="numberDecimal"/>
@@ -70,7 +69,6 @@
                 android:id="@+id/et_height"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/onboarding_height_hint"
                 android:textColor="@color/white"
                 android:textColorHint="@color/gray_text_color_hint"
                 android:inputType="numberDecimal"/>

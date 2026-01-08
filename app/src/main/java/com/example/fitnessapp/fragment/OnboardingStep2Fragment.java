@@ -78,9 +78,8 @@ public class OnboardingStep2Fragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!s.toString().isEmpty()) {
                     try {
-                        // User inputs in cm, convert to meters
-                        double heightCm = Double.parseDouble(s.toString());
-                        double heightM = heightCm / 100.0;
+                        // User inputs in meters directly
+                        double heightM = Double.parseDouble(s.toString());
                         viewModel.setHeight(heightM);
                         tilHeight.setError(null);
                     } catch (NumberFormatException e) {
@@ -103,9 +102,8 @@ public class OnboardingStep2Fragment extends Fragment {
 
         viewModel.getHeight().observe(getViewLifecycleOwner(), height -> {
             if (height != null && etHeight != null && etHeight.getText().toString().isEmpty()) {
-                // Convert meters back to cm for display
-                double heightCm = height * 100.0;
-                etHeight.setText(String.valueOf((int) heightCm));
+                // Display meters directly
+                etHeight.setText(String.format("%.2f", height));
             }
         });
     }
