@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.fitnessapp.enums.FitnessGoal;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.Pagination;
+import com.example.fitnessapp.model.response.nutrition.MenuListResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 import com.example.fitnessapp.repository.NutritionRepository;
 
@@ -31,8 +32,8 @@ public class MenuViewModel extends AndroidViewModel {
     private final NutritionRepository repository;
 
     // LiveData for public menus
-    private final MutableLiveData<List<MenuResponse>> publicMenusLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<MenuResponse>> myMenusLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<MenuListResponse>> publicMenusLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<MenuListResponse>> myMenusLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> emptyStateLiveData = new MutableLiveData<>(false);
@@ -41,13 +42,13 @@ public class MenuViewModel extends AndroidViewModel {
     private int publicCurrentPage = 0;
     private boolean publicHasMorePages = true;
     private boolean publicIsLoadingMore = false;
-    private final List<MenuResponse> allPublicMenus = new ArrayList<>();
+    private final List<MenuListResponse> allPublicMenus = new ArrayList<>();
 
     // Pagination for my menus
     private int myCurrentPage = 0;
     private boolean myHasMorePages = true;
     private boolean myIsLoadingMore = false;
-    private final List<MenuResponse> allMyMenus = new ArrayList<>();
+    private final List<MenuListResponse> allMyMenus = new ArrayList<>();
 
     // Filters for public menus
     private String searchKeyword = "";
@@ -80,11 +81,11 @@ public class MenuViewModel extends AndroidViewModel {
     }
 
     // Getters for LiveData
-    public LiveData<List<MenuResponse>> getPublicMenus() {
+    public LiveData<List<MenuListResponse>> getPublicMenus() {
         return publicMenusLiveData;
     }
 
-    public LiveData<List<MenuResponse>> getMyMenus() {
+    public LiveData<List<MenuListResponse>> getMyMenus() {
         return myMenusLiveData;
     }
 
@@ -266,10 +267,10 @@ public class MenuViewModel extends AndroidViewModel {
         Log.d(TAG, "API params: " + params.toString());
 
         // Make API call
-        repository.getPublicMenus(params, new Callback<ApiResponse<List<MenuResponse>>>() {
+        repository.getPublicMenus(params, new Callback<ApiResponse<List<MenuListResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<MenuResponse>>> call,
-                                 Response<ApiResponse<List<MenuResponse>>> response) {
+            public void onResponse(Call<ApiResponse<List<MenuListResponse>>> call,
+                                 Response<ApiResponse<List<MenuListResponse>>> response) {
                 Log.d(TAG, "onResponse - HTTP code: " + response.code());
 
                 // Clear loading states
@@ -277,11 +278,11 @@ public class MenuViewModel extends AndroidViewModel {
                 publicIsLoadingMore = false;
 
                 if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<List<MenuResponse>> apiResponse = response.body();
+                    ApiResponse<List<MenuListResponse>> apiResponse = response.body();
                     Log.d(TAG, "Response received - status: " + apiResponse.isStatus());
 
                     if (apiResponse.isStatus() && apiResponse.getData() != null) {
-                        List<MenuResponse> newMenus = apiResponse.getData();
+                        List<MenuListResponse> newMenus = apiResponse.getData();
                         Log.d(TAG, "SUCCESS - Received " + newMenus.size() + " menus");
 
                         // Clear old data only on successful refresh
@@ -330,7 +331,7 @@ public class MenuViewModel extends AndroidViewModel {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<MenuResponse>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<MenuListResponse>>> call, Throwable t) {
                 Log.e(TAG, "NETWORK FAILURE: " + t.getMessage(), t);
 
                 loadingLiveData.postValue(false);
@@ -418,18 +419,18 @@ public class MenuViewModel extends AndroidViewModel {
             params.put("maxFat", String.valueOf(myFilterMaxFat));
         }
 
-        repository.getMyMenus(params, new Callback<ApiResponse<List<MenuResponse>>>() {
+        repository.getMyMenus(params, new Callback<ApiResponse<List<MenuListResponse>>>() {
             @Override
-            public void onResponse(Call<ApiResponse<List<MenuResponse>>> call,
-                                 Response<ApiResponse<List<MenuResponse>>> response) {
+            public void onResponse(Call<ApiResponse<List<MenuListResponse>>> call,
+                                 Response<ApiResponse<List<MenuListResponse>>> response) {
                 loadingLiveData.postValue(false);
                 myIsLoadingMore = false;
 
                 if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<List<MenuResponse>> apiResponse = response.body();
+                    ApiResponse<List<MenuListResponse>> apiResponse = response.body();
 
                     if (apiResponse.isStatus() && apiResponse.getData() != null) {
-                        List<MenuResponse> newMenus = apiResponse.getData();
+                        List<MenuListResponse> newMenus = apiResponse.getData();
                         Log.d(TAG, "SUCCESS - Received " + newMenus.size() + " my menus");
 
                         // Clear old data only on successful refresh
@@ -465,7 +466,7 @@ public class MenuViewModel extends AndroidViewModel {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<List<MenuResponse>>> call, Throwable t) {
+            public void onFailure(Call<ApiResponse<List<MenuListResponse>>> call, Throwable t) {
                 Log.e(TAG, "NETWORK FAILURE: " + t.getMessage(), t);
 
                 loadingLiveData.postValue(false);
@@ -562,8 +563,8 @@ public class MenuViewModel extends AndroidViewModel {
             myMenusLiveData.postValue(new ArrayList<>(allMyMenus));
         } else {
             // Filter by goal
-            List<MenuResponse> filtered = new ArrayList<>();
-            for (MenuResponse menu : allMyMenus) {
+            List<MenuListResponse> filtered = new ArrayList<>();
+            for (MenuListResponse menu : allMyMenus) {
                 if (menu.getFitnessGoal() == myFilterGoal) {
                     filtered.add(menu);
                 }
@@ -572,7 +573,7 @@ public class MenuViewModel extends AndroidViewModel {
         }
 
         // Update empty state
-        List<MenuResponse> currentList = myMenusLiveData.getValue();
+        List<MenuListResponse> currentList = myMenusLiveData.getValue();
         emptyStateLiveData.postValue(currentList == null || currentList.isEmpty());
     }
 

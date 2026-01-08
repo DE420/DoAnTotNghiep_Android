@@ -22,6 +22,7 @@ import com.example.fitnessapp.adapter.FitnessGoalAdapter;
 import com.example.fitnessapp.adapter.nutrition.MenuAdapter;
 import com.example.fitnessapp.databinding.FragmentPublicMenusBinding;
 import com.example.fitnessapp.enums.FitnessGoal;
+import com.example.fitnessapp.model.response.nutrition.MenuListResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 import com.example.fitnessapp.viewmodel.MenuViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -96,7 +97,7 @@ public class PublicMenusFragment extends Fragment {
         // Setup click listeners
         adapter.setOnMenuClickListener(new MenuAdapter.OnMenuClickListener() {
             @Override
-            public void onMenuClick(MenuResponse menu) {
+            public void onMenuClick(MenuListResponse menu) {
                 // Navigate to MenuDetailFragment
                 // Hide parent NutritionMainFragment instead of this child fragment to preserve state
                 MenuDetailFragment detailFragment = MenuDetailFragment.newInstance(menu.getId());
@@ -113,7 +114,7 @@ public class PublicMenusFragment extends Fragment {
             }
 
             @Override
-            public void onCloneClick(MenuResponse menu) {
+            public void onCloneClick(MenuListResponse menu) {
                 cloneMenu(menu);
             }
         });
@@ -424,7 +425,7 @@ public class PublicMenusFragment extends Fragment {
                 minCarbs, maxCarbs, minFat, maxFat);
     }
 
-    private void cloneMenu(MenuResponse menu) {
+    private void cloneMenu(MenuListResponse menu) {
         viewModel.cloneMenu(menu.getId(), new MenuViewModel.OnMenuClonedListener() {
             @Override
             public void onSuccess(MenuResponse clonedMenu) {
