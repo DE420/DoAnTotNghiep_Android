@@ -2,6 +2,7 @@ package com.example.fitnessapp.fragment.community;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,6 +16,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
@@ -102,6 +104,12 @@ public class CreateUpdatePostFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // FIX: Force white hint color for TextInputLayouts (both focused and unfocused states)
+        int whiteColor = ContextCompat.getColor(requireContext(), R.color.white);
+        ColorStateList whiteColorStateList = ColorStateList.valueOf(whiteColor);
+        binding.tilContent.setDefaultHintTextColor(whiteColorStateList);
+        binding.tilContent.setHintTextColor(whiteColorStateList);
 
         // Hide header and bottom navigation
         hideHeaderAndBottomNavigation();
