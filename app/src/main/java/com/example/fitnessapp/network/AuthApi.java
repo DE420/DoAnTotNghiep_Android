@@ -7,11 +7,13 @@ import com.example.fitnessapp.model.request.LogoutRequest;
 import com.example.fitnessapp.model.request.RefreshTokenRequest;
 import com.example.fitnessapp.model.request.RegisterRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
+import com.example.fitnessapp.model.response.BasicInfoResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
 import com.example.fitnessapp.model.response.RegisterResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface AuthApi {
@@ -37,4 +39,11 @@ public interface AuthApi {
     @POST("auth/refresh-token")
     Call<ApiResponse<LoginResponse>> refreshToken(@Body RefreshTokenRequest refreshTokenRequest);
 
+    /**
+     * Get basic user information including onboarding status
+     * Authorization header is automatically added by AuthInterceptor
+     * @return Basic info with onboarding completion status
+     */
+    @GET("auth/me")
+    Call<ApiResponse<BasicInfoResponse>> getBasicInfo();
 }

@@ -1,4 +1,4 @@
-package com.example.fitnessapp.fragment;
+package com.example.fitnessapp.fragment.profile;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.fitnessapp.LoginActivity;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.databinding.FragmentProfileBinding;
+import com.example.fitnessapp.fragment.ConfirmLogoutDialogFragment;
 import com.example.fitnessapp.model.request.UpdateProfileRequest;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
 import com.example.fitnessapp.session.SessionManager;

@@ -20,6 +20,7 @@ public class RetrofitClient {
     private static Retrofit retrofitPlain;
     private static Retrofit retrofitAuth;
     private static AuthApi authApi;
+    private static AuthApi authApiAuthenticated;
     private static PostApi postApi;
     private static CommentApi commentApi;
     private static UserApi userApi;
@@ -74,6 +75,14 @@ public class RetrofitClient {
             authApi = getPlainRetrofit().create(AuthApi.class);
         }
         return authApi;
+    }
+
+    public static AuthApi getAuthApiAuthenticated(Context ctx) {
+        if (authApiAuthenticated == null) {
+            authApiAuthenticated = getAuthRetrofit(ctx.getApplicationContext())
+                    .create(AuthApi.class);
+        }
+        return authApiAuthenticated;
     }
 
     public static PostApi getPostApi(Context ctx) {
