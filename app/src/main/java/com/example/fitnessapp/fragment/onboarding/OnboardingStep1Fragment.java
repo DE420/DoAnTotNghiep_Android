@@ -1,4 +1,4 @@
-package com.example.fitnessapp.fragment;
+package com.example.fitnessapp.fragment.onboarding;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
