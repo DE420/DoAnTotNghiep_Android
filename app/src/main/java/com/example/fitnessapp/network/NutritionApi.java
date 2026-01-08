@@ -55,7 +55,7 @@ public interface NutritionApi {
     );
 
     @DELETE("menus/{id}")
-    Call<ApiResponse<Void>> deleteMenu(
+    Call<ApiResponse<String>> deleteMenu(
             @Path("id") Long id
     );
 
