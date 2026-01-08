@@ -386,13 +386,15 @@ public class EditProfileFragment extends Fragment {
 
         // Weight
         if (currentProfile.getWeight() != null) {
-            binding.etWeight.setText(String.valueOf(currentProfile.getWeight()));
+            // Use Locale.US to ensure period decimal separator (70.50 not 70,50)
+            binding.etWeight.setText(String.format(Locale.US, "%.2f", currentProfile.getWeight()));
         }
 
         // Height (in meters)
         if (currentProfile.getHeight() != null) {
+            // Use Locale.US to ensure period decimal separator (1.78 not 1,78)
             // Backend stores in meters, display as-is
-            binding.etHeight.setText(String.valueOf(currentProfile.getHeight()));
+            binding.etHeight.setText(String.format(Locale.US, "%.2f", currentProfile.getHeight()));
         }
 
         // Birthday
