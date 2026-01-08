@@ -1,5 +1,6 @@
 package com.example.fitnessapp.fragment.profile;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -54,6 +56,19 @@ public class ChangePasswordFragment extends Fragment {
 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
+        // FIX: Force white hint color for TextInputLayouts (both focused and unfocused states)
+        int whiteColor = ContextCompat.getColor(requireContext(), R.color.white);
+        ColorStateList whiteColorStateList = ColorStateList.valueOf(whiteColor);
+
+        binding.tilCurrentPassword.setDefaultHintTextColor(whiteColorStateList);
+        binding.tilCurrentPassword.setHintTextColor(whiteColorStateList);
+
+        binding.tilNewPassword.setDefaultHintTextColor(whiteColorStateList);
+        binding.tilNewPassword.setHintTextColor(whiteColorStateList);
+
+        binding.tilConfirmPassword.setDefaultHintTextColor(whiteColorStateList);
+        binding.tilConfirmPassword.setHintTextColor(whiteColorStateList);
 
         // Setup UI
         setupTextWatchers();
