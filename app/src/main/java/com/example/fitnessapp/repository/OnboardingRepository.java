@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.fitnessapp.model.request.OnboardingRequest;
 import com.example.fitnessapp.model.response.BasicInfoResponse;
+import com.example.fitnessapp.model.response.user.ProfileResponse;
 import com.example.fitnessapp.model.response.user.UserResponse;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.network.RetrofitClient;
@@ -32,6 +33,11 @@ public class OnboardingRepository {
 
     public interface OnboardingSubmitCallback {
         void onSuccess(UserResponse user);
+        void onError(String errorMessage);
+    }
+
+    public interface ProfileDataCallback {
+        void onSuccess(ProfileResponse profile);
         void onError(String errorMessage);
     }
 
@@ -98,6 +104,35 @@ public class OnboardingRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<UserResponse>> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Get user profile data to populate onboarding screens
+     * Calls GET /user/profile via UserApi
+     */
+    public void getUserProfileData(Context context, ProfileDataCallback callback) {
+        Log.d("OnboardingRepository", "Calling GET /user/profile to load existing data...");
+        RetrofitClient.getUserApi(context).getUserProfile().enqueue(new Callback<ApiResponse<ProfileResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<ProfileResponse>> call, Response<ApiResponse<ProfileResponse>> response) {
+                Log.d("OnboardingRepository", "Profile API Response Code: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
+                    ProfileResponse profile = response.body().getData();
+                    Log.d("OnboardingRepository", "Profile loaded: " + profile);
+                    callback.onSuccess(profile);
+                } else {
+                    Log.e("OnboardingRepository", "Failed to load profile data");
+                    callback.onError("Không thể tải dữ liệu hồ sơ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<ProfileResponse>> call, Throwable t) {
+                Log.e("OnboardingRepository", "Profile API call failed", t);
                 callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });
