@@ -7,6 +7,7 @@ import com.example.fitnessapp.model.request.nutrition.MenuRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.nutrition.DishResponse;
 import com.example.fitnessapp.model.response.nutrition.MealDishResponse;
+import com.example.fitnessapp.model.response.nutrition.MenuListResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 import com.example.fitnessapp.network.NutritionApi;
 import com.example.fitnessapp.network.RetrofitClient;
@@ -34,13 +35,13 @@ public class NutritionRepository {
 
     // Menu methods
     public void getPublicMenus(Map<String, String> params,
-                              Callback<ApiResponse<List<MenuResponse>>> callback) {
+                              Callback<ApiResponse<List<MenuListResponse>>> callback) {
         Log.d(TAG, "Getting public menus with params: " + params);
         api.getPublicMenus(params).enqueue(callback);
     }
 
     public void getMyMenus(Map<String, String> params,
-                          Callback<ApiResponse<List<MenuResponse>>> callback) {
+                          Callback<ApiResponse<List<MenuListResponse>>> callback) {
         Log.d(TAG, "Getting my menus with params: " + params);
         api.getMyMenus(params).enqueue(callback);
     }
