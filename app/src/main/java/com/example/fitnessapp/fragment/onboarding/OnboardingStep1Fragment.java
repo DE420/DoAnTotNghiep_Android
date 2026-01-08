@@ -1,6 +1,7 @@
 package com.example.fitnessapp.fragment.onboarding;
 
 import android.app.DatePickerDialog;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.example.fitnessapp.R;
 import com.example.fitnessapp.viewmodel.OnboardingViewModel;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,6 +29,7 @@ public class OnboardingStep1Fragment extends Fragment {
     private MaterialCardView cardMale;
     private MaterialCardView cardFemale;
     private TextInputEditText etDob;
+    private TextInputLayout tilDob;
     private String selectedSex = null;
 
     @Nullable
@@ -51,6 +54,13 @@ public class OnboardingStep1Fragment extends Fragment {
         cardMale = view.findViewById(R.id.card_male);
         cardFemale = view.findViewById(R.id.card_female);
         etDob = view.findViewById(R.id.et_dob);
+        tilDob = view.findViewById(R.id.til_dob);
+
+        // FIX: Force white hint color for both focused and unfocused states
+        int whiteColor = ContextCompat.getColor(requireContext(), R.color.white);
+        ColorStateList whiteColorStateList = ColorStateList.valueOf(whiteColor);
+        tilDob.setDefaultHintTextColor(whiteColorStateList);
+        tilDob.setHintTextColor(whiteColorStateList);
     }
 
     private void setupGenderSelection() {

@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -136,6 +138,14 @@ public class CreateEditMenuFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // FIX: Force white hint color for TextInputLayouts (both focused and unfocused states)
+        int whiteColor = ContextCompat.getColor(requireContext(), R.color.white);
+        ColorStateList whiteColorStateList = ColorStateList.valueOf(whiteColor);
+        binding.tilMenuName.setDefaultHintTextColor(whiteColorStateList);
+        binding.tilMenuName.setHintTextColor(whiteColorStateList);
+        binding.tilDescription.setDefaultHintTextColor(whiteColorStateList);
+        binding.tilDescription.setHintTextColor(whiteColorStateList);
 
         setupUI();
         setupAdapters();
