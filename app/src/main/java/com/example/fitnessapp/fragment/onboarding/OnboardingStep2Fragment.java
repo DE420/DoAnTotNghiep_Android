@@ -19,6 +19,8 @@ import com.example.fitnessapp.viewmodel.OnboardingViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Locale;
+
 public class OnboardingStep2Fragment extends Fragment {
     private OnboardingViewModel viewModel;
     private TextInputEditText etWeight;
@@ -112,14 +114,15 @@ public class OnboardingStep2Fragment extends Fragment {
     private void observeViewModel() {
         viewModel.getWeight().observe(getViewLifecycleOwner(), weight -> {
             if (weight != null && etWeight != null && etWeight.getText().toString().isEmpty()) {
-                etWeight.setText(String.valueOf(weight));
+                // Use Locale.US to ensure period decimal separator (1.75 not 1,75)
+                etWeight.setText(String.format(Locale.US, "%.2f", weight));
             }
         });
 
         viewModel.getHeight().observe(getViewLifecycleOwner(), height -> {
             if (height != null && etHeight != null && etHeight.getText().toString().isEmpty()) {
-                // Display meters directly
-                etHeight.setText(String.format("%.2f", height));
+                // Use Locale.US to ensure period decimal separator (1.78 not 1,78)
+                etHeight.setText(String.format(Locale.US, "%.2f", height));
             }
         });
     }
