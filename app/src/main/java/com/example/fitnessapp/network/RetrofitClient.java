@@ -36,6 +36,7 @@ public class RetrofitClient {
     private static UserApi userApi;
     private static NutritionApi nutritionApi;
     private static NotificationApi notificationApi;
+    private static HomeApiService homeApiService;
 
     private static Retrofit retrofit = null;
 
@@ -147,6 +148,13 @@ public class RetrofitClient {
             notificationApi = getAuthRetrofit(context).create(NotificationApi.class);
         }
         return notificationApi;
+    }
+
+    public static HomeApiService getHomeApiService(Context context) {
+        if (homeApiService == null) {
+            homeApiService = getAuthRetrofit(context).create(HomeApiService.class);
+        }
+        return homeApiService;
     }
 
 }
