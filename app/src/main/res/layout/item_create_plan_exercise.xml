@@ -29,6 +29,7 @@
             app:layout_constraintWidth_percent="0.25" />
 
         <!-- Regular Spinner (disabled, just for display) -->
+        <!-- Regular Spinner (disabled, just for display) -->
         <Spinner
             android:id="@+id/spinner_exercise"
             android:layout_width="0dp"
@@ -36,6 +37,7 @@
             android:background="@drawable/bg_search_box"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
+            android:theme="@style/SpinnerThemeWhiteText"
             app:layout_constraintStart_toEndOf="@id/tv_exercise_label"
             app:layout_constraintEnd_toStartOf="@id/btn_search_exercise"
             app:layout_constraintTop_toTopOf="parent"
@@ -49,7 +51,7 @@
             android:src="@android:drawable/ic_menu_search"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Search Exercise"
-            app:tint="@color/white85"
+            app:tint="@android:color/white"
             app:layout_constraintEnd_toStartOf="@id/btn_delete_exercise"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.10" />

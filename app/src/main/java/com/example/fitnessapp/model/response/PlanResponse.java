@@ -24,7 +24,14 @@ public class PlanResponse {
     @SerializedName("startDate")
     private String startDate;
 
-    public PlanResponse(Long id, String name, String description, Integer durationWeek, Integer daysPerWeek, FitnessGoal targetGoal, DifficultyLevel difficultyLevel, Boolean isDefault, String startDate) {
+    @SerializedName("currentWorkoutDayId")
+    private Long currentWorkoutDayId;
+
+    private Integer exerciseCount;
+
+    private boolean isCompleted;
+
+    public PlanResponse(Long id, String name, String description, Integer durationWeek, Integer daysPerWeek, FitnessGoal targetGoal, DifficultyLevel difficultyLevel, Boolean isDefault, String startDate, Long currentWorkoutDayId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -34,6 +41,7 @@ public class PlanResponse {
         this.difficultyLevel = difficultyLevel;
         this.isDefault = isDefault;
         this.startDate = startDate;
+        this.currentWorkoutDayId = currentWorkoutDayId;
     }
 
     public PlanResponse() {
@@ -73,5 +81,29 @@ public class PlanResponse {
 
     public String getStartDate() {
         return startDate;
+    }
+
+    public Long getCurrentWorkoutDayId() {
+        return currentWorkoutDayId;
+    }
+
+    public void setCurrentWorkoutDayId(Long currentWorkoutDayId) {
+        this.currentWorkoutDayId = currentWorkoutDayId;
+    }
+
+    public Integer getExerciseCount() {
+        return exerciseCount;
+    }
+
+    public void setExerciseCount(Integer exerciseCount) {
+        this.exerciseCount = exerciseCount;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 }
