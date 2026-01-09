@@ -53,7 +53,8 @@
                         android:layout_marginBottom="24dp"
                         app:cardBackgroundColor="@color/black_370"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="2dp">
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
