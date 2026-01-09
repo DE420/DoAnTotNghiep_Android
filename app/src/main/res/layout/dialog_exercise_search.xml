@@ -4,31 +4,25 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@android:color/black">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Search Exercise"
-        android:textColor="@color/white85"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
+    android:background="#1E1E1E">
 
     <EditText
         android:id="@+id/et_search_exercise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Type to search..."
+        android:hint="Search exercises..."
         android:textColorHint="#8A8A8A"
         android:textColor="@android:color/white"
         android:background="@drawable/bg_search_box"
         android:padding="12dp"
-        android:layout_marginBottom="16dp" />
+        android:inputType="text"
+        android:singleLine="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_exercises"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="400dp"
+        android:layout_marginTop="8dp"
+        android:background="#222222" />
 
 </LinearLayout>

@@ -88,6 +88,12 @@
         <item name="android:layout_marginTop">4dp</item>
     </style>
 
+    <style name="SpinnerThemeWhiteText" parent="Theme.AppCompat.Light">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
     <style name="fab_3_rounded">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

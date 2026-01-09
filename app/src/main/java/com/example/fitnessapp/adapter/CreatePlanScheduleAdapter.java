@@ -304,7 +304,7 @@ public class CreatePlanScheduleAdapter extends RecyclerView.Adapter<RecyclerView
 
     private void showExerciseSearchDialog(ExerciseItemViewHolder holder, CreatePlanFragment.ScheduleItem item,
                                           List<ExerciseResponse> allExercises, List<String> exerciseNames) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_exercise_search, null);
         builder.setView(dialogView);
 
@@ -467,7 +467,7 @@ public class CreatePlanScheduleAdapter extends RecyclerView.Adapter<RecyclerView
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.item_exercise_search, parent, false);
             return new ViewHolder(view);
         }
 

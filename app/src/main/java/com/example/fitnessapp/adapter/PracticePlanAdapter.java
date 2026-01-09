@@ -1,5 +1,6 @@
 package com.example.fitnessapp.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,24 @@ public class PracticePlanAdapter extends RecyclerView.Adapter<PracticePlanAdapte
     @Override
     public void onBindViewHolder(@NonNull PlanViewHolder holder, int position) {
         PlanResponse plan = planList.get(position);
-        holder.bind(plan);
+
+        holder.tvPlanName.setText(plan.getName());
+        holder.tvExerciseCount.setText(plan.getExerciseCount() + " bài tập");
+
+        // NEW: Hiển thị icon dựa trên trạng thái hoàn thành
+        if (plan.isCompleted()) {
+            holder.btnPlay.setImageResource(R.drawable.ic_check); // Icon dấu tick
+            holder.btnPlay.setColorFilter(Color.WHITE);
+        } else {
+            holder.btnPlay.setImageResource(R.drawable.ic_play); // Icon play
+            holder.btnPlay.setColorFilter(android.graphics.Color.WHITE);
+        }
+
+        holder.btnPlay.setOnClickListener(v -> {
+            if (listener != null && !plan.isCompleted()) {
+                listener.onPlayClick(plan);
+            }
+        });
     }
 
     @Override

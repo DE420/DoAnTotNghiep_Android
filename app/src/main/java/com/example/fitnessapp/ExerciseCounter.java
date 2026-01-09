@@ -15,7 +15,10 @@ public class ExerciseCounter {
         SITUP,
         PUSHUP,
         PLANK,
-        BICEPS_CURL  // Thêm mới
+        BICEPS_CURL,
+        PULLUP,
+        BACK_LEVER,
+        DEADLIFT
     }
 
     // Pose landmark indices
@@ -37,7 +40,7 @@ public class ExerciseCounter {
     private enum State {
         UP,
         DOWN,
-        HOLDING,  // For plank
+        HOLDING,
         UNKNOWN
     }
 
@@ -45,15 +48,17 @@ public class ExerciseCounter {
     private State currentState = State.UNKNOWN;
     private int repCount = 0;
 
-    // Plank tracking
-    private boolean isPlankHolding = false;
-    private long plankHoldStartTime = 0;
-    private int plankHoldDuration = 0; // in seconds
+    // Duration tracking - Chuẩn hóa cho tất cả bài tập duration
+    private boolean isDurationHolding = false;
+    private long durationHoldStartTime = 0;
+    private int durationHoldTime = 0; // in seconds
+    private int durationFramesCorrect = 0;
+    private static final int DURATION_FRAMES_THRESHOLD = 3;
 
-    // Biceps curl tracking - cả 2 tay phải đồng bộ
+    // Biceps curl tracking
     private boolean leftArmCurled = false;
     private boolean rightArmCurled = false;
-    private boolean bothArmsDown = true; // Bắt đầu ở trạng thái xuống
+    private boolean bothArmsDown = true;
 
     // Squat thresholds
     private static final double SQUAT_STANDING_ANGLE = 160.0;
@@ -67,16 +72,34 @@ public class ExerciseCounter {
     private static final double PUSHUP_UP_ANGLE = 160.0;
     private static final double PUSHUP_DOWN_ANGLE = 90.0;
 
+    // Pull-up thresholds
+    private static final double PULLUP_DOWN_ANGLE = 160.0;
+    private static final double PULLUP_UP_ANGLE = 50.0;
+
     // Plank thresholds
-    private static final double PLANK_MIN_BACK_ANGLE = 160.0;
-    private static final double PLANK_MAX_BACK_ANGLE = 200.0;
-    private static final double PLANK_MIN_HIP_HEIGHT = 0.3;
-    private static final double PLANK_MAX_HIP_HEIGHT = 0.7;
+    private static final double PLANK_MIN_BODY_ANGLE = 150.0;
+    private static final double PLANK_MAX_BODY_ANGLE = 200.0;
+    private static final double PLANK_MIN_ELBOW_ANGLE = 70.0;
+    private static final double PLANK_MAX_ELBOW_ANGLE = 110.0;
+    private static final double PLANK_MAX_SHOULDER_HIP_DIFF = 0.15;
+
+    // Back Lever thresholds
+    private static final double BACK_LEVER_MIN_BODY_ANGLE = 160.0;
+    private static final double BACK_LEVER_MAX_BODY_ANGLE = 200.0;
+    private static final double BACK_LEVER_MIN_HIP_HEIGHT = 0.35;
+    private static final double BACK_LEVER_MAX_HIP_HEIGHT = 0.65;
+    private static final double BACK_LEVER_MAX_SHOULDER_HIP_DIFF = 0.1;
 
     // Biceps curl thresholds
-    private static final double BICEPS_CURL_UP_ANGLE = 50.0;    // Tay nâng lên (góc nhỏ)
-    private static final double BICEPS_CURL_DOWN_ANGLE = 150.0; // Tay duỗi thẳng (góc lớn)
-    private static final double BICEPS_TOLERANCE = 20.0;        // Dung sai cho 2 tay
+    private static final double BICEPS_CURL_UP_ANGLE = 50.0;
+    private static final double BICEPS_CURL_DOWN_ANGLE = 150.0;
+    private static final double BICEPS_TOLERANCE = 20.0;
+
+    // Deadlift thresholds
+    private static final double DEADLIFT_STANDING_ANGLE = 160.0;  // Đứng thẳng (hip-knee-ankle)
+    private static final double DEADLIFT_BENT_ANGLE = 70.0;       // Cúi xuống
+    private static final double DEADLIFT_HIP_ANGLE_MIN = 130.0;   // Góc hông khi đứng (shoulder-hip-knee)
+    private static final double DEADLIFT_HIP_ANGLE_BENT = 60.0;   // Góc hông khi cúi
 
     public void setExerciseType(ExerciseType type) {
         if (this.currentExercise != type) {
@@ -87,6 +110,14 @@ public class ExerciseCounter {
 
     public ExerciseType getExerciseType() {
         return currentExercise;
+    }
+
+    /**
+     * Kiểm tra xem bài tập hiện tại có phải dạng duration không
+     */
+    public boolean isDurationBasedExercise() {
+        return currentExercise == ExerciseType.PLANK ||
+                currentExercise == ExerciseType.BACK_LEVER;
     }
 
     public int processLandmarks(List<NormalizedLandmark> landmarks) {
@@ -104,11 +135,20 @@ public class ExerciseCounter {
             case PUSHUP:
                 processPushup(landmarks);
                 break;
+            case PULLUP:
+                processPullup(landmarks);
+                break;
             case PLANK:
                 processPlank(landmarks);
                 break;
+            case BACK_LEVER:
+                processBackLever(landmarks);
+                break;
             case BICEPS_CURL:
                 processBicepsCurl(landmarks);
+                break;
+            case DEADLIFT:
+                processDeadlift(landmarks);
                 break;
         }
 
@@ -139,7 +179,6 @@ public class ExerciseCounter {
             currentState = State.DOWN;
         }
 
-        // Hoàn thành 1 rep: DOWN → UP
         if (previousState == State.DOWN && currentState == State.UP) {
             repCount++;
             Log.d(TAG, "Squat rep completed: " + repCount);
@@ -169,7 +208,6 @@ public class ExerciseCounter {
             currentState = State.DOWN;
         }
 
-        // Hoàn thành 1 rep: DOWN → UP
         if (previousState == State.DOWN && currentState == State.UP) {
             repCount++;
             Log.d(TAG, "Sit-up rep completed: " + repCount);
@@ -200,14 +238,43 @@ public class ExerciseCounter {
             currentState = State.DOWN;
         }
 
-        // Hoàn thành 1 rep: DOWN → UP
         if (previousState == State.DOWN && currentState == State.UP) {
             repCount++;
             Log.d(TAG, "Push-up rep completed: " + repCount);
         }
     }
 
-    // PLANK LOGIC - Đo thời gian giữ tư thế
+    // PULL-UP LOGIC
+    private void processPullup(List<NormalizedLandmark> landmarks) {
+        double leftElbowAngle = calculateAngle(
+                landmarks.get(LEFT_SHOULDER),
+                landmarks.get(LEFT_ELBOW),
+                landmarks.get(LEFT_WRIST)
+        );
+
+        double rightElbowAngle = calculateAngle(
+                landmarks.get(RIGHT_SHOULDER),
+                landmarks.get(RIGHT_ELBOW),
+                landmarks.get(RIGHT_WRIST)
+        );
+
+        double avgElbowAngle = (leftElbowAngle + rightElbowAngle) / 2.0;
+
+        State previousState = currentState;
+
+        if (avgElbowAngle > PULLUP_DOWN_ANGLE) {
+            currentState = State.DOWN;
+        } else if (avgElbowAngle < PULLUP_UP_ANGLE) {
+            currentState = State.UP;
+        }
+
+        if (previousState == State.UP && currentState == State.DOWN) {
+            repCount++;
+            Log.d(TAG, "Pull-up rep completed: " + repCount);
+        }
+    }
+
+    // PLANK LOGIC
     private void processPlank(List<NormalizedLandmark> landmarks) {
         NormalizedLandmark leftShoulder = landmarks.get(LEFT_SHOULDER);
         NormalizedLandmark rightShoulder = landmarks.get(RIGHT_SHOULDER);
@@ -220,80 +287,97 @@ public class ExerciseCounter {
         NormalizedLandmark midHip = midpoint(leftHip, rightHip);
         NormalizedLandmark midAnkle = midpoint(leftAnkle, rightAnkle);
 
-        // Tính góc lưng (shoulder-hip-ankle)
-        double backAngle = calculateAngle(midShoulder, midHip, midAnkle);
+        double bodyAngle = calculateAngle(midShoulder, midHip, midAnkle);
 
-        // Tính độ cao tương đối của hông
-        double hipHeight = midHip.y();
+        double leftElbowAngle = calculateAngle(
+                landmarks.get(LEFT_SHOULDER),
+                landmarks.get(LEFT_ELBOW),
+                landmarks.get(LEFT_WRIST)
+        );
+        double rightElbowAngle = calculateAngle(
+                landmarks.get(RIGHT_SHOULDER),
+                landmarks.get(RIGHT_ELBOW),
+                landmarks.get(RIGHT_WRIST)
+        );
+        double avgElbowAngle = (leftElbowAngle + rightElbowAngle) / 2.0;
 
-        // Kiểm tra tư thế plank đúng
-        boolean isCorrectPlankPose =
-                backAngle >= PLANK_MIN_BACK_ANGLE &&
-                        backAngle <= PLANK_MAX_BACK_ANGLE &&
-                        hipHeight >= PLANK_MIN_HIP_HEIGHT &&
-                        hipHeight <= PLANK_MAX_HIP_HEIGHT;
+        double shoulderY = midShoulder.y();
+        double hipY = midHip.y();
+        double shoulderHipDiff = Math.abs(shoulderY - hipY);
 
-        long currentTime = System.currentTimeMillis();
+        boolean hipNotTooHigh = hipY >= shoulderY - 0.05;
+        boolean hipNotTooLow = hipY <= shoulderY + 0.2;
 
-        if (isCorrectPlankPose) {
-            if (!isPlankHolding) {
-                // Bắt đầu giữ plank
-                isPlankHolding = true;
-                plankHoldStartTime = currentTime;
-                currentState = State.HOLDING;
-                Log.d(TAG, "Plank started");
-            } else {
-                // Đang giữ plank - tính thời gian
-                long elapsedTime = currentTime - plankHoldStartTime;
-                plankHoldDuration = (int) (elapsedTime / 1000);
-            }
-        } else {
-            if (isPlankHolding) {
-                // Mất tư thế - kết thúc
-                isPlankHolding = false;
-                currentState = State.UNKNOWN;
-                Log.d(TAG, "Plank ended. Duration: " + plankHoldDuration + "s");
-            }
-        }
+        boolean bodyAligned = bodyAngle >= PLANK_MIN_BODY_ANGLE &&
+                bodyAngle <= PLANK_MAX_BODY_ANGLE;
+        boolean elbowsCorrect = avgElbowAngle >= PLANK_MIN_ELBOW_ANGLE &&
+                avgElbowAngle <= PLANK_MAX_ELBOW_ANGLE;
+        boolean heightCorrect = shoulderHipDiff < PLANK_MAX_SHOULDER_HIP_DIFF &&
+                hipNotTooHigh && hipNotTooLow;
+
+        boolean isCorrectPose = bodyAligned && elbowsCorrect && heightCorrect;
+
+        processDurationExercise(isCorrectPose, "Plank");
     }
 
-    // BICEPS CURL LOGIC - Yêu cầu cả 2 tay nâng lên
+    // BACK LEVER LOGIC
+    private void processBackLever(List<NormalizedLandmark> landmarks) {
+        NormalizedLandmark leftShoulder = landmarks.get(LEFT_SHOULDER);
+        NormalizedLandmark rightShoulder = landmarks.get(RIGHT_SHOULDER);
+        NormalizedLandmark leftHip = landmarks.get(LEFT_HIP);
+        NormalizedLandmark rightHip = landmarks.get(RIGHT_HIP);
+        NormalizedLandmark leftKnee = landmarks.get(LEFT_KNEE);
+        NormalizedLandmark rightKnee = landmarks.get(RIGHT_KNEE);
+
+        NormalizedLandmark midShoulder = midpoint(leftShoulder, rightShoulder);
+        NormalizedLandmark midHip = midpoint(leftHip, rightHip);
+        NormalizedLandmark midKnee = midpoint(leftKnee, rightKnee);
+
+        double bodyAngle = calculateAngle(midShoulder, midHip, midKnee);
+
+        double shoulderY = midShoulder.y();
+        double hipY = midHip.y();
+        double shoulderHipDiff = Math.abs(shoulderY - hipY);
+
+        boolean hipHeightCorrect = hipY >= BACK_LEVER_MIN_HIP_HEIGHT &&
+                hipY <= BACK_LEVER_MAX_HIP_HEIGHT;
+
+        boolean bodyAligned = bodyAngle >= BACK_LEVER_MIN_BODY_ANGLE &&
+                bodyAngle <= BACK_LEVER_MAX_BODY_ANGLE;
+        boolean heightCorrect = shoulderHipDiff < BACK_LEVER_MAX_SHOULDER_HIP_DIFF &&
+                hipHeightCorrect;
+
+        boolean isCorrectPose = bodyAligned && heightCorrect;
+
+        processDurationExercise(isCorrectPose, "Back Lever");
+    }
+
+    // BICEPS CURL LOGIC
     private void processBicepsCurl(List<NormalizedLandmark> landmarks) {
-        // Tính góc khuỷu tay trái (shoulder-elbow-wrist)
         double leftElbowAngle = calculateAngle(
                 landmarks.get(LEFT_SHOULDER),
                 landmarks.get(LEFT_ELBOW),
                 landmarks.get(LEFT_WRIST)
         );
 
-        // Tính góc khuỷu tay phải (shoulder-elbow-wrist)
         double rightElbowAngle = calculateAngle(
                 landmarks.get(RIGHT_SHOULDER),
                 landmarks.get(RIGHT_ELBOW),
                 landmarks.get(RIGHT_WRIST)
         );
 
-        // Kiểm tra độ lệch giữa 2 tay (để đảm bảo đồng bộ)
         double angleDifference = Math.abs(leftElbowAngle - rightElbowAngle);
         boolean armsInSync = angleDifference < BICEPS_TOLERANCE;
 
-        // Debug log
-        Log.d(TAG, String.format("Biceps Curl - Left: %.1f°, Right: %.1f°, Diff: %.1f°, Sync: %b",
-                leftElbowAngle, rightElbowAngle, angleDifference, armsInSync));
-
-        // Kiểm tra trạng thái curl (cả 2 tay phải nâng lên cùng lúc)
         boolean bothArmsCurled = leftElbowAngle < BICEPS_CURL_UP_ANGLE &&
                 rightElbowAngle < BICEPS_CURL_UP_ANGLE &&
                 armsInSync;
 
-        // Kiểm tra trạng thái duỗi (cả 2 tay phải duỗi thẳng)
         boolean bothArmsExtended = leftElbowAngle > BICEPS_CURL_DOWN_ANGLE &&
                 rightElbowAngle > BICEPS_CURL_DOWN_ANGLE &&
                 armsInSync;
 
-        // State machine để đếm rep
         if (bothArmsExtended && !bothArmsDown) {
-            // Cả 2 tay đã duỗi thẳng xuống
             bothArmsDown = true;
             leftArmCurled = false;
             rightArmCurled = false;
@@ -301,7 +385,6 @@ public class ExerciseCounter {
             Log.d(TAG, "Biceps Curl: Both arms down");
         }
         else if (bothArmsCurled && bothArmsDown) {
-            // Cả 2 tay đã nâng lên từ trạng thái xuống → Hoàn thành 1 rep
             bothArmsDown = false;
             leftArmCurled = true;
             rightArmCurled = true;
@@ -310,29 +393,104 @@ public class ExerciseCounter {
             Log.d(TAG, "Biceps Curl rep completed: " + repCount);
         }
 
-        // Cảnh báo nếu 2 tay không đồng bộ
         if (!armsInSync && (leftElbowAngle < BICEPS_CURL_DOWN_ANGLE || rightElbowAngle < BICEPS_CURL_DOWN_ANGLE)) {
-            Log.w(TAG, "Biceps Curl: Arms not in sync! Left: " + leftElbowAngle + "°, Right: " + rightElbowAngle + "°");
+            Log.w(TAG, "Biceps Curl: Arms not in sync!");
+        }
+    }
+
+    private void processDeadlift(List<NormalizedLandmark> landmarks) {
+        NormalizedLandmark leftShoulder = landmarks.get(LEFT_SHOULDER);
+        NormalizedLandmark rightShoulder = landmarks.get(RIGHT_SHOULDER);
+        NormalizedLandmark leftHip = landmarks.get(LEFT_HIP);
+        NormalizedLandmark rightHip = landmarks.get(RIGHT_HIP);
+        NormalizedLandmark leftKnee = landmarks.get(LEFT_KNEE);
+        NormalizedLandmark rightKnee = landmarks.get(RIGHT_KNEE);
+        NormalizedLandmark leftAnkle = landmarks.get(LEFT_ANKLE);
+        NormalizedLandmark rightAnkle = landmarks.get(RIGHT_ANKLE);
+
+        NormalizedLandmark midShoulder = midpoint(leftShoulder, rightShoulder);
+        NormalizedLandmark midHip = midpoint(leftHip, rightHip);
+        NormalizedLandmark midKnee = midpoint(leftKnee, rightKnee);
+        NormalizedLandmark midAnkle = midpoint(leftAnkle, rightAnkle);
+
+        // 1. Góc hip-knee-ankle (chân)
+        double legAngle = calculateAngle(midHip, midKnee, midAnkle);
+
+        // 2. Góc shoulder-hip-knee (thân người)
+        double hipAngle = calculateAngle(midShoulder, midHip, midKnee);
+
+        Log.d(TAG, String.format("Deadlift - Leg angle: %.1f°, Hip angle: %.1f°",
+                legAngle, hipAngle));
+
+        State previousState = currentState;
+
+        // Tư thế đứng thẳng: chân duỗi, thân thẳng
+        if (legAngle > DEADLIFT_STANDING_ANGLE && hipAngle > DEADLIFT_HIP_ANGLE_MIN) {
+            currentState = State.UP;
+        }
+        // Tư thế cúi xuống: chân hơi gập, thân cúi
+        else if (legAngle < DEADLIFT_BENT_ANGLE && hipAngle < DEADLIFT_HIP_ANGLE_BENT) {
+            currentState = State.DOWN;
+        }
+
+        // Hoàn thành 1 rep: DOWN (cúi) -> UP (đứng)
+        if (previousState == State.DOWN && currentState == State.UP) {
+            repCount++;
+            Log.d(TAG, "Deadlift rep completed: " + repCount);
         }
     }
 
     /**
-     * Lấy thời gian giữ plank hiện tại (tính bằng giây)
+     * Xử lý chung cho tất cả bài tập duration
      */
-    public int getPlankDuration() {
-        if (isPlankHolding) {
+    private void processDurationExercise(boolean isCorrectPose, String exerciseName) {
+        long currentTime = System.currentTimeMillis();
+
+        if (isCorrectPose) {
+            durationFramesCorrect++;
+
+            if (durationFramesCorrect >= DURATION_FRAMES_THRESHOLD) {
+                if (!isDurationHolding) {
+                    isDurationHolding = true;
+                    durationHoldStartTime = currentTime;
+                    currentState = State.HOLDING;
+                    Log.d(TAG, exerciseName + " STARTED - holding...");
+                } else {
+                    long elapsedTime = currentTime - durationHoldStartTime;
+                    durationHoldTime = (int) (elapsedTime / 1000);
+                }
+            }
+        } else {
+            if (durationFramesCorrect > 0) {
+                Log.d(TAG, exerciseName + " pose incorrect, resetting frame counter");
+            }
+            durationFramesCorrect = 0;
+
+            if (isDurationHolding) {
+                isDurationHolding = false;
+                currentState = State.UNKNOWN;
+                Log.d(TAG, exerciseName + " ENDED. Total duration: " + durationHoldTime + "s");
+            }
+        }
+    }
+
+    /**
+     * Lấy thời gian giữ cho bài tập duration (tính bằng giây)
+     */
+    public int getDurationTime() {
+        if (isDurationHolding) {
             long currentTime = System.currentTimeMillis();
-            long elapsedTime = currentTime - plankHoldStartTime;
+            long elapsedTime = currentTime - durationHoldStartTime;
             return (int) (elapsedTime / 1000);
         }
-        return plankHoldDuration;
+        return durationHoldTime;
     }
 
     /**
-     * Kiểm tra xem có đang giữ plank không
+     * Kiểm tra xem có đang giữ tư thế duration không
      */
-    public boolean isPlankHolding() {
-        return isPlankHolding;
+    public boolean isDurationHolding() {
+        return isDurationHolding;
     }
 
     /**
@@ -381,9 +539,12 @@ public class ExerciseCounter {
     public void reset() {
         repCount = 0;
         currentState = State.UNKNOWN;
-        isPlankHolding = false;
-        plankHoldStartTime = 0;
-        plankHoldDuration = 0;
+
+        // Reset duration tracking
+        isDurationHolding = false;
+        durationHoldStartTime = 0;
+        durationHoldTime = 0;
+        durationFramesCorrect = 0;
 
         // Reset biceps curl states
         leftArmCurled = false;

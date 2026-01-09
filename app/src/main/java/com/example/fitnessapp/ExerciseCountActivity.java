@@ -83,6 +83,12 @@ public class ExerciseCountActivity extends AppCompatActivity {
 
     private boolean isProcessing = false;
 
+    // Duration tracking
+    private long exerciseStartTime = 0;
+    private int elapsedDuration = 0; // in seconds
+    private Thread durationTrackingThread;
+    private volatile boolean isTrackingDuration = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +107,10 @@ public class ExerciseCountActivity extends AppCompatActivity {
         setupPoseLandmarker();
         requestCameraPermission();
         setupListeners();
+
+        // Bắt đầu đo thời gian
+        exerciseStartTime = System.currentTimeMillis();
+        startDurationTracking();
     }
 
     private void initViews() {
@@ -134,6 +144,27 @@ public class ExerciseCountActivity extends AppCompatActivity {
         // Set exercise name
         tvExerciseName.setText(exercise.getExerciseName());
 
+        // Initialize exercise counter TRƯỚC KHI xác định rep/duration
+        exerciseCounter = new ExerciseCounter();
+        String exerciseName = exercise.getExerciseName();
+
+        // Map exercise name to type
+        if (exerciseName.equalsIgnoreCase("pull up")) {
+            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.PULLUP);
+        } else if (exerciseName.equalsIgnoreCase("push up")) {
+            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.PUSHUP);
+        } else if (exerciseName.equalsIgnoreCase("squat")) {
+            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.SQUAT);
+        } else if (exerciseName.equalsIgnoreCase("back lever")) {
+            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.BACK_LEVER);
+        } else if (exerciseName.equalsIgnoreCase("plank")) {
+            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.PLANK);
+        } else if (exerciseName.equalsIgnoreCase("deadlift")) {
+            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.DEADLIFT);
+        } else {
+            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.SQUAT); // Default
+        }
+
         // Determine if rep-based or duration-based
         boolean hasReps = exercise.getReps() != null && exercise.getReps() > 0;
         boolean hasDuration = exercise.getDuration() != null && exercise.getDuration() > 0;
@@ -152,36 +183,85 @@ public class ExerciseCountActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize exercise counter based on exercise name
-        exerciseCounter = new ExerciseCounter();
-        String exerciseName = exercise.getExerciseName().toLowerCase();
-
-        if (exerciseName.contains("squat")) {
-            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.SQUAT);
-        } else if (exerciseName.contains("sit") || exerciseName.contains("up")) {
-            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.SITUP);
-        } else if (exerciseName.contains("push")) {
-            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.PUSHUP);
-        } else if (exerciseName.contains("plank")) {
-            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.PLANK);
-        } else if (exerciseName.contains("bicep") || exerciseName.contains("curl")) {
-            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.BICEPS_CURL);
-        } else {
-            exerciseCounter.setExerciseType(ExerciseCounter.ExerciseType.SQUAT); // Default
-        }
-
         Log.d(TAG, "Exercise setup - Type: " + (isRepBased ? "Reps" : "Duration")
                 + ", Target: " + targetCount
                 + ", Counter type: " + exerciseCounter.getExerciseType());
     }
 
+    private void startDurationTracking() {
+        isTrackingDuration = true;
+
+        durationTrackingThread = new Thread(() -> {
+            while (isTrackingDuration && !isProcessing) {
+                try {
+                    Thread.sleep(100);
+
+                    runOnUiThread(() -> {
+                        if (isRepBased) {
+                            long currentTime = System.currentTimeMillis();
+                            elapsedDuration = (int) ((currentTime - exerciseStartTime) / 1000);
+                            updateCountDisplay();
+                        } else {
+                            if (exerciseCounter.isDurationBasedExercise()) {
+                                currentCount = exerciseCounter.getDurationTime();
+                                long currentTime = System.currentTimeMillis();
+                                elapsedDuration = (int) ((currentTime - exerciseStartTime) / 1000);
+                            } else {
+                                long currentTime = System.currentTimeMillis();
+                                currentCount = (int) ((currentTime - exerciseStartTime) / 1000);
+                                elapsedDuration = currentCount;
+                            }
+
+                            updateDurationDisplay();
+
+                            if (currentCount >= targetCount) {
+                                isTrackingDuration = false;
+                                onTargetReached();
+                            }
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "Duration tracking thread interrupted");
+                    break;
+                }
+            }
+            Log.d(TAG, "Duration tracking thread stopped");
+        });
+
+        durationTrackingThread.start();
+    }
+
     private void updateCountDisplay() {
-        String displayText = String.format(Locale.getDefault(), "Rep: %d / %d", currentCount, targetCount);
-        repCounterTextView.setText(displayText);
+        if (isRepBased) {
+            // Show reps with elapsed time
+            String displayText = String.format(Locale.getDefault(),
+                    "Rep: %d / %d (%ds)",
+                    currentCount, targetCount, elapsedDuration);
+            repCounterTextView.setText(displayText);
+        } else {
+            updateDurationDisplay();
+        }
     }
 
     private void updateDurationDisplay() {
-        String displayText = String.format(Locale.getDefault(), "Thời gian: %d/%d", currentCount, targetCount);
+        String displayText;
+
+        if (exerciseCounter.isDurationBasedExercise()) {
+            if (exerciseCounter.isDurationHolding()) {
+                displayText = String.format(Locale.getDefault(),
+                        "Thời gian: %d/%d s",
+                        currentCount, targetCount);
+            } else {
+                displayText = String.format(Locale.getDefault(),
+                        "Chưa vào tư thế",
+                        currentCount, targetCount);
+            }
+        } else {
+            displayText = String.format(Locale.getDefault(),
+                    "Thời gian: %d/%d s",
+                    currentCount, targetCount);
+        }
+
         repCounterTextView.setText(displayText);
     }
 
@@ -214,23 +294,25 @@ public class ExerciseCountActivity extends AppCompatActivity {
             if (result != null && !result.landmarks().isEmpty()) {
                 List<NormalizedLandmark> landmarks = result.landmarks().get(0);
 
-                // Count reps using exercise counter
-                int reps = exerciseCounter.processLandmarks(landmarks);
+                if (isRepBased) {
+                    int reps = exerciseCounter.processLandmarks(landmarks);
 
-                if (reps > currentCount) {
-                    currentCount = reps;
-
-                    if (isRepBased) {
+                    if (reps > currentCount) {
+                        currentCount = reps;
                         updateCountDisplay();
 
-                        // Check if target reached
                         if (currentCount >= targetCount) {
                             onTargetReached();
                         }
                     }
+                } else {
+                    exerciseCounter.processLandmarks(landmarks);
+
+                    if (exerciseCounter.isDurationBasedExercise()) {
+                        currentCount = exerciseCounter.getDurationTime();
+                    }
                 }
 
-                // Update overlay with pose landmarks
                 overlayView.setPoseLandmarks(
                         landmarks,
                         input.getWidth(),
@@ -252,7 +334,7 @@ public class ExerciseCountActivity extends AppCompatActivity {
 
     private void onTargetReached() {
         if (isProcessing) {
-            return; // Prevent multiple calls
+            return;
         }
 
         Log.d(TAG, "Target reached! Logging workout...");
@@ -262,7 +344,6 @@ public class ExerciseCountActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnFinish.setOnClickListener(v -> {
-            // Manual finish - log current progress
             logWorkoutAndFinish();
         });
     }
@@ -273,6 +354,7 @@ public class ExerciseCountActivity extends AppCompatActivity {
         }
 
         isProcessing = true;
+        isTrackingDuration = false;
 
         String accessToken = sessionManager.getAccessToken();
         if (accessToken == null || accessToken.isEmpty()) {
@@ -281,7 +363,6 @@ public class ExerciseCountActivity extends AppCompatActivity {
             return;
         }
 
-        // Build request
         LogWorkoutRequest request = new LogWorkoutRequest();
         request.setExerciseId(exercise.getExerciseId());
         request.setWorkoutDayId(workoutDayId);
@@ -289,17 +370,24 @@ public class ExerciseCountActivity extends AppCompatActivity {
 
         if (isRepBased) {
             request.setReps(currentCount);
+            request.setDuration(elapsedDuration);
+            Log.d(TAG, "Logging rep-based workout - Reps: " + currentCount
+                    + ", Duration: " + elapsedDuration + "s");
         } else {
-            request.setDuration(currentCount);
+            if (exerciseCounter.isDurationBasedExercise()) {
+                int duration = exerciseCounter.getDurationTime();
+                request.setDuration(duration);
+                Log.d(TAG, "Logging duration-based workout - Duration: " + duration + "s (correct pose time)");
+            } else {
+                request.setDuration(currentCount);
+                Log.d(TAG, "Logging duration-based workout - Duration: " + currentCount + "s");
+            }
         }
 
         if (exercise.getWeight() != null && exercise.getWeight() > 0) {
             request.setWeight(exercise.getWeight());
+            Log.d(TAG, "Weight: " + exercise.getWeight() + "kg");
         }
-
-        Log.d(TAG, "Logging workout - Set: " + request.getSetNumber()
-                + ", Reps: " + request.getReps()
-                + ", Duration: " + request.getDuration());
 
         showLoading(true);
 
@@ -313,32 +401,45 @@ public class ExerciseCountActivity extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             ApiResponse<Boolean> apiResponse = response.body();
                             if (apiResponse.isStatus() && apiResponse.getData()) {
-                                // Save progress
                                 int newCompletedSets = completedSets + 1;
                                 progressManager.saveCompletedSets(workoutDayId, exercise.getId(), newCompletedSets);
 
                                 Log.d(TAG, "Workout logged successfully. New completed sets: " + newCompletedSets);
-                                Toast.makeText(ExerciseCountActivity.this, "Đã lưu set " + newCompletedSets, Toast.LENGTH_SHORT).show();
 
-                                // Return success
+                                String message;
+                                if (isRepBased) {
+                                    message = String.format("Da luu set %d (%d reps, %ds)",
+                                            newCompletedSets, currentCount, elapsedDuration);
+                                } else {
+                                    message = String.format("Da luu set %d (%ds)",
+                                            newCompletedSets, request.getDuration());
+                                }
+                                Toast.makeText(ExerciseCountActivity.this, message, Toast.LENGTH_SHORT).show();
+
                                 setResult(RESULT_OK);
                                 finish();
                             } else {
-                                Toast.makeText(ExerciseCountActivity.this, "Lỗi: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ExerciseCountActivity.this, "Loi: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
                                 isProcessing = false;
+                                isTrackingDuration = true;
+                                startDurationTracking();
                             }
                         } else {
-                            Toast.makeText(ExerciseCountActivity.this, "Lỗi server: " + response.code(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ExerciseCountActivity.this, "Loi server: " + response.code(), Toast.LENGTH_SHORT).show();
                             isProcessing = false;
+                            isTrackingDuration = true;
+                            startDurationTracking();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<Boolean>> call, Throwable t) {
                         showLoading(false);
-                        Toast.makeText(ExerciseCountActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ExerciseCountActivity.this, "Loi ket noi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "Connection error", t);
                         isProcessing = false;
+                        isTrackingDuration = true;
+                        startDurationTracking();
                     }
                 });
     }
@@ -476,11 +577,40 @@ public class ExerciseCountActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isProcessing = true;
+        isTrackingDuration = false; // Stop duration tracking thread
+
+        // Wait for thread to finish
+        if (durationTrackingThread != null) {
+            try {
+                durationTrackingThread.interrupt();
+                durationTrackingThread.join(1000); // Wait max 1 second
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Error stopping duration tracking thread", e);
+            }
+        }
+
         if (poseLandmarker != null) {
             poseLandmarker.close();
         }
         if (cameraProvider != null) {
             cameraProvider.unbindAll();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Tạm dừng tracking khi app vào background
+        isTrackingDuration = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Resume tracking khi app quay lại
+        if (!isProcessing && durationTrackingThread != null && !durationTrackingThread.isAlive()) {
+            startDurationTracking();
         }
     }
 }
