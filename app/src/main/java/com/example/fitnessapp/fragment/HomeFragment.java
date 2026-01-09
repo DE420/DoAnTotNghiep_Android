@@ -16,6 +16,8 @@ import com.example.fitnessapp.R;
 import com.example.fitnessapp.adapter.HomeMenuAdapter;
 import com.example.fitnessapp.adapter.HomeWorkoutAdapter;
 import com.example.fitnessapp.databinding.FragmentHomeBinding;
+import com.example.fitnessapp.fragment.nutrition.MenuDetailFragment;
+import com.example.fitnessapp.fragment.nutrition.NutritionMainFragment;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 import com.example.fitnessapp.model.response.PlanResponse;
 import com.example.fitnessapp.model.response.SuggestionResponse;
@@ -82,16 +84,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        // See all workouts
+        // See all workouts - navigate to Plan tab
         binding.tvSeeAllWorkouts.setOnClickListener(v -> {
-            // TODO: Navigate to workout plans screen
-            Toast.makeText(requireContext(), "Xem tất cả kế hoạch", Toast.LENGTH_SHORT).show();
+            navigateToPlanFragment();
         });
 
-        // See all menus
+        // See all menus - navigate to Nutrition screen
         binding.tvSeeAllMenus.setOnClickListener(v -> {
-            // TODO: Navigate to nutrition/menus screen
-            Toast.makeText(requireContext(), "Xem tất cả thực đơn", Toast.LENGTH_SHORT).show();
+            navigateToNutritionFragment();
         });
 
         // Retry button
@@ -182,17 +182,73 @@ public class HomeFragment extends Fragment {
     }
 
     private void onWorkoutClick(PlanResponse plan) {
-        // TODO: Navigate to workout plan detail
-        Toast.makeText(requireContext(),
-                "Chi tiết kế hoạch: " + plan.getName(),
-                Toast.LENGTH_SHORT).show();
+        // Navigate to workout plan detail
+        if (plan != null && plan.getId() != null) {
+            PlanDetailFragment fragment = PlanDetailFragment.newInstance(plan.getId());
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in,
+                            R.anim.fade_out,
+                            R.anim.fade_in,
+                            R.anim.slide_out
+                    )
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack("PlanDetail")
+                    .commit();
+        }
     }
 
     private void onMenuClick(MenuResponse menu) {
-        // TODO: Navigate to menu detail
-        Toast.makeText(requireContext(),
-                "Chi tiết thực đơn: " + menu.getName(),
-                Toast.LENGTH_SHORT).show();
+        // Navigate to menu detail
+        if (menu != null && menu.getId() != null) {
+            MenuDetailFragment fragment = MenuDetailFragment.newInstance(menu.getId());
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in,
+                            R.anim.fade_out,
+                            R.anim.fade_in,
+                            R.anim.slide_out
+                    )
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack("MenuDetail")
+                    .commit();
+        }
+    }
+
+    /**
+     * Navigate to Plan Fragment (workout plans screen)
+     */
+    private void navigateToPlanFragment() {
+        if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+            com.example.fitnessapp.MainActivity mainActivity =
+                    (com.example.fitnessapp.MainActivity) requireActivity();
+            mainActivity.findViewById(R.id.bottom_navigation);
+            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                    mainActivity.findViewById(R.id.bottom_navigation);
+            if (bottomNav != null) {
+                bottomNav.setSelectedItemId(R.id.nav_plan);
+            }
+        }
+    }
+
+    /**
+     * Navigate to Nutrition Main Fragment (menus screen)
+     */
+    private void navigateToNutritionFragment() {
+        NutritionMainFragment fragment = new NutritionMainFragment();
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.slide_out
+                )
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack("Nutrition")
+                .commit();
     }
 
     @Override
