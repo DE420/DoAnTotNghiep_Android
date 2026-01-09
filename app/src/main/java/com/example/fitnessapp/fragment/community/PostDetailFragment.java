@@ -113,6 +113,7 @@ public class PostDetailFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         selectedEditCommentImageUri = result.getData().getData();
+                        shouldRemoveEditCommentImage = false; // Reset deletion flag when new image selected
                         // Call the callback to update the image preview in the dialog
                         // Only if fragment is still added and callback is set
                         if (isAdded() && editCommentImageUpdateCallback != null) {
@@ -1000,6 +1001,7 @@ public class PostDetailFragment extends Fragment {
 
     private void updateComment(int position, long commentId, String newContent) {
         Log.d(TAG, "Updating comment: " + commentId);
+        Log.d(TAG, "Delete image flag: " + shouldRemoveEditCommentImage);
 
         // Get image file if a new image was selected
         File imageFile = null;
@@ -1017,8 +1019,8 @@ public class PostDetailFragment extends Fragment {
         // Show uploading toast
         Toast.makeText(requireContext(), R.string.community_loading, Toast.LENGTH_SHORT).show();
 
-        // Call repository to update comment with image support
-        commentRepository.updateComment(commentId, newContent, imageFile, new Callback<ApiResponse<CommentResponse>>() {
+        // Call repository to update comment with image support and deleteImage flag
+        commentRepository.updateComment(commentId, newContent, imageFile, shouldRemoveEditCommentImage, new Callback<ApiResponse<CommentResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<CommentResponse>> call,
                                    Response<ApiResponse<CommentResponse>> response) {

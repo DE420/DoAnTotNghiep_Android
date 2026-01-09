@@ -106,10 +106,13 @@ public class PostRepository {
     /**
      * Update an existing post
      */
-    public void updatePost(long postId, String content, File imageFile, File videoFile, Callback<ApiResponse<PostResponse>> callback) {
+    public void updatePost(long postId, String content, File imageFile, File videoFile,
+                          boolean deleteImage, boolean deleteVideo,
+                          Callback<ApiResponse<PostResponse>> callback) {
         Log.d(TAG, "updatePost called for postId: " + postId + ", content: " + content);
         Log.d(TAG, "Image file: " + (imageFile != null ? imageFile.getPath() : "null"));
         Log.d(TAG, "Video file: " + (videoFile != null ? videoFile.getPath() : "null"));
+        Log.d(TAG, "Delete image: " + deleteImage + ", Delete video: " + deleteVideo);
 
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"), content);
 
@@ -127,7 +130,12 @@ public class PostRepository {
             Log.d(TAG, "Video part created: " + videoFile.getName());
         }
 
-        api.updatePost(postId, contentBody, imagePart, videoPart).enqueue(callback);
+        RequestBody deleteImageBody = RequestBody.create(MediaType.parse("text/plain"),
+                String.valueOf(deleteImage));
+        RequestBody deleteVideoBody = RequestBody.create(MediaType.parse("text/plain"),
+                String.valueOf(deleteVideo));
+
+        api.updatePost(postId, contentBody, imagePart, videoPart, deleteImageBody, deleteVideoBody).enqueue(callback);
     }
 
     /**
@@ -176,11 +184,13 @@ public class PostRepository {
      * Update an existing post synchronously (for use in Workers)
      * @return true if successful, false otherwise
      */
-    public boolean updatePostSync(Context context, long postId, String content, File imageFile, File videoFile) {
+    public boolean updatePostSync(Context context, long postId, String content, File imageFile, File videoFile,
+                                 boolean deleteImage, boolean deleteVideo) {
         initApi(context);
         Log.d(TAG, "updatePostSync called for postId: " + postId + ", content: " + content);
         Log.d(TAG, "Image file: " + (imageFile != null ? imageFile.getPath() : "null"));
         Log.d(TAG, "Video file: " + (videoFile != null ? videoFile.getPath() : "null"));
+        Log.d(TAG, "Delete image: " + deleteImage + ", Delete video: " + deleteVideo);
 
         try {
             RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"), content);
@@ -199,7 +209,13 @@ public class PostRepository {
                 Log.d(TAG, "Video part created: " + videoFile.getName());
             }
 
-            Response<ApiResponse<PostResponse>> response = api.updatePost(postId, contentBody, imagePart, videoPart).execute();
+            RequestBody deleteImageBody = RequestBody.create(MediaType.parse("text/plain"),
+                    String.valueOf(deleteImage));
+            RequestBody deleteVideoBody = RequestBody.create(MediaType.parse("text/plain"),
+                    String.valueOf(deleteVideo));
+
+            Response<ApiResponse<PostResponse>> response = api.updatePost(postId, contentBody, imagePart, videoPart,
+                    deleteImageBody, deleteVideoBody).execute();
 
             if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
                 Log.d(TAG, "Post updated successfully");

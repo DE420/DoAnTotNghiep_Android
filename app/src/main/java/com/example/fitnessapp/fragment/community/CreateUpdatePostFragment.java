@@ -48,6 +48,10 @@ public class CreateUpdatePostFragment extends Fragment {
     private boolean isEditing;
     private ExoPlayer videoPreviewPlayer;
 
+    // Track if user wants to delete existing media when updating
+    private boolean shouldDeleteImage = false;
+    private boolean shouldDeleteVideo = false;
+
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private ActivityResultLauncher<Intent> videoPickerLauncher;
 
@@ -76,6 +80,7 @@ public class CreateUpdatePostFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         selectedImageUri = result.getData().getData();
+                        shouldDeleteImage = false; // Reset deletion flag when new image selected
                         displaySelectedMedia();
                     }
                 }
@@ -87,6 +92,7 @@ public class CreateUpdatePostFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         selectedVideoUri = result.getData().getData();
+                        shouldDeleteVideo = false; // Reset deletion flag when new video selected
                         displaySelectedMedia();
                     }
                 }
@@ -273,12 +279,26 @@ public class CreateUpdatePostFragment extends Fragment {
 
     private void removeSelectedImage() {
         selectedImageUri = null;
+
+        // If editing and post has existing image, mark for deletion
+        if (isEditing && existingPost != null &&
+            existingPost.getImageUrl() != null && !existingPost.getImageUrl().isEmpty()) {
+            shouldDeleteImage = true;
+        }
+
         binding.llImagePreview.setVisibility(View.GONE);
         binding.btnRemoveImage.setVisibility(View.GONE);
     }
 
     private void removeSelectedVideo() {
         selectedVideoUri = null;
+
+        // If editing and post has existing video, mark for deletion
+        if (isEditing && existingPost != null &&
+            existingPost.getVideoUrl() != null && !existingPost.getVideoUrl().isEmpty()) {
+            shouldDeleteVideo = true;
+        }
+
         binding.llVideoPreview.setVisibility(View.GONE);
         binding.btnRemoveVideo.setVisibility(View.GONE);
         releaseVideoPreview();
@@ -413,7 +433,9 @@ public class CreateUpdatePostFragment extends Fragment {
         Data.Builder dataBuilder = new Data.Builder()
                 .putBoolean(PostUploadWorker.KEY_IS_EDITING, true)
                 .putLong(PostUploadWorker.KEY_POST_ID, existingPost.getId())
-                .putString(PostUploadWorker.KEY_CONTENT, content);
+                .putString(PostUploadWorker.KEY_CONTENT, content)
+                .putBoolean(PostUploadWorker.KEY_DELETE_IMAGE, shouldDeleteImage)
+                .putBoolean(PostUploadWorker.KEY_DELETE_VIDEO, shouldDeleteVideo);
 
         // Add image URI if selected
         if (selectedImageUri != null) {
@@ -426,6 +448,8 @@ public class CreateUpdatePostFragment extends Fragment {
             dataBuilder.putString(PostUploadWorker.KEY_VIDEO_URI, selectedVideoUri.toString());
             Log.d(TAG, "Video URI added: " + selectedVideoUri);
         }
+
+        Log.d(TAG, "Delete flags - Image: " + shouldDeleteImage + ", Video: " + shouldDeleteVideo);
 
         // Create and enqueue work request
         OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(PostUploadWorker.class)

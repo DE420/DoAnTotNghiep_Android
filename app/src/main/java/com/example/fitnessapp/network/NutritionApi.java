@@ -4,6 +4,7 @@ import com.example.fitnessapp.model.request.nutrition.MenuRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.nutrition.DishResponse;
 import com.example.fitnessapp.model.response.nutrition.MealDishResponse;
+import com.example.fitnessapp.model.response.nutrition.MenuListResponse;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 
 import java.util.List;
@@ -23,12 +24,12 @@ public interface NutritionApi {
 
     // Menu endpoints
     @GET("menus/public")
-    Call<ApiResponse<List<MenuResponse>>> getPublicMenus(
+    Call<ApiResponse<List<MenuListResponse>>> getPublicMenus(
             @QueryMap Map<String, String> params
     );
 
     @GET("menus/my-menus")
-    Call<ApiResponse<List<MenuResponse>>> getMyMenus(
+    Call<ApiResponse<List<MenuListResponse>>> getMyMenus(
             @QueryMap Map<String, String> params
     );
 
@@ -54,7 +55,7 @@ public interface NutritionApi {
     );
 
     @DELETE("menus/{id}")
-    Call<ApiResponse<Void>> deleteMenu(
+    Call<ApiResponse<String>> deleteMenu(
             @Path("id") Long id
     );
 
