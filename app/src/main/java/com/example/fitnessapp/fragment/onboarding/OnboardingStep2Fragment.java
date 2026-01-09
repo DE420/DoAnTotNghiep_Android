@@ -96,9 +96,9 @@ public class OnboardingStep2Fragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!s.toString().isEmpty()) {
                     try {
-                        // User inputs in meters directly
-                        double heightM = Double.parseDouble(s.toString());
-                        viewModel.setHeight(heightM);
+                        // User inputs height in centimeters
+                        double heightCm = Double.parseDouble(s.toString());
+                        viewModel.setHeight(heightCm);
                         tilHeight.setError(null);
                     } catch (NumberFormatException e) {
                         tilHeight.setError(getString(R.string.onboarding_error_height));
@@ -121,8 +121,8 @@ public class OnboardingStep2Fragment extends Fragment {
 
         viewModel.getHeight().observe(getViewLifecycleOwner(), height -> {
             if (height != null && etHeight != null && etHeight.getText().toString().isEmpty()) {
-                // Use Locale.US to ensure period decimal separator (1.78 not 1,78)
-                etHeight.setText(String.format(Locale.US, "%.2f", height));
+                // Display height in centimeters without decimal places
+                etHeight.setText(String.format(Locale.US, "%.0f", height));
             }
         });
     }
