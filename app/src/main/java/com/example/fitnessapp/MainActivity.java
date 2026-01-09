@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.fitnessapp.databinding.ActivityMainBinding;
+import com.example.fitnessapp.fragment.PracticeFragment;
 import com.example.fitnessapp.fragment.community.CommunityFragment;
 import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.NotificationFragment;
@@ -220,8 +221,8 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new PlanFragment();
                 title = getString(R.string.nav_title_plan);
             } else if (itemId == R.id.nav_practice) {
-                startActivity(new Intent(this, ExerciseCountActivity.class));
-                return false;
+                selectedFragment = new PracticeFragment();
+                title = getString(R.string.nav_title_plan);
             } else if (itemId == R.id.nav_community) {
                 selectedFragment = new CommunityFragment();
                 title = getString(R.string.nav_title_community);
