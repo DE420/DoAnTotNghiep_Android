@@ -82,12 +82,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        // Notification button
-        binding.ibNotification.setOnClickListener(v -> {
-            // TODO: Navigate to notification screen
-            Toast.makeText(requireContext(), "Thông báo", Toast.LENGTH_SHORT).show();
-        });
-
         // See all workouts
         binding.tvSeeAllWorkouts.setOnClickListener(v -> {
             // TODO: Navigate to workout plans screen
