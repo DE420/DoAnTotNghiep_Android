@@ -87,8 +87,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginTop">4dp</item>
     </style>
-</resources>
-<resources>
+
     <style name="fab_3_rounded">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
@@ -99,5 +98,4 @@
         <item name="android:textStyle">bold</item>
         <item name="textAllCaps">false</item>
     </style>
-
 </resources>
