@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/black"
+    android:layout_marginBottom="16dp">
+
+    <TextView
+        android:id="@+id/tv_day_section_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Monday"
+        android:textColor="@color/white85"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingVertical="8dp"
+        android:background="#333333"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Container cho các item bài tập của ngày này -->
+    <LinearLayout
+        android:id="@+id/layout_exercises_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <Button
+        android:id="@+id/btn_add_exercise"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="+ Add more exercises ..."
+        android:textColor="#FFD700"
+        android:textAllCaps="false"
+        android:textSize="16sp" />
+
+</LinearLayout>

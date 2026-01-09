@@ -1,5 +1,13 @@
 package com.example.fitnessapp.network;
 
+import com.example.fitnessapp.utils.LocalDateAdapter;
+import com.example.fitnessapp.utils.LocalDateTimeAdapter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import android.content.Context;
 
 import com.example.fitnessapp.network.authenticator.TokenAuthenticator;
@@ -15,10 +23,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     // ip address emulator
-//    private static final String BASE_URL = "http://10.0.2.2:8080/api/v1/";
+//    private static final String BASE_URL = "http://10.0.2.2:8080/api/";
 
     // ip address real device
-    private static final String BASE_URL = "http://192.168.1.168:8080/api/";
+    private static final String BASE_URL = "http://192.168.0.101:8080/api/";
     private static Retrofit retrofitPlain;
     private static Retrofit retrofitAuth;
     private static AuthApi authApi;
@@ -31,14 +39,24 @@ public class RetrofitClient {
 
     private static Retrofit retrofit = null;
 
-    public static ApiService getApiService() {
+    public static Retrofit getRetrofit() {
         if (retrofit == null) {
+            // Tạo Gson với TypeAdapter cho LocalDateTime và LocalDate
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .create();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
-        return retrofit.create(ApiService.class);
+        return retrofit;
+    }
+
+    public static ApiService getApiService() {
+        return getRetrofit().create(ApiService.class);
     }
 
     private static Retrofit getPlainRetrofit() {

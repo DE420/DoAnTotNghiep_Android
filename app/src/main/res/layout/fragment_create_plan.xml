@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- Top Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_create_plan"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/back_button_create_plan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/white85" />
+
+        <TextView
+            android:id="@+id/toolbar_title_create_plan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:text="Create New Plan"
+            android:textColor="@color/white85"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_create_plan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view_create_plan"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_create_plan">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Plan Name -->
+            <LinearLayout style="@style/CreatePlanInputRow">
+                <TextView style="@style/CreatePlanLabel" android:text="Plan name:" />
+                <EditText
+                    android:id="@+id/et_plan_name"
+                    style="@style/CreatePlanInputField"
+                    android:hint="Your plan 1"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <!-- Start Date -->
+            <LinearLayout style="@style/CreatePlanInputRow">
+                <TextView style="@style/CreatePlanLabel" android:text="Start date:" />
+                <EditText
+                    android:id="@+id/et_start_date"
+                    style="@style/CreatePlanInputField"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="DD/MM/YYYY"
+                    android:singleLine="true"
+                    android:drawableEnd="@drawable/ic_calendar_20"
+                    android:drawableTint="@color/white85" />
+            </LinearLayout>
+
+            <!-- Level Spinner -->
+            <LinearLayout style="@style/CreatePlanInputRow">
+                <TextView style="@style/CreatePlanLabel" android:text="Level:" />
+                <Spinner
+                    android:id="@+id/spinner_level"
+                    style="@style/CreatePlanSpinnerField"
+                     />
+            </LinearLayout>
+
+            <!-- Goal Spinner -->
+            <LinearLayout style="@style/CreatePlanInputRow">
+                <TextView style="@style/CreatePlanLabel" android:text="Goal:" />
+                <Spinner
+                    android:id="@+id/spinner_goal"
+                    style="@style/CreatePlanSpinnerField"
+                     />
+            </LinearLayout>
+
+            <!-- Duration -->
+            <LinearLayout style="@style/CreatePlanInputRow">
+                <TextView style="@style/CreatePlanLabel" android:text="Duration:" />
+                <EditText
+                    android:id="@+id/et_duration"
+                    style="@style/CreatePlanInputField"
+                    android:hint="4"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <!-- Days Checkboxes -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:text="Days:"
+                    android:textColor="@color/white85"
+                    android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:orientation="horizontal"
+                    android:gravity="start">
+
+                    <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
+                        <CheckBox android:id="@+id/cb_mon" style="@style/DayCheckBoxVertical" android:tag="1" />
+                        <TextView style="@style/DayLabel" android:text="M" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
+                        <CheckBox android:id="@+id/cb_tue" style="@style/DayCheckBoxVertical" android:tag="2" />
+                        <TextView style="@style/DayLabel" android:text="T" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
+                        <CheckBox android:id="@+id/cb_wed" style="@style/DayCheckBoxVertical" android:tag="3" />
+                        <TextView style="@style/DayLabel" android:text="W" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
+                        <CheckBox android:id="@+id/cb_thu" style="@style/DayCheckBoxVertical" android:tag="4" />
+                        <TextView style="@style/DayLabel" android:text="T" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
+                        <CheckBox android:id="@+id/cb_fri" style="@style/DayCheckBoxVertical" android:tag="5" />
+                        <TextView style="@style/DayLabel" android:text="F" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
+                        <CheckBox android:id="@+id/cb_sat" style="@style/DayCheckBoxVertical" android:tag="6" />
+                        <TextView style="@style/DayLabel" android:text="S" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
+                        <CheckBox android:id="@+id/cb_sun" style="@style/DayCheckBoxVertical" android:tag="0" />
+                        <TextView style="@style/DayLabel" android:text="S" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Edit Exercises Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Edit exercises:"
+                android:textColor="@color/white85"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp" />
+
+            <!-- Week Selector for Exercises -->
+            <LinearLayout style="@style/CreatePlanInputRow" android:layout_marginBottom="16dp">
+                <TextView style="@style/CreatePlanLabel" android:text="Week:" />
+                <Spinner
+                    android:id="@+id/spinner_exercise_week"
+                    style="@style/CreatePlanSpinnerField"
+                     />
+            </LinearLayout>
+
+            <!-- RecyclerView for Days and Exercises -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_create_plan_day_section" />
+
+            <!-- Save Button -->
+            <Button
+                android:id="@+id/btn_save_plan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="#FFD700"
+                android:text="SAVE"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="70dp"
+                app:cornerRadius="4dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
