@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.databinding.ItemHomeMenuCardBinding;
+import com.example.fitnessapp.enums.FitnessGoal;
 import com.example.fitnessapp.model.response.nutrition.MenuResponse;
 
 import java.util.ArrayList;
@@ -78,10 +79,9 @@ public class HomeMenuAdapter extends RecyclerView.Adapter<HomeMenuAdapter.ViewHo
             );
             binding.tvMacros.setText(macros);
 
-            // Set creator name
-            String creatorName = menu.getCreatorName() != null ?
-                    menu.getCreatorName() : "Unknown";
-            binding.tvCreatorName.setText(creatorName);
+            // Set fitness goal
+            String goal = getGoalText(menu.getFitnessGoal());
+            binding.tvFitnessGoal.setText(goal);
 
             // Click listener
             binding.btnViewMenu.setOnClickListener(v -> {
@@ -89,6 +89,18 @@ public class HomeMenuAdapter extends RecyclerView.Adapter<HomeMenuAdapter.ViewHo
                     listener.onMenuClick(menu);
                 }
             });
+        }
+
+        private String getGoalText(FitnessGoal goal) {
+            if (goal == null) return "";
+            switch (goal) {
+                case LOSE_WEIGHT: return "Giảm cân";
+                case MUSCLE_GAIN: return "Tăng cơ";
+                case GAIN_WEIGHT: return "Tăng cân";
+                case SHAPE_BODY: return "Săn chắc";
+                case OTHERS: return "Khác";
+                default: return "";
+            }
         }
     }
 }
