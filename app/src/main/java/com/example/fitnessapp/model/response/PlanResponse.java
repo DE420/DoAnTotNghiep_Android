@@ -29,6 +29,8 @@ public class PlanResponse {
 
     private Integer exerciseCount;
 
+    private boolean isCompleted;
+
     public PlanResponse(Long id, String name, String description, Integer durationWeek, Integer daysPerWeek, FitnessGoal targetGoal, DifficultyLevel difficultyLevel, Boolean isDefault, String startDate, Long currentWorkoutDayId) {
         this.id = id;
         this.name = name;
@@ -95,5 +97,13 @@ public class PlanResponse {
 
     public void setExerciseCount(Integer exerciseCount) {
         this.exerciseCount = exerciseCount;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 }

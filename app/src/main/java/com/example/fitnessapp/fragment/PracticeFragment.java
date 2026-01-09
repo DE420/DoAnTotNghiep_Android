@@ -23,6 +23,7 @@ import com.example.fitnessapp.model.response.WorkoutDayDetailResponse;
 import com.example.fitnessapp.network.RetrofitClient;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.session.SessionManager;
+import com.example.fitnessapp.utils.WorkoutProgressManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,6 +44,7 @@ public class PracticeFragment extends Fragment implements PracticePlanAdapter.On
     private PracticePlanAdapter adapter;
     private ApiService apiService;
     private SessionManager sessionManager;
+    private WorkoutProgressManager progressManager;
 
     @Nullable
     @Override
@@ -59,6 +61,12 @@ public class PracticeFragment extends Fragment implements PracticePlanAdapter.On
         loadTodayPlans();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadTodayPlans();
+    }
+
     private void initViews(View view) {
         recyclerViewPlans = view.findViewById(R.id.recyclerViewPlans);
         progressBar = view.findViewById(R.id.progressBar);
@@ -66,6 +74,7 @@ public class PracticeFragment extends Fragment implements PracticePlanAdapter.On
 
         apiService = RetrofitClient.getApiService();
         sessionManager = SessionManager.getInstance(requireContext());
+        progressManager = WorkoutProgressManager.getInstance(requireContext());
     }
 
     private void setupRecyclerView() {
@@ -136,13 +145,19 @@ public class PracticeFragment extends Fragment implements PracticePlanAdapter.On
                 });
     }
 
-    // ...existing code...
-
     private void loadExerciseCountsForPlans(List<PlanResponse> plans, String authorizationHeader) {
         final int[] completedRequests = {0};
         final int totalRequests = plans.size();
 
         for (PlanResponse plan : plans) {
+            // NEW: Kiểm tra trạng thái hoàn thành từ SharedPreferences
+            if (plan.getCurrentWorkoutDayId() != null) {
+                boolean isCompleted = progressManager.isWorkoutDayCompleted(plan.getCurrentWorkoutDayId());
+                plan.setCompleted(isCompleted);
+                Log.d(TAG, "Plan: " + plan.getName() + ", WorkoutDayId: " + plan.getCurrentWorkoutDayId()
+                        + ", isCompleted: " + isCompleted);
+            }
+
             if (plan.getCurrentWorkoutDayId() != null) {
                 apiService.getExercisesByDay(authorizationHeader, plan.getCurrentWorkoutDayId())
                         .enqueue(new Callback<ApiResponse<WorkoutDayDetailResponse>>() {
@@ -153,7 +168,6 @@ public class PracticeFragment extends Fragment implements PracticePlanAdapter.On
                                     if (apiResponse.isStatus() && apiResponse.getData() != null) {
                                         WorkoutDayDetailResponse dayDetail = apiResponse.getData();
                                         if (dayDetail.getExercises() != null) {
-                                            // Đếm số lượng exercises
                                             plan.setExerciseCount(dayDetail.getExercises().size());
                                         } else {
                                             plan.setExerciseCount(0);

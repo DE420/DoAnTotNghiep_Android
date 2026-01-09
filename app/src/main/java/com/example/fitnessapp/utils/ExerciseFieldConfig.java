@@ -16,14 +16,17 @@ public class ExerciseFieldConfig {
 
     static {
         // Sets, reps
-        EXERCISE_CONFIG.put("Push Up", FieldDisplay.SETS_REPS);
+        EXERCISE_CONFIG.put("Pull up", FieldDisplay.SETS_REPS);
+        EXERCISE_CONFIG.put("Push up", FieldDisplay.SETS_REPS);
         EXERCISE_CONFIG.put("Squat", FieldDisplay.SETS_REPS);
 
         // Sets, durations
         EXERCISE_CONFIG.put("Plank", FieldDisplay.SETS_DURATION);
+        EXERCISE_CONFIG.put("Back lever", FieldDisplay.SETS_DURATION);
 
         // Sets, reps, weight
         EXERCISE_CONFIG.put("Biceps Curl", FieldDisplay.SETS_REPS_WEIGHT);
+        EXERCISE_CONFIG.put("Deadlift", FieldDisplay.SETS_REPS_WEIGHT);
     }
 
     /**

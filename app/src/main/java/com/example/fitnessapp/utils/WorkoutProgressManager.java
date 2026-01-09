@@ -2,92 +2,61 @@ package com.example.fitnessapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 public class WorkoutProgressManager {
-    private static final String TAG = "WorkoutProgressManager";
+
     private static final String PREF_NAME = "workout_progress";
     private static final String KEY_COMPLETED_SETS = "completed_sets_";
+    private static final String KEY_WORKOUT_DAY_COMPLETED = "workout_day_completed_";
 
     private static WorkoutProgressManager instance;
-    private SharedPreferences preferences;
-    private Gson gson;
+    private final SharedPreferences preferences;
 
     private WorkoutProgressManager(Context context) {
-        preferences = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        gson = new Gson();
+        preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
     public static synchronized WorkoutProgressManager getInstance(Context context) {
         if (instance == null) {
-            instance = new WorkoutProgressManager(context);
+            instance = new WorkoutProgressManager(context.getApplicationContext());
         }
         return instance;
     }
 
-    // Lưu số set đã hoàn thành cho một exercise trong workout day cụ thể
-    public void saveCompletedSets(Long workoutDayId, Long exerciseId, int completedSets) {
-        String key = getKey(workoutDayId, exerciseId);
+    // Existing methods
+    public void saveCompletedSets(Long workoutDayId, Long workoutDayExerciseId, int completedSets) {
+        String key = KEY_COMPLETED_SETS + workoutDayId + "_" + workoutDayExerciseId;
         preferences.edit().putInt(key, completedSets).apply();
-        Log.d(TAG, "Saved completed sets: " + completedSets + " for key: " + key);
     }
 
-    // Lấy số set đã hoàn thành
-    public int getCompletedSets(Long workoutDayId, Long exerciseId) {
-        String key = getKey(workoutDayId, exerciseId);
-        int completedSets = preferences.getInt(key, 0);
-        Log.d(TAG, "Retrieved completed sets: " + completedSets + " for key: " + key);
-        return completedSets;
+    public int getCompletedSets(Long workoutDayId, Long workoutDayExerciseId) {
+        String key = KEY_COMPLETED_SETS + workoutDayId + "_" + workoutDayExerciseId;
+        return preferences.getInt(key, 0);
     }
 
-    // Xóa progress của một workout day (khi hoàn thành hoặc reset)
     public void clearWorkoutDayProgress(Long workoutDayId) {
         SharedPreferences.Editor editor = preferences.edit();
-        Map<String, ?> allEntries = preferences.getAll();
-        String prefix = KEY_COMPLETED_SETS + workoutDayId + "_";
-
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            if (entry.getKey().startsWith(prefix)) {
-                editor.remove(entry.getKey());
+        for (String key : preferences.getAll().keySet()) {
+            if (key.startsWith(KEY_COMPLETED_SETS + workoutDayId + "_")) {
+                editor.remove(key);
             }
         }
         editor.apply();
-        Log.d(TAG, "Cleared progress for workout day: " + workoutDayId);
     }
 
-    // Xóa tất cả progress (khi logout hoặc reset app)
-    public void clearAllProgress() {
-        preferences.edit().clear().apply();
-        Log.d(TAG, "Cleared all workout progress");
+    // NEW: Đánh dấu workout day hoàn thành
+    public void markWorkoutDayCompleted(Long workoutDayId) {
+        String key = KEY_WORKOUT_DAY_COMPLETED + workoutDayId;
+        preferences.edit().putBoolean(key, true).apply();
     }
 
-    private String getKey(Long workoutDayId, Long exerciseId) {
-        return KEY_COMPLETED_SETS + workoutDayId + "_" + exerciseId;
+    public boolean isWorkoutDayCompleted(Long workoutDayId) {
+        String key = KEY_WORKOUT_DAY_COMPLETED + workoutDayId;
+        return preferences.getBoolean(key, false);
     }
 
-    // Helper: Check xem có progress nào cho workout day không
-    public boolean hasProgress(Long workoutDayId) {
-        Map<String, ?> allEntries = preferences.getAll();
-        String prefix = KEY_COMPLETED_SETS + workoutDayId + "_";
-
-        for (String key : allEntries.keySet()) {
-            if (key.startsWith(prefix)) {
-                int sets = preferences.getInt(key, 0);
-                if (sets > 0) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public void clearWorkoutDayCompletion(Long workoutDayId) {
+        String key = KEY_WORKOUT_DAY_COMPLETED + workoutDayId;
+        preferences.edit().remove(key).apply();
     }
 }

@@ -105,10 +105,7 @@ public class PracticeExerciseListFragment extends Fragment implements PracticeEx
 
         btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
 
-        btnFinish.setOnClickListener(v -> {
-            // TODO: Navigate to completion screen
-            Toast.makeText(requireContext(), "Kết thúc luyện tập!", Toast.LENGTH_SHORT).show();
-        });
+        btnFinish.setOnClickListener(v -> finishWorkout());
     }
 
     private void setupRecyclerView() {
@@ -192,6 +189,44 @@ public class PracticeExerciseListFragment extends Fragment implements PracticeEx
                         showEmptyState(true);
                     }
                 });
+    }
+
+    private void finishWorkout() {
+        // Kiểm tra xem tất cả bài tập đã hoàn thành chưa
+        List<PracticeExerciseItem> items = adapter.getExerciseItems();
+        boolean allCompleted = true;
+
+        for (PracticeExerciseItem item : items) {
+            if (item.hasRemainingSet()) {
+                allCompleted = false;
+                break;
+            }
+        }
+
+        if (!allCompleted) {
+            // Hiển thị dialog xác nhận
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Xác nhận")
+                    .setMessage("Bạn chưa hoàn thành tất cả bài tập. Bạn có chắc muốn kết thúc?")
+                    .setPositiveButton("Kết thúc", (dialog, which) -> {
+                        markAsCompletedAndGoBack();
+                    })
+                    .setNegativeButton("Tiếp tục", null)
+                    .show();
+        } else {
+            markAsCompletedAndGoBack();
+        }
+    }
+
+    private void markAsCompletedAndGoBack() {
+        // Đánh dấu workout day hoàn thành
+        progressManager.markWorkoutDayCompleted(workoutDayId);
+
+        Toast.makeText(requireContext(), "Hoàn thành buổi tập!", Toast.LENGTH_SHORT).show();
+
+        // Quay về PracticeFragment
+        requireActivity().getSupportFragmentManager().popBackStack(null,
+                androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     private void showLoading(boolean isLoading) {
