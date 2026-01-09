@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen Title -->
+    <string name="home_title">Trang Chủ</string>
+
+    <!-- Section Titles -->
+    <string name="home_health_metrics_title">Chỉ Số Sức Khỏe</string>
+    <string name="home_suggested_workouts_title">Gợi Ý Kế Hoạch Tập Luyện</string>
+    <string name="home_suggested_menus_title">Gợi Ý Thực Đơn Dinh Dưỡng</string>
+
+    <!-- Health Metrics Labels -->
+    <string name="home_bmi_label">Chỉ số BMI</string>
+    <string name="home_tdee_label">TDEE</string>
+    <string name="home_target_calories_label">Calories mục tiêu</string>
+    <string name="home_bmi_desc">Chỉ số khối cơ thể</string>
+    <string name="home_tdee_desc">Tổng năng lượng tiêu hao hàng ngày</string>
+    <string name="home_target_calories_desc">Lượng calories cần đạt mỗi ngày</string>
+
+    <!-- Workout Card Labels -->
+    <string name="home_workout_duration">Thời lượng</string>
+    <string name="home_workout_days_per_week">Số ngày/tuần</string>
+    <string name="home_workout_difficulty">Độ khó</string>
+    <string name="home_workout_goal">Mục tiêu</string>
+    <string name="home_workout_weeks_format">%d tuần</string>
+    <string name="home_workout_days_format">%d ngày</string>
+
+    <!-- Menu Card Labels -->
+    <string name="home_menu_calories">Calories</string>
+    <string name="home_menu_protein">Protein</string>
+    <string name="home_menu_carbs">Carbs</string>
+    <string name="home_menu_fat">Fat</string>
+    <string name="home_menu_target">Mục tiêu</string>
+    <string name="home_menu_created_by">Tạo bởi</string>
+    <string name="home_menu_macros_format">P: %.0fg | C: %.0fg | F: %.0fg</string>
+
+    <!-- Action Buttons -->
+    <string name="home_view_details">Xem chi tiết</string>
+    <string name="home_start_plan">Bắt đầu kế hoạch</string>
+    <string name="home_view_menu">Xem thực đơn</string>
+    <string name="home_see_all_workouts">Xem tất cả</string>
+    <string name="home_see_all_menus">Xem tất cả</string>
+
+    <!-- Empty States -->
+    <string name="home_no_workouts">Chưa có gợi ý kế hoạch tập luyện</string>
+    <string name="home_no_menus">Chưa có gợi ý thực đơn</string>
+    <string name="home_no_data">Chưa có dữ liệu để hiển thị</string>
+    <string name="home_no_data_desc">Vui lòng cập nhật thông tin cá nhân để nhận gợi ý phù hợp</string>
+
+    <!-- Loading & Error States -->
+    <string name="home_loading">Đang tải dữ liệu...</string>
+    <string name="home_error_load">Không thể tải dữ liệu</string>
+    <string name="home_error_network">Lỗi kết nối mạng</string>
+    <string name="home_retry">Thử lại</string>
+    <string name="home_pull_to_refresh">Kéo xuống để làm mới</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="home_back_desc">Quay lại</string>
+    <string name="home_notification_desc">Thông báo</string>
+    <string name="home_bmi_icon_desc">Biểu tượng BMI</string>
+    <string name="home_tdee_icon_desc">Biểu tượng TDEE</string>
+    <string name="home_calories_icon_desc">Biểu tượng Calories</string>
+    <string name="home_workout_icon_desc">Biểu tượng kế hoạch tập luyện</string>
+    <string name="home_menu_icon_desc">Biểu tượng thực đơn</string>
+
+    <!-- Units -->
+    <string name="home_unit_kcal">kcal</string>
+    <string name="home_unit_kcal_per_day">kcal/ngày</string>
+    <string name="home_unit_gram">g</string>
+
+    <!-- Success Messages -->
+    <string name="home_refresh_success">Đã cập nhật dữ liệu</string>
+</resources>
