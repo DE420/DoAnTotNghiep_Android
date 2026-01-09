@@ -41,7 +41,7 @@
     <!-- Input Hints -->
     <string name="profile_name_hint">Nhập họ và tên</string>
     <string name="profile_weight_hint">Nhập cân nặng (kg)</string>
-    <string name="profile_height_hint">Nhập chiều cao (m)</string>
+    <string name="profile_height_hint">Nhập chiều cao (cm)</string>
     <string name="profile_birthday_hint">Chọn ngày sinh</string>
 
     <!-- Units -->

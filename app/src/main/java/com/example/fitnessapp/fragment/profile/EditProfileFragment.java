@@ -390,11 +390,10 @@ public class EditProfileFragment extends Fragment {
             binding.etWeight.setText(String.format(Locale.US, "%.2f", currentProfile.getWeight()));
         }
 
-        // Height (in meters)
+        // Height (in centimeters)
         if (currentProfile.getHeight() != null) {
-            // Use Locale.US to ensure period decimal separator (1.78 not 1,78)
-            // Backend stores in meters, display as-is
-            binding.etHeight.setText(String.format(Locale.US, "%.2f", currentProfile.getHeight()));
+            // Display height in centimeters
+            binding.etHeight.setText(String.format(Locale.US, "%.0f", currentProfile.getHeight()));
         }
 
         // Birthday
@@ -544,12 +543,12 @@ public class EditProfileFragment extends Fragment {
             }
         }
 
-        // Validate height (in meters)
+        // Validate height (in centimeters)
         String heightStr = binding.etHeight.getText().toString().trim();
         if (!heightStr.isEmpty()) {
             try {
-                double heightM = Double.parseDouble(heightStr);
-                if (heightM <= 0 || heightM > 3.0) {
+                double heightCm = Double.parseDouble(heightStr);
+                if (heightCm <= 0 || heightCm > 300) {
                     binding.tilHeight.setError(getString(R.string.profile_height_invalid));
                     isValid = false;
                 }
@@ -618,7 +617,7 @@ public class EditProfileFragment extends Fragment {
                 dataBuilder.putString(ProfileUpdateWorker.KEY_WEIGHT, weightStr);
             }
 
-            // Height (in meters, send as-is to backend)
+            // Height (in centimeters, send as-is to backend)
             String heightStr = binding.etHeight.getText().toString().trim();
             if (!heightStr.isEmpty()) {
                 dataBuilder.putString(ProfileUpdateWorker.KEY_HEIGHT, heightStr);
