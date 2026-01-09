@@ -102,6 +102,7 @@
             android:textStyle="bold"
             tools:text="Giảm cân"/>
 
+
         <!-- View Menu Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_view_menu"
