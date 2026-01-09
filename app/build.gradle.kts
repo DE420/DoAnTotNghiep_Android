@@ -80,4 +80,6 @@ dependencies {
 
 //    implementation("com.toptoche.searchablespinner:searchablespinnerlibrary:master")
     implementation("com.github.miteshpithadiya:SearchableSpinner:master")
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

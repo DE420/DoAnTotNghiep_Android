@@ -43,7 +43,9 @@ public class OtherFragment extends Fragment {
             loadFragmentOther(new ExercisesFragment());
         });
 
-        binding.buttonStatistics.setOnClickListener(v -> Toast.makeText(getContext(), "Statistics", Toast.LENGTH_SHORT).show());
+        binding.buttonStatistics.setOnClickListener(v -> {
+            loadFragmentOther(new StatisticsFragment());
+        });
 
         binding.buttonLeaderboard.setOnClickListener(v -> Toast.makeText(getContext(), "Leaderboard", Toast.LENGTH_SHORT).show());
     }
