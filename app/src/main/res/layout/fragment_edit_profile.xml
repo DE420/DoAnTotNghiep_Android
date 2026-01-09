@@ -179,7 +179,7 @@
                         app:boxBackgroundColor="@color/black_370"
                         app:hintTextColor="@color/white_200"
                         app:boxStrokeColor="@color/yellow"
-                        app:suffixText="@string/profile_unit_m"
+                        app:suffixText="@string/profile_unit_cm"
                         app:suffixTextColor="@color/white"
                         android:layout_marginBottom="16dp">
 
