@@ -7,6 +7,7 @@ import com.example.fitnessapp.model.request.ChangePasswordRequest;
 import com.example.fitnessapp.model.request.CreatePlanRequest;
 import com.example.fitnessapp.model.request.ForgotPasswordRequest;
 import com.example.fitnessapp.model.request.GoogleLoginRequest;
+import com.example.fitnessapp.model.request.LogWorkoutRequest;
 import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.request.LogoutRequest;
 import com.example.fitnessapp.model.request.RefreshTokenRequest;
@@ -21,6 +22,10 @@ import com.example.fitnessapp.model.response.RegisterResponse;
 import com.example.fitnessapp.model.response.SelectOptions;
 
 import java.util.List;
+
+import com.example.fitnessapp.model.response.WorkoutDayDetailResponse;
+import com.example.fitnessapp.model.response.WorkoutHistoryResponse;
+import com.example.fitnessapp.model.response.WorkoutLogResponse;
 import com.example.fitnessapp.model.response.user.ProfileResponse;
 
 import okhttp3.MultipartBody;
@@ -172,5 +177,49 @@ public interface ApiService {
     Call<ApiResponse<Boolean>> deletePlan(
             @Header("Authorization") String authorizationHeader,
             @Path("id") Long planId
+    );
+
+    @GET("workout-plan/calendar")
+    Call<ApiResponse<List<PlanResponse>>> getPlansByDate(
+            @Header("Authorization") String authorizationHeader,
+            @Query("date") String date // dd/MM/yyyy
+    );
+
+    @GET("workout-plan/day/{dayId}")
+    Call<ApiResponse<WorkoutDayDetailResponse>> getExercisesByDay(
+            @Header("Authorization") String authorizationHeader,
+            @Path("dayId") Long dayId
+    );
+
+    @POST("workout-logs")
+    Call<ApiResponse<Boolean>> logWorkoutSet(
+            @Header("Authorization") String authorizationHeader,
+            @Body LogWorkoutRequest request
+    );
+
+    @GET("workout-logs")
+    Call<ApiResponse<List<WorkoutLogResponse>>> getLogsByDate(
+            @Header("Authorization") String authorizationHeader,
+            @Query("date") String date // dd/MM/yyyy
+    );
+
+    @GET("workout-logs/history")
+    Call<ApiResponse<List<WorkoutHistoryResponse>>> getWorkoutHistory(
+            @Header("Authorization") String authorizationHeader,
+            @Query("fromDate") String fromDate, // dd/MM/yyyy
+            @Query("toDate") String toDate,     // dd/MM/yyyy
+            @Query("exerciseId") Long exerciseId
+    );
+
+    @GET("workout-logs/plan-day/{dayId}/exercise/{exerciseId}")
+    Call<ApiResponse<List<WorkoutLogResponse>>> getLogsByWorkoutDayAndExercise(
+            @Header("Authorization") String authorizationHeader,
+            @Path("dayId") Long dayId,
+            @Path("exerciseId") Long exerciseId
+    );
+
+    @GET("workout-logs/statistics")
+    Call<ApiResponse<Object>> getWorkoutLogStatistics(
+            @Header("Authorization") String authorizationHeader
     );
 }

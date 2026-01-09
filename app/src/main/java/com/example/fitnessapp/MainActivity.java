@@ -17,7 +17,8 @@ import com.example.fitnessapp.fragment.CommunityFragment;
 import com.example.fitnessapp.fragment.HomeFragment;
 import com.example.fitnessapp.fragment.OtherFragment;
 import com.example.fitnessapp.fragment.PlanFragment;
-import com.example.fitnessapp.fragment.ProfileFragment; // <-- Import ProfileFragment
+import com.example.fitnessapp.fragment.PracticeFragment;
+import com.example.fitnessapp.fragment.ProfileFragment;
 import com.example.fitnessapp.model.request.LoginRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.LoginResponse;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         binding.imageAvatar.setOnClickListener(v -> {
-            loadFragment(new ProfileFragment(), "Profile", true); // addToBackStack là true
+            loadFragment(new ProfileFragment(), "Profile", true);
         });
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
@@ -66,8 +67,9 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new PlanFragment();
                 title = "Plan";
             } else if (itemId == R.id.nav_practice) {
-                startActivity(new Intent(this, ExerciseCountActivity.class));
-                return false;
+                // Thay đổi từ startActivity sang loadFragment
+                selectedFragment = new PracticeFragment();
+                title = "Practice";
             } else if (itemId == R.id.nav_community) {
                 selectedFragment = new CommunityFragment();
                 title = "Community";
@@ -125,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setAppBarVisible(boolean visible) {
-
         if (appBarLayout != null) {
             appBarLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
@@ -142,12 +143,5 @@ public class MainActivity extends AppCompatActivity {
             binding.bottomNavigation.getMenu().findItem(preSelectedItemIditem).setChecked(true);
         }
         super.onBackPressed();
-//        if (fm.getBackStackEntryCount() > 0) {
-//            fm.popBackStack();
-//        } else {
-//            super.onBackPressed();
-//        }
     }
-
-
 }

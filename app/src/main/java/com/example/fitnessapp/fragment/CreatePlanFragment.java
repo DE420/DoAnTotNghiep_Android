@@ -152,7 +152,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
         }
 
         // Initialize all days to false
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 0; i <= 6; i++) {
             selectedDaysOfWeek.put(i, false);
         }
     }
@@ -311,7 +311,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
         // Day Checkbox listeners
         for (CheckBox cb : dayOfWeekCheckBoxes) {
             cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                int day = Integer.parseInt(buttonView.getTag().toString()); // Get day (1-7) from tag
+                int day = Integer.parseInt(buttonView.getTag().toString()); // Get day (0 - 6) from tag
                 selectedDaysOfWeek.put(day, isChecked);
                 generateCurrentWeekScheduleItems(currentSelectedWeek); // Refresh UI to show/hide days
             });
@@ -581,7 +581,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                 Log.d(TAG, "Restored data for week " + weekNum);
             } else {
                 // Initialize empty lists for selected days
-                for (int day = 1; day <= 7; day++) {
+                for (int day = 0; day <= 6; day++) {
                     if (selectedDaysOfWeek.get(day) != null && selectedDaysOfWeek.get(day)) {
                         weekData.put(day, new ArrayList<>());
                     }
@@ -628,7 +628,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
         }
 
         // Iterate through all 7 days of the week in order (1=Mon, 7=Sun)
-        for (int day = 1; day <= 7; day++) {
+        for (int day = 0; day <= 6; day++) {
             Boolean isDaySelected = selectedDaysOfWeek.get(day);
             Log.d(TAG, "Day " + day + " (" + getDayName(day) + ") selected: " + isDaySelected);
 
@@ -836,7 +836,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
             case 4: return "Thursday";
             case 5: return "Friday";
             case 6: return "Saturday";
-            case 7: return "Sunday";
+            case 0: return "Sunday";
             default: return "Invalid Day";
         }
     }
@@ -883,7 +883,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
             Log.d(TAG, "Processing week " + weekNum + " for save. Week data exists: " + (weekData != null));
 
             if (weekData != null) {
-                for (int dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+                for (int dayOfWeek = 0; dayOfWeek <= 6; dayOfWeek++) {
                     if (selectedDaysOfWeek.get(dayOfWeek) != null && selectedDaysOfWeek.get(dayOfWeek)) {
                         List<PlanExerciseRequest> exercisesForDay = weekData.get(dayOfWeek);
 
