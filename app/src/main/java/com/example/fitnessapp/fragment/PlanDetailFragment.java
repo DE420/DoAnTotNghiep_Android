@@ -317,7 +317,7 @@ public class PlanDetailFragment extends Fragment {
             case 4: return "Thursday";
             case 5: return "Friday";
             case 6: return "Saturday";
-            case 7: return "Sunday";
+            case 0: return "Sunday";
             default: return "Day " + dayOfWeek;
         }
     }

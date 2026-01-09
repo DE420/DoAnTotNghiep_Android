@@ -1,9 +1,12 @@
 package com.example.fitnessapp.model.response;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.List;
 
-public class ExerciseResponse {
+public class ExerciseResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
     @SerializedName("id")
     private Long id;
     @SerializedName("name")
