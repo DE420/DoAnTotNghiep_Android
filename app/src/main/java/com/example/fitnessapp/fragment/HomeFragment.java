@@ -184,6 +184,18 @@ public class HomeFragment extends Fragment {
     private void onWorkoutClick(PlanResponse plan) {
         // Navigate to workout plan detail
         if (plan != null && plan.getId() != null) {
+            // First, switch to the "Plan" tab in bottom navigation
+            if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+                com.example.fitnessapp.MainActivity mainActivity =
+                        (com.example.fitnessapp.MainActivity) requireActivity();
+                com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                        mainActivity.findViewById(R.id.bottom_navigation);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_plan);
+                }
+            }
+
+            // Then navigate to PlanDetailFragment
             PlanDetailFragment fragment = PlanDetailFragment.newInstance(plan.getId());
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
@@ -202,6 +214,18 @@ public class HomeFragment extends Fragment {
     private void onMenuClick(MenuResponse menu) {
         // Navigate to menu detail
         if (menu != null && menu.getId() != null) {
+            // First, switch to the "Other" tab in bottom navigation
+            if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+                com.example.fitnessapp.MainActivity mainActivity =
+                        (com.example.fitnessapp.MainActivity) requireActivity();
+                com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                        mainActivity.findViewById(R.id.bottom_navigation);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_other);
+                }
+            }
+
+            // Then navigate to MenuDetailFragment
             MenuDetailFragment fragment = MenuDetailFragment.newInstance(menu.getId());
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
