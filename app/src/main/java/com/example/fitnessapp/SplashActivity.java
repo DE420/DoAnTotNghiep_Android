@@ -9,6 +9,8 @@ import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fitnessapp.activity.OnboardingActivity;
+import com.example.fitnessapp.repository.OnboardingRepository;
 import com.example.fitnessapp.session.SessionManager;
 
 // Using SuppressLint for a known visual lint issue with splash screens in recent IDEs.
@@ -27,19 +29,39 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void decideNextActivity() {
-        // Lấy instance của SessionManager
         SessionManager sessionManager = SessionManager.getInstance(this);
 
-        Intent intent;
-        if (sessionManager.isLoggedIn()) { // <-- Logic kiểm tra đơn giản hơn nhiều
-            // User has a token, so they are logged in. Go to MainActivity.
-            intent = new Intent(SplashActivity.this, MainActivity.class);
-        } else {
-            // No token found. User is not logged in. Go to LoginActivity.
-            intent = new Intent(SplashActivity.this, LoginActivity.class);
+        if (!sessionManager.isLoggedIn()) {
+            // Not logged in -> LoginActivity
+            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
         }
 
-        startActivity(intent);
-        finish();
+        // Logged in -> Check onboarding status
+        OnboardingRepository.getInstance().checkOnboardingStatus(this, new OnboardingRepository.OnboardingStatusCallback() {
+            @Override
+            public void onSuccess(com.example.fitnessapp.model.response.BasicInfoResponse response) {
+                Intent intent;
+                if (!response.isOnboardingCompleted()) {
+                    // Onboarding not completed -> OnboardingActivity
+                    intent = new Intent(SplashActivity.this, OnboardingActivity.class);
+                } else {
+                    // Onboarding completed -> MainActivity
+                    intent = new Intent(SplashActivity.this, MainActivity.class);
+                }
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // On error, assume onboarding not completed or go to MainActivity
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen Titles -->
+    <string name="profile_title">Hồ Sơ</string>
+    <string name="profile_edit_title">Chỉnh Sửa Hồ Sơ</string>
+
+    <!-- Profile Information Labels -->
+    <string name="profile_full_name">Họ và tên</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_birthday">Ngày sinh</string>
+    <string name="profile_weight">Cân nặng</string>
+    <string name="profile_height">Chiều cao</string>
+    <string name="profile_goal">Mục tiêu</string>
+    <string name="profile_activity_level">Mức độ hoạt động</string>
+
+    <!-- Action Buttons -->
+    <string name="profile_edit_button">Chỉnh sửa</string>
+    <string name="profile_change_password">Đổi mật khẩu</string>
+    <string name="profile_logout">Đăng xuất</string>
+    <string name="profile_save">Lưu</string>
+    <string name="profile_cancel">Hủy</string>
+    <string name="profile_change_avatar">Thay đổi ảnh đại diện</string>
+    <string name="profile_select_photo">Chọn ảnh</string>
+    <string name="profile_take_photo">Chụp ảnh</string>
+    <string name="profile_retry">Thử lại</string>
+
+    <!-- Statistics Labels -->
+    <string name="profile_my_stats">Thống Kê Của Tôi</string>
+    <string name="profile_monthly_stats">Thống Kê Tháng Này</string>
+    <string name="profile_total_workouts">Tổng số buổi tập</string>
+    <string name="profile_total_calories">Tổng calories</string>
+    <string name="profile_total_hours">Tổng giờ tập</string>
+    <string name="profile_total_duration">Tổng thời gian:</string>
+    <string name="profile_active_days">Số ngày tập:</string>
+    <string name="profile_avg_per_workout">Trung bình mỗi buổi:</string>
+    <string name="profile_current_streak">Chuỗi ngày tập:</string>
+    <string name="profile_workouts">Buổi tập</string>
+    <string name="profile_calories">Calories</string>
+    <string name="profile_hours">Giờ</string>
+
+    <!-- Input Hints -->
+    <string name="profile_name_hint">Nhập họ và tên</string>
+    <string name="profile_weight_hint">Nhập cân nặng (kg)</string>
+    <string name="profile_height_hint">Nhập chiều cao (cm)</string>
+    <string name="profile_birthday_hint">Chọn ngày sinh</string>
+
+    <!-- Units -->
+    <string name="profile_unit_kg">kg</string>
+    <string name="profile_unit_m">m</string>
+    <string name="profile_unit_cm">cm</string>
+    <string name="profile_unit_cal">cal</string>
+    <string name="profile_unit_hours">giờ</string>
+    <string name="profile_unit_min">phút</string>
+    <string name="profile_unit_days">ngày</string>
+
+    <!-- Loading States -->
+    <string name="profile_loading">Đang tải hồ sơ...</string>
+    <string name="profile_updating">Đang cập nhật...</string>
+
+    <!-- Error Messages -->
+    <string name="profile_error_load">Không thể tải hồ sơ. Vui lòng thử lại.</string>
+    <string name="profile_error_update">Không thể cập nhật hồ sơ. Vui lòng thử lại.</string>
+    <string name="profile_error_network">Lỗi kết nối mạng. Kiểm tra internet của bạn.</string>
+    <string name="profile_error_unauthorized">Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.</string>
+
+    <!-- Success Messages -->
+    <string name="profile_update_success">Cập nhật hồ sơ thành công!</string>
+    <string name="profile_avatar_updated">Ảnh đại diện đã được cập nhật</string>
+
+    <!-- Validation Messages -->
+    <string name="profile_name_required">Vui lòng nhập họ và tên</string>
+    <string name="profile_weight_invalid">Cân nặng không hợp lệ</string>
+    <string name="profile_height_invalid">Chiều cao không hợp lệ</string>
+    <string name="profile_date_invalid">Ngày sinh không hợp lệ</string>
+
+    <!-- Logout Confirmation -->
+    <string name="profile_logout_confirm_title">Xác nhận đăng xuất</string>
+    <string name="profile_logout_confirm_message">Bạn có chắc chắn muốn đăng xuất?</string>
+    <string name="profile_logout_yes">Đăng xuất</string>
+    <string name="profile_logout_no">Hủy</string>
+
+    <!-- Logout Dialog (Material Design) -->
+    <string name="profile_logout_dialog_title">Xác nhận đăng xuất</string>
+    <string name="profile_logout_dialog_message">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</string>
+    <string name="profile_logout_dialog_confirm">Đăng xuất</string>
+    <string name="profile_logout_dialog_cancel">Hủy</string>
+
+    <!-- Empty States -->
+    <string name="profile_no_data">Chưa có dữ liệu</string>
+    <string name="profile_no_stats">Chưa có thống kê. Bắt đầu tập luyện ngay!</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="profile_avatar_desc">Ảnh đại diện</string>
+    <string name="profile_edit_desc">Chỉnh sửa hồ sơ</string>
+    <string name="profile_back_desc">Quay lại</string>
+    <string name="profile_logout_icon_desc">Biểu tượng đăng xuất</string>
+
+    <!-- Change Password Strings -->
+    <string name="profile_change_password_title">Đổi Mật Khẩu</string>
+    <string name="profile_current_password">Mật khẩu hiện tại</string>
+    <string name="profile_new_password">Mật khẩu mới</string>
+    <string name="profile_confirm_new_password">Xác nhận mật khẩu mới</string>
+    <string name="profile_current_password_hint">Nhập mật khẩu hiện tại</string>
+    <string name="profile_new_password_hint">Nhập mật khẩu mới</string>
+    <string name="profile_confirm_password_hint">Nhập lại mật khẩu mới</string>
+    <string name="profile_password_requirements">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ cái, số và ký tự đặc biệt</string>
+    <string name="profile_password_mismatch">Mật khẩu xác nhận không khớp</string>
+    <string name="profile_password_too_short">Mật khẩu quá ngắn (tối thiểu 8 ký tự)</string>
+    <string name="profile_password_weak">Mật khẩu yếu. Vui lòng thêm chữ số và ký tự đặc biệt</string>
+    <string name="profile_current_password_incorrect">Mật khẩu hiện tại không đúng</string>
+    <string name="profile_change_password_success">Đổi mật khẩu thành công!</string>
+    <string name="profile_change_password_error">Không thể đổi mật khẩu. Vui lòng thử lại.</string>
+</resources>

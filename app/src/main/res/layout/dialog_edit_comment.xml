@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/black_370">
+
+    <!-- Dialog Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/community_edit_comment_title"
+        android:textSize="22sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Comment Content Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_comment_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/community_comment_content_hint"
+        app:boxBackgroundColor="@color/background_app_color"
+        app:hintTextColor="@color/gray_450"
+        app:boxStrokeColor="@color/yellow">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_comment_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="6"
+            android:minHeight="100dp"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Image Options Section -->
+    <TextView
+        android:id="@+id/tv_image_section_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/community_add_image"
+        android:textSize="14sp"
+        android:textColor="@color/yellow"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <!-- Current Image Preview -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_current_image"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="@color/background_app_color"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/iv_current_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@color/gray_450"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Image Action Buttons -->
+    <LinearLayout
+        android:id="@+id/ll_image_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"
+        tools:visibility="visible">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_change_image"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/community_change_image"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/yellow"
+            app:icon="@drawable/ic_image_24"
+            app:iconTint="@color/black"
+            app:iconSize="18dp"
+            android:layout_marginEnd="6dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_remove_image"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="@string/community_remove_image"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/red_400"
+            app:icon="@drawable/ic_delete_24"
+            app:iconTint="@color/white"
+            app:iconSize="18dp"
+            android:layout_marginStart="6dp"/>
+
+    </LinearLayout>
+
+    <!-- Add Image Button (when no image) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_image"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/community_add_image"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textAllCaps="false"
+        app:backgroundTint="@color/yellow"
+        app:icon="@drawable/ic_image_24"
+        app:iconTint="@color/black"
+        android:layout_marginBottom="16dp"
+        android:visibility="visible"/>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="@string/community_cancel"
+            android:textColor="@color/gray_450"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            app:backgroundTint="@android:color/transparent"
+            app:strokeColor="@color/gray_450"
+            app:strokeWidth="1dp"
+            app:cornerRadius="8dp"
+            android:layout_marginEnd="12dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="@string/community_save"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            app:backgroundTint="@color/yellow"
+            app:cornerRadius="8dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
