@@ -23,6 +23,7 @@ import com.example.fitnessapp.model.response.SelectOptions;
 
 import java.util.List;
 
+import com.example.fitnessapp.model.response.StatisticsResponse;
 import com.example.fitnessapp.model.response.WorkoutDayDetailResponse;
 import com.example.fitnessapp.model.response.WorkoutHistoryResponse;
 import com.example.fitnessapp.model.response.WorkoutLogResponse;
@@ -231,7 +232,7 @@ public interface ApiService {
     );
 
     @GET("workout-logs/statistics")
-    Call<ApiResponse<Object>> getWorkoutLogStatistics(
+    Call<ApiResponse<StatisticsResponse>> getWorkoutLogStatistics(
             @Header("Authorization") String authorizationHeader
     );
 }
