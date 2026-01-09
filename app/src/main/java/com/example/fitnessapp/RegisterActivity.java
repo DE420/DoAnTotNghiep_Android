@@ -1,7 +1,10 @@
 package com.example.fitnessapp;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -21,12 +25,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.fitnessapp.model.constants.Constants;
 import com.example.fitnessapp.model.request.RegisterRequest;
 import com.example.fitnessapp.model.response.ApiResponse;
 import com.example.fitnessapp.model.response.RegisterResponse;
 import com.example.fitnessapp.network.ApiService;
 import com.example.fitnessapp.network.RetrofitClient;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.util.Objects;
@@ -40,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static final String TAG = RegisterActivity.class.getSimpleName();
 
     private ImageView imageViewShowPassword, imageViewShowConfirmPassword;
-    private RelativeLayout relativeLayoutLoading;
+    private View relativeLayoutLoading, containerLayout;
     private TextView textViewLoginNow;
     private EditText editTextEmail;
     private EditText editTextUsername;
@@ -56,27 +62,40 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private ApiService apiService;
 
+    private ImageView imgBackground;
+
+    private OnBackPressedCallback backPressedCallback;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
+        backPressedCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                // Do nothing → back button disabled
+                Toast.makeText(getApplicationContext(), getString(R.string.register_please_wait), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        setContentView(R.layout.activity_register);
         initViews();
         apiService = RetrofitClient.getApiService();
     }
 
     private void initViews() {
+        containerLayout = findViewById(R.id.main);
         textViewEmailWarning = findViewById(R.id.tv_email_warning);
         textViewUsernameWarning = findViewById(R.id.tv_full_name_warning);
         textViewPasswordWarning = findViewById(R.id.tv_password_warning);
         textViewConfirmPasswordWarning = findViewById(R.id.tv_confirm_password_warning);
         textViewErrorRegister = findViewById(R.id.tv_error_register);
+        imgBackground = findViewById(R.id.img_background);
+
+        Glide.with(this)
+                .load(R.drawable.login_register_background_compress)
+                .into(imgBackground);
 
         imageViewShowPassword = findViewById(R.id.img_show_password);
         imageViewShowConfirmPassword = findViewById(R.id.img_show_confirm_password);
@@ -110,6 +129,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         imageViewShowPassword.setOnClickListener(this);
         imageViewShowConfirmPassword.setOnClickListener(this);
         btnRegister.setOnClickListener(this);
+        relativeLayoutLoading.setOnClickListener(this);
     }
 
     @Override
@@ -127,15 +147,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 && checkValidPassword() && checkValidConfirmPassword()) {
                 registerAccount();
             } else {
-                Toast.makeText(this, "Input invalid", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.register_error_invalid_input), Toast.LENGTH_SHORT).show();
             }
         } else if (view.getId() == R.id.tv_login_now) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+        } else if(view.getId() == R.id.rl_loading) {
+
         }
     }
 
     private void registerAccount() {
+        backPressedCallback.setEnabled(true);
         enableLoading();
         clearWarning(textViewErrorRegister);
 
@@ -149,12 +172,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         apiService.register(registerRequest).enqueue(new Callback<ApiResponse<RegisterResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<RegisterResponse>> call, Response<ApiResponse<RegisterResponse>> response) {
+                backPressedCallback.setEnabled(false);
+                disableLoading();
                 if (response.isSuccessful()) {
                     ApiResponse<RegisterResponse> apiResponse = response.body();
                     RegisterResponse registeredUser = apiResponse.getData();
+                    Snackbar.make(containerLayout, getString(R.string.register_success), Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(
+                                    getResources()
+                                            .getColor(R.color.green_500, null)
+                            ).show();
+                    new Handler().postDelayed(() -> {
+                        RegisterActivity.this.getOnBackPressedDispatcher().onBackPressed();
+                    }, 2000);
                     Log.d(TAG, "User: " + registeredUser.getUsername());
                 } else {
-                    disableLoading();
+
+
                     try {
                         String json = response.errorBody().string();
 
@@ -162,10 +196,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         ApiResponse<String> errorResponse = gson.fromJson(json, ApiResponse.class);
 
                         String errorMessage = errorResponse.getData();
+                        Snackbar.make(containerLayout, errorMessage, Snackbar.LENGTH_SHORT)
+                                .setBackgroundTint(
+                                        getResources()
+                                                .getColor(R.color.red_400, null)
+                                ).show();
                         setWarning(textViewErrorRegister, errorMessage);
                         Log.e(TAG, "Lỗi API: " + errorMessage);
 
                     } catch (Exception e) {
+                        Snackbar.make(containerLayout, getString(R.string.register_fail), Snackbar.LENGTH_SHORT)
+                                .setBackgroundTint(
+                                        getResources()
+                                                .getColor(R.color.red_400, null)
+                                ).show();
                         e.printStackTrace();
                         Log.e(TAG, "Không đọc được lỗi từ server");
                     }
@@ -174,8 +218,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onFailure(Call<ApiResponse<RegisterResponse>> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Register fail", Toast.LENGTH_SHORT).show();
+                backPressedCallback.setEnabled(false);
                 disableLoading();
+                Snackbar.make(containerLayout, getString(R.string.register_fail), Snackbar.LENGTH_SHORT)
+                                .setBackgroundTint(
+                                        getResources()
+                                        .getColor(R.color.red_400, null)
+                                ).show();
+
                 Log.e(TAG, Objects.requireNonNull(t.getMessage()));
             }
         });
@@ -250,14 +300,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String email = editTextEmail.getText().toString();
         String warningStr = "";
         if (email.isBlank()) {
-            warningStr += "Email can't blank.";
+            warningStr += getString(R.string.register_error_email_blank);
         }
 
         if (!Constants.patternMatches(email, Constants.EMAIL_PATTERN)) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Email is invalid.";
+            warningStr += getString(R.string.register_error_email_invalid);
         }
         if (warningStr.isEmpty()) {
             clearWarning(textViewEmailWarning);
@@ -272,14 +322,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String username = editTextUsername.getText().toString();
         String warningStr = "";
         if (username.isBlank()) {
-            warningStr += "Full name can't blank.";
+            warningStr += getString(R.string.register_error_username_blank);
         }
 
         if (username.length() < 3) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Use at least 3 characters.";
+            warningStr += getString(R.string.register_error_username_too_short);
         }
 
         if (warningStr.isEmpty()) {
@@ -295,14 +345,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String password = editTextPassword.getText().toString();
         String warningStr = "";
         if (password.isBlank()) {
-            warningStr += "Password can't blank.";
+            warningStr += getString(R.string.register_error_password_blank);
         }
 
         if (!Constants.patternMatches(password, Constants.PASSWORD_PATTERN)) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Password must be at least 8 characters, including letters, numbers and special characters.";
+            warningStr += getString(R.string.register_error_password_weak);
         }
 
         if (warningStr.isEmpty()) {
@@ -319,14 +369,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String confirmPassword = editTextConfirmPassword.getText().toString();
         String warningStr = "";
         if (confirmPassword.isBlank()) {
-            warningStr += "Confirm password can't blank.";
+            warningStr += getString(R.string.register_error_confirm_blank);
         }
 
         if (!confirmPassword.equals(password)) {
             if (!warningStr.isEmpty()) {
                 warningStr += "\n";
             }
-            warningStr += "Password and Confirm Password does not mat.";
+            warningStr += getString(R.string.register_error_password_mismatch);
         }
 
         if (warningStr.isEmpty()) {
