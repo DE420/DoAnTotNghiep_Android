@@ -235,8 +235,21 @@ public class HomeFragment extends Fragment {
 
     /**
      * Navigate to Nutrition Main Fragment (menus screen)
+     * Selects the "Other" tab in bottom navigation and navigates to nutrition
      */
     private void navigateToNutritionFragment() {
+        // First, switch to the "Other" tab in bottom navigation
+        if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+            com.example.fitnessapp.MainActivity mainActivity =
+                    (com.example.fitnessapp.MainActivity) requireActivity();
+            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                    mainActivity.findViewById(R.id.bottom_navigation);
+            if (bottomNav != null) {
+                bottomNav.setSelectedItemId(R.id.nav_other);
+            }
+        }
+
+        // Then navigate to NutritionMainFragment
         NutritionMainFragment fragment = new NutritionMainFragment();
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
