@@ -26,7 +26,7 @@ public class RetrofitClient {
 //    private static final String BASE_URL = "http://10.0.2.2:8080/api/";
 
     // ip address real device
-    private static final String BASE_URL = "http://192.168.0.101:8080/api/";
+    private static final String BASE_URL = "http://192.168.1.168:8080/api/";
     private static Retrofit retrofitPlain;
     private static Retrofit retrofitAuth;
     private static AuthApi authApi;
@@ -36,6 +36,7 @@ public class RetrofitClient {
     private static UserApi userApi;
     private static NutritionApi nutritionApi;
     private static NotificationApi notificationApi;
+    private static HomeApiService homeApiService;
 
     private static Retrofit retrofit = null;
 
@@ -147,6 +148,13 @@ public class RetrofitClient {
             notificationApi = getAuthRetrofit(context).create(NotificationApi.class);
         }
         return notificationApi;
+    }
+
+    public static HomeApiService getHomeApiService(Context context) {
+        if (homeApiService == null) {
+            homeApiService = getAuthRetrofit(context).create(HomeApiService.class);
+        }
+        return homeApiService;
     }
 
 }

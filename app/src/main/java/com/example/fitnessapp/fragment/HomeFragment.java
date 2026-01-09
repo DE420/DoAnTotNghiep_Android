@@ -1,8 +1,5 @@
 package com.example.fitnessapp.fragment;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,29 +9,38 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.fitnessapp.LoginActivity;
 import com.example.fitnessapp.R;
-import com.example.fitnessapp.databinding.FragmentHomeBinding; // Import ViewBinding
-import com.example.fitnessapp.model.request.LogoutRequest;
-import com.example.fitnessapp.model.response.ApiResponse;
-import com.example.fitnessapp.network.ApiService;
-import com.example.fitnessapp.network.RetrofitClient;
+import com.example.fitnessapp.adapter.HomeMenuAdapter;
+import com.example.fitnessapp.adapter.HomeWorkoutAdapter;
+import com.example.fitnessapp.databinding.FragmentHomeBinding;
+import com.example.fitnessapp.fragment.nutrition.MenuDetailFragment;
+import com.example.fitnessapp.fragment.nutrition.NutritionMainFragment;
+import com.example.fitnessapp.model.response.nutrition.MenuResponse;
+import com.example.fitnessapp.model.response.PlanResponse;
+import com.example.fitnessapp.model.response.SuggestionResponse;
 import com.example.fitnessapp.session.SessionManager;
+import com.example.fitnessapp.viewmodel.HomeViewModel;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private FragmentHomeBinding binding; // Sử dụng ViewBinding
-    private ApiService apiService;
+    private FragmentHomeBinding binding;
+    private HomeViewModel viewModel;
+    private SessionManager sessionManager;
+
+    private HomeWorkoutAdapter workoutAdapter;
+    private HomeMenuAdapter menuAdapter;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding.setLifecycleOwner(getViewLifecycleOwner());
         return binding.getRoot();
     }
 
@@ -42,61 +48,249 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        apiService = RetrofitClient.getApiService();
+        // Initialize
+        sessionManager = SessionManager.getInstance(requireActivity());
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        binding.setViewModel(viewModel);
 
-        binding.buttonLogout.setOnClickListener(v -> {
-            handleLogout();
+        setupRecyclerViews();
+        setupSwipeRefresh();
+        setupClickListeners();
+        observeViewModel();
+
+        // Load data
+        loadData();
+    }
+
+    private void setupRecyclerViews() {
+        // Workout RecyclerView
+        workoutAdapter = new HomeWorkoutAdapter(this::onWorkoutClick);
+        binding.rvWorkouts.setLayoutManager(
+                new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        );
+        binding.rvWorkouts.setAdapter(workoutAdapter);
+
+        // Menu RecyclerView
+        menuAdapter = new HomeMenuAdapter(this::onMenuClick);
+        binding.rvMenus.setLayoutManager(
+                new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        );
+        binding.rvMenus.setAdapter(menuAdapter);
+    }
+
+    private void setupSwipeRefresh() {
+        binding.swipeRefresh.setColorSchemeResources(R.color.yellow);
+        binding.swipeRefresh.setOnRefreshListener(this::loadData);
+    }
+
+    private void setupClickListeners() {
+        // See all workouts - navigate to Plan tab
+        binding.tvSeeAllWorkouts.setOnClickListener(v -> {
+            navigateToPlanFragment();
+        });
+
+        // See all menus - navigate to Nutrition screen
+        binding.tvSeeAllMenus.setOnClickListener(v -> {
+            navigateToNutritionFragment();
+        });
+
+        // Retry button
+        binding.btnRetry.setOnClickListener(v -> loadData());
+    }
+
+    private void observeViewModel() {
+        // Observe suggestion data
+        viewModel.getSuggestionData().observe(getViewLifecycleOwner(), this::updateUI);
+
+        // Observe loading state
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null && isLoading) {
+                showLoading();
+            } else {
+                hideLoading();
+                binding.swipeRefresh.setRefreshing(false);
+            }
+        });
+
+        // Observe error messages
+        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMsg -> {
+            if (errorMsg != null && !errorMsg.isEmpty()) {
+                showError(errorMsg);
+            }
         });
     }
 
-    private void handleLogout() {
-        // Lấy refresh token từ SessionManager
-        String refreshToken = SessionManager.getInstance(requireActivity()).getRefreshToken();
+    private void loadData() {
+        Long userId = sessionManager.getUserId();
 
-        if (refreshToken == null) {
-            Toast.makeText(getContext(), "No active session found.", Toast.LENGTH_SHORT).show();
-            clearUserDataAndNavigateToLogin();
+        if (userId == null) {
+            showError("Phiên đăng nhập không hợp lệ");
             return;
         }
 
-        // Vô hiệu hóa nút để tránh click nhiều lần
-        binding.buttonLogout.setEnabled(false);
-        binding.buttonLogout.setText("Logging out...");
-
-        LogoutRequest logoutRequest = new LogoutRequest(refreshToken);
-
-        apiService.logout(logoutRequest).enqueue(new Callback<ApiResponse<String>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
-                Toast.makeText(getContext(), "Logged out successfully.", Toast.LENGTH_SHORT).show();
-                clearUserDataAndNavigateToLogin();
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                Toast.makeText(getContext(), "Logged out (offline).", Toast.LENGTH_SHORT).show();
-                clearUserDataAndNavigateToLogin();
-            }
-        });
+        viewModel.loadRecommendations(userId);
     }
 
-    private void clearUserDataAndNavigateToLogin() {
-        // Chỉ cần gọi một dòng duy nhất để logout
-        SessionManager.getInstance(requireActivity()).logout();
+    private void updateUI(SuggestionResponse data) {
+        if (data == null) return;
 
-        // Tạo Intent để quay về LoginActivity
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        // Hide error state, show content
+        binding.llError.setVisibility(View.GONE);
+        binding.swipeRefresh.setVisibility(View.VISIBLE);
 
-        // Kết thúc MainActivity
-        getActivity().finish();
+        // Update health metrics
+        binding.tvBmi.setText(String.format("%.1f", data.getBmi()));
+        binding.tvTdee.setText(String.format("%.0f", data.getTdee()));
+        binding.tvTargetCalories.setText(String.format("%.0f", data.getTargetCalories()));
+
+        // Update workouts
+        List<PlanResponse> workouts = data.getSuggestedWorkoutPlans();
+        if (workouts != null && !workouts.isEmpty()) {
+            workoutAdapter.setWorkoutPlans(workouts);
+            binding.rvWorkouts.setVisibility(View.VISIBLE);
+            binding.tvNoWorkouts.setVisibility(View.GONE);
+        } else {
+            binding.rvWorkouts.setVisibility(View.GONE);
+            binding.tvNoWorkouts.setVisibility(View.VISIBLE);
+        }
+
+        // Update menus
+        List<MenuResponse> menus = data.getSuggestedMenus();
+        if (menus != null && !menus.isEmpty()) {
+            menuAdapter.setMenus(menus);
+            binding.rvMenus.setVisibility(View.VISIBLE);
+            binding.tvNoMenus.setVisibility(View.GONE);
+        } else {
+            binding.rvMenus.setVisibility(View.GONE);
+            binding.tvNoMenus.setVisibility(View.VISIBLE);
+        }
     }
 
+    private void showLoading() {
+        binding.loadingOverlay.setVisibility(View.VISIBLE);
+        binding.llError.setVisibility(View.GONE);
+    }
+
+    private void hideLoading() {
+        binding.loadingOverlay.setVisibility(View.GONE);
+    }
+
+    private void showError(String message) {
+        binding.swipeRefresh.setVisibility(View.GONE);
+        binding.llError.setVisibility(View.VISIBLE);
+        binding.tvErrorMessage.setText(message);
+    }
+
+    private void onWorkoutClick(PlanResponse plan) {
+        // Navigate to workout plan detail
+        if (plan != null && plan.getId() != null) {
+            // First, switch to the "Plan" tab in bottom navigation
+            if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+                com.example.fitnessapp.MainActivity mainActivity =
+                        (com.example.fitnessapp.MainActivity) requireActivity();
+                com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                        mainActivity.findViewById(R.id.bottom_navigation);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_plan);
+                }
+            }
+
+            // Then navigate to PlanDetailFragment
+            PlanDetailFragment fragment = PlanDetailFragment.newInstance(plan.getId());
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in,
+                            R.anim.fade_out,
+                            R.anim.fade_in,
+                            R.anim.slide_out
+                    )
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack("PlanDetail")
+                    .commit();
+        }
+    }
+
+    private void onMenuClick(MenuResponse menu) {
+        // Navigate to menu detail
+        if (menu != null && menu.getId() != null) {
+            // First, switch to the "Other" tab in bottom navigation
+            if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+                com.example.fitnessapp.MainActivity mainActivity =
+                        (com.example.fitnessapp.MainActivity) requireActivity();
+                com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                        mainActivity.findViewById(R.id.bottom_navigation);
+                if (bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_other);
+                }
+            }
+
+            // Then navigate to MenuDetailFragment
+            MenuDetailFragment fragment = MenuDetailFragment.newInstance(menu.getId());
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in,
+                            R.anim.fade_out,
+                            R.anim.fade_in,
+                            R.anim.slide_out
+                    )
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack("MenuDetail")
+                    .commit();
+        }
+    }
+
+    /**
+     * Navigate to Plan Fragment (workout plans screen)
+     */
+    private void navigateToPlanFragment() {
+        if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+            com.example.fitnessapp.MainActivity mainActivity =
+                    (com.example.fitnessapp.MainActivity) requireActivity();
+            mainActivity.findViewById(R.id.bottom_navigation);
+            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                    mainActivity.findViewById(R.id.bottom_navigation);
+            if (bottomNav != null) {
+                bottomNav.setSelectedItemId(R.id.nav_plan);
+            }
+        }
+    }
+
+    /**
+     * Navigate to Nutrition Main Fragment (menus screen)
+     * Selects the "Other" tab in bottom navigation and navigates to nutrition
+     */
+    private void navigateToNutritionFragment() {
+        // First, switch to the "Other" tab in bottom navigation
+        if (requireActivity() instanceof com.example.fitnessapp.MainActivity) {
+            com.example.fitnessapp.MainActivity mainActivity =
+                    (com.example.fitnessapp.MainActivity) requireActivity();
+            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav =
+                    mainActivity.findViewById(R.id.bottom_navigation);
+            if (bottomNav != null) {
+                bottomNav.setSelectedItemId(R.id.nav_other);
+            }
+        }
+
+        // Then navigate to NutritionMainFragment
+        NutritionMainFragment fragment = new NutritionMainFragment();
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.slide_out
+                )
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack("Nutrition")
+                .commit();
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Tránh memory leak
+        binding = null;
     }
 }
