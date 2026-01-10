@@ -163,7 +163,7 @@ public class PlanFragment extends Fragment implements PlanAdapter.OnItemClickLis
     private void setupSpinners() {
         // Goal Spinner
         List<SelectOptions> goalOptions = new ArrayList<>();
-        goalOptions.add(new SelectOptions(null, "(Choose one)"));
+        goalOptions.add(new SelectOptions(null, "(Chọn mục tiêu)"));
         for (FitnessGoal goal : FitnessGoal.values()) {
             goalOptions.add(new SelectOptions((long) goal.ordinal(), getString(goal.getResId())));
         }
@@ -173,7 +173,7 @@ public class PlanFragment extends Fragment implements PlanAdapter.OnItemClickLis
 
         // Level Spinner
         List<SelectOptions> levelOptions = new ArrayList<>();
-        levelOptions.add(new SelectOptions(null, "(Choose one)"));
+        levelOptions.add(new SelectOptions(null, "(Chọn cấp độ)"));
         for (DifficultyLevel level : DifficultyLevel.values()) {
             levelOptions.add(new SelectOptions((long) level.ordinal(), getString(level.getResId())));
         }
@@ -251,7 +251,7 @@ public class PlanFragment extends Fragment implements PlanAdapter.OnItemClickLis
                 currentSearchDuration = Integer.parseInt(durationStr);
             } catch (NumberFormatException e) {
                 currentSearchDuration = null;
-                Toast.makeText(getContext(), "Please enter a valid number for Duration.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Vui lòng nhập số hợp lệ cho thời lượng.", Toast.LENGTH_SHORT).show();
             }
         } else {
             currentSearchDuration = null;
@@ -269,7 +269,7 @@ public class PlanFragment extends Fragment implements PlanAdapter.OnItemClickLis
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token unavailable. Please login again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token không khả dụng. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
             isLoading = false;
             progressBarPlan.setVisibility(View.GONE);
             return;
@@ -329,18 +329,18 @@ public class PlanFragment extends Fragment implements PlanAdapter.OnItemClickLis
 
                         // Show message if no plans found
                         if ((plans == null || plans.isEmpty()) && clearExisting) {
-                            Toast.makeText(getContext(), "No plans found.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Không tìm thấy kế hoạch nào.", Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
-                        Toast.makeText(getContext(), "API Error: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi API: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "API Error: " + apiResponse.getData());
                     }
                 } else {
                     if (response.code() == 401) {
-                        Toast.makeText(getContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Phiên đã hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi máy chủ: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
                     Log.e(TAG, "Server error: " + response.code() + " " + response.message());
                 }
@@ -350,7 +350,7 @@ public class PlanFragment extends Fragment implements PlanAdapter.OnItemClickLis
             public void onFailure(@NonNull Call<ApiResponse<List<PlanResponse>>> call, @NonNull Throwable t) {
                 isLoading = false;
                 progressBarPlan.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 Log.e(TAG, "Connection error: " + t.getMessage(), t);
             }
         });
@@ -361,7 +361,7 @@ public class PlanFragment extends Fragment implements PlanAdapter.OnItemClickLis
         if (plan != null && plan.getId() != null) {
             PlanDetailFragment detailFragment = PlanDetailFragment.newInstance(plan.getId());
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, detailFragment) // Thay thế ID container của bạn
+                    .replace(R.id.fragment_container, detailFragment)
                     .addToBackStack(null)
                     .commit();
         } else {

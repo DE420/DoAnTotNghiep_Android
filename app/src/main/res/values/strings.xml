@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">P Fit</string>
-    <string name="register_prompt">Don\'t have account? <font color="#FFD600">Sign up now!</font></string>
+    <string name="register_prompt">Chưa có tài khoản? <font color="#FFD600">Đăng ký ngay!</font></string>
     <string name="login_prompt">Already have an account? <font color="#FFD600">Login now</font></string>
 
     <!--    <string name="default_web_client_id">513503235334-c3lv2j0ruri1mplaj5io4ss9g3b5el4a.apps.googleusercontent.com</string>-->
@@ -36,19 +36,19 @@
     <string name="txt_no_data">No Data</string>
     <string name="txt_not_selected_goal">Not Selected Goal</string>
     <string name="txt_not_selected_activity_level">Not Selected Activity Level</string>
-    <string name="fitness_goal_others">Others</string>
-    <string name="fitness_goal_shape_body">Shape body</string>
-    <string name="fitness_goal_gain_weight">Gain weight</string>
-    <string name="fitness_goal_lose_weight">Lose weight</string>
-    <string name="fitness_goal_muscle_gain">Muscle gain</string>
+    <string name="fitness_goal_others">Khác</string>
+    <string name="fitness_goal_shape_body">Giữ dáng</string>
+    <string name="fitness_goal_gain_weight">Tăng cân</string>
+    <string name="fitness_goal_lose_weight">Giảm cân</string>
+    <string name="fitness_goal_muscle_gain">Tăng cơ</string>
     <string name="acitvity_level_sedentary">Sedentary</string>
     <string name="acitvity_level_lightly_active">Lightly active</string>
     <string name="acitvity_level_moderately_active">Moderately active</string>
     <string name="acitvity_level_very_active">Very active</string>
     <string name="acitvity_level_extra_active">Extra active</string>
-    <string name="difficulty_level_beginner">Beginner</string>
-    <string name="difficulty_level_intermediate">Intermediate</string>
-    <string name="difficulty_level_advanced">Advanced</string>
+    <string name="difficulty_level_beginner">Cơ bản</string>
+    <string name="difficulty_level_intermediate">Trung bình</string>
+    <string name="difficulty_level_advanced">Nâng cao</string>
     <string name="txt_min">min</string>
     <string name="txt_days">days</string>
     <string name="txt_birthday">Birthday</string>

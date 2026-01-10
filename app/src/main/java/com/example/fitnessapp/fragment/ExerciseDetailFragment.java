@@ -109,7 +109,7 @@ public class ExerciseDetailFragment extends Fragment {
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
             } else {
-                Toast.makeText(getContext(), "Previous page unavailable.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Không tìm thấy trang trước đó.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -130,7 +130,7 @@ public class ExerciseDetailFragment extends Fragment {
         if (exerciseId != null) {
             fetchExerciseDetail(exerciseId);
         } else {
-            Toast.makeText(getContext(), "Exercise unvailable.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Bài tập không khả dụng.", Toast.LENGTH_SHORT).show();
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
             }
@@ -146,7 +146,7 @@ public class ExerciseDetailFragment extends Fragment {
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token unavailable.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token không khả dụng.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -164,45 +164,50 @@ public class ExerciseDetailFragment extends Fragment {
                             displayExerciseDetail(exerciseDetail);
                             initializePlayer(exerciseDetail.getVideoUrl());
                         } else {
-                            Toast.makeText(getContext(), "Exercise detail unavailable.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Chi tiết bài tập không khả dụng.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "API Error: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "API Error: " + apiResponse.getData());
+                        Toast.makeText(getContext(), "Lỗi API: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Lỗi API: " + apiResponse.getData());
                     }
                 } else {
                     if (response.code() == 401) {
-                        Toast.makeText(getContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Phiên đã hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi máy chủ: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
-                    Log.e(TAG, "Server error: " + response.code() + " " + response.message());
+                    Log.e(TAG, "Lỗi máy chủ: " + response.code() + " " + response.message());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<ExerciseResponse>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Connection error: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Lỗi kết nối: " + t.getMessage(), t);
             }
         });
     }
 
     private void displayExerciseDetail(ExerciseResponse detail) {
         tvExerciseName.setText(detail.getName());
-        tvExerciseLevel.setText(detail.getLevel());
-        tvTrainingType.setText(detail.getTrainingType() != null ? detail.getTrainingType() : "N/A");
 
-        // Set background color for level text based on level (optional, you can expand this)
-        if ("Beginner".equalsIgnoreCase(detail.getLevel())) {
+        // Convert level to Vietnamese
+        String levelText = detail.getLevel();
+        if ("Beginner".equalsIgnoreCase(levelText)) {
+            levelText = "Người mới bắt đầu";
             tvExerciseLevel.setBackgroundResource(R.drawable.bg_level_beginner);
-        } else if ("Intermediate".equalsIgnoreCase(detail.getLevel())) {
+        } else if ("Intermediate".equalsIgnoreCase(levelText)) {
+            levelText = "Trung cấp";
             tvExerciseLevel.setBackgroundResource(R.drawable.bg_level_intermediate);
-        } else if ("Advanced".equalsIgnoreCase(detail.getLevel())) {
+        } else if ("Advanced".equalsIgnoreCase(levelText)) {
+            levelText = "Nâng cao";
             tvExerciseLevel.setBackgroundResource(R.drawable.bg_level_advanced);
         } else {
             tvExerciseLevel.setBackgroundResource(R.drawable.bg_level_default);
         }
+        tvExerciseLevel.setText(levelText);
+
+        tvTrainingType.setText(detail.getTrainingType() != null ? detail.getTrainingType() : "N/A");
 
         // Guideline Content
         addListItemsToLayout(llEquipmentList, detail.getEquipments(), "• ");
@@ -210,10 +215,10 @@ public class ExerciseDetailFragment extends Fragment {
 
         // Note Content
         // Add Main Muscle Groups
-        addMuscleGroupItemsToLayout(llMuscleGroupList, detail.getPrimaryMuscles(), "Main", R.drawable.bg_main_muscle_rounded, ContextCompat.getColor(requireContext(), R.color.black));
+        addMuscleGroupItemsToLayout(llMuscleGroupList, detail.getPrimaryMuscles(), "Chính", R.drawable.bg_main_muscle_rounded, ContextCompat.getColor(requireContext(), R.color.black));
 
         // Add Secondary Muscle Groups
-        addMuscleGroupItemsToLayout(llMuscleGroupList, detail.getSecondaryMuscles(), "Secondary", R.drawable.bg_secondary_muscle_rounded, ContextCompat.getColor(requireContext(), R.color.black));
+        addMuscleGroupItemsToLayout(llMuscleGroupList, detail.getSecondaryMuscles(), "Phụ", R.drawable.bg_secondary_muscle_rounded, ContextCompat.getColor(requireContext(), R.color.black));
 
         // If no muscle groups are added at all, add "N/A"
         if ((detail.getPrimaryMuscles() == null || detail.getPrimaryMuscles().isEmpty()) &&
@@ -379,16 +384,14 @@ public class ExerciseDetailFragment extends Fragment {
         if (player == null) {
             player = new ExoPlayer.Builder(requireContext()).build();
             videoPlayerView.setPlayer(player);
-            // Hide default play button from ExoPlayer if video is unavailable
-            // or if you want custom logic
-            videoPlayerView.setControllerShowTimeoutMs(3000); // Show controls for 3 seconds then hide
+            videoPlayerView.setControllerShowTimeoutMs(3000);
 
             player.addListener(new Player.Listener() {
                 @Override
                 public void onPlayerError(@NonNull com.google.android.exoplayer2.PlaybackException error) {
                     Player.Listener.super.onPlayerError(error);
-                    Toast.makeText(getContext(), "ExoPlayer Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "ExoPlayer Error: " + error.getMessage(), error);
+                    Toast.makeText(getContext(), "Lỗi ExoPlayer: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Lỗi ExoPlayer: " + error.getMessage(), error);
                 }
             });
         }
@@ -399,8 +402,8 @@ public class ExerciseDetailFragment extends Fragment {
             player.prepare();
             player.setPlayWhenReady(false);
         } else {
-            Toast.makeText(getContext(), "Link unavailable.", Toast.LENGTH_SHORT).show();
-            videoPlayerView.setControllerAutoShow(false); // Hide controls if no video
+            Toast.makeText(getContext(), "Link video không khả dụng.", Toast.LENGTH_SHORT).show();
+            videoPlayerView.setControllerAutoShow(false);
         }
     }
 

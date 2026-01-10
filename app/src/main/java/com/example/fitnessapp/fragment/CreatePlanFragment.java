@@ -220,7 +220,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
     private void setupSpinners() {
         // Level Spinner
         List<SelectOptions> levelOptions = new ArrayList<>();
-        levelOptions.add(new SelectOptions(null, "(Choose Level)"));
+        levelOptions.add(new SelectOptions(null, "(Chọn cấp độ)"));
         for (DifficultyLevel level : DifficultyLevel.values()) {
             levelOptions.add(new SelectOptions((long) level.ordinal(), getString(level.getResId())));
         }
@@ -238,7 +238,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
 
         // Goal Spinner
         List<SelectOptions> goalOptions = new ArrayList<>();
-        goalOptions.add(new SelectOptions(null, "(Choose Goal)"));
+        goalOptions.add(new SelectOptions(null, "(Chọn mục tiêu)"));
         for (FitnessGoal goal : FitnessGoal.values()) {
             goalOptions.add(new SelectOptions((long) goal.ordinal(), getString(goal.getResId())));
         }
@@ -261,7 +261,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedWeekText = (String) parent.getItemAtPosition(position);
                 try {
-                    currentSelectedWeek = Integer.parseInt(selectedWeekText.replace("Week ", ""));
+                    currentSelectedWeek = Integer.parseInt(selectedWeekText.replace("Tuần ", ""));
                     generateCurrentWeekScheduleItems(currentSelectedWeek); // Refresh RecyclerView for new week
                 } catch (NumberFormatException e) {
                     Log.e(TAG, "Invalid week format: " + selectedWeekText, e);
@@ -277,7 +277,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
             } else {
-                Toast.makeText(getContext(), "No previous page.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Không tìm thấy trang trước đó.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -391,13 +391,13 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
     }
 
     private void populatePlanDataForEditing(PlanDetailResponse planDetail) {
-        Log.d(TAG, "=== Starting to populate plan data ===");
+        Log.d(TAG, "=== Bắt đầu điền dữ liệu kế hoạch ===");
 
         // Set plan name
         String planName = planDetail.getName();
         if (planDetail.getDefault() != null && planDetail.getDefault()) {
             // This was originally a preset plan, add prefix
-            planName = "Copy of " + planName;
+            planName = "Bản sao của " + planName;
         }
         etPlanName.setText(planName);
 
@@ -433,7 +433,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
 
         // Set selected days and populate schedule data
         if (planDetail.getWeeks() != null && !planDetail.getWeeks().isEmpty()) {
-            Log.d(TAG, "Processing " + planDetail.getWeeks().size() + " weeks");
+            Log.d(TAG, "Đang xử lý " + planDetail.getWeeks().size() + " tuần");
 
             // Clear existing schedule data
             planScheduleData.clear();
@@ -445,26 +445,26 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                     minWeekNumber = week.getWeekNumber();
                 }
             }
-            Log.d(TAG, "Minimum week number from backend: " + minWeekNumber);
+            Log.d(TAG, "Số tuần nhỏ nhất từ backend: " + minWeekNumber);
 
             // Calculate offset to normalize weeks (so they start from 1)
             int weekOffset = minWeekNumber - 1;
-            Log.d(TAG, "Week offset for normalization: " + weekOffset);
+            Log.d(TAG, "Độ lệch tuần để chuẩn hóa: " + weekOffset);
 
             // Process each week and normalize the week numbers
             for (PlanWeekResponse week : planDetail.getWeeks()) {
                 int originalWeekNumber = week.getWeekNumber();
                 int normalizedWeekNumber = originalWeekNumber - weekOffset; // Normalize to start from 1
 
-                Log.d(TAG, "Processing week " + originalWeekNumber + " -> normalized to week " + normalizedWeekNumber +
-                        " with " + week.getDays().size() + " days");
+                Log.d(TAG, "Đang xử lý tuần " + originalWeekNumber + " -> chuẩn hóa thành tuần " + normalizedWeekNumber +
+                        " với " + week.getDays().size() + " ngày");
 
                 Map<Integer, List<PlanExerciseRequest>> weekData = new LinkedHashMap<>();
 
                 for (PlanDayResponse day : week.getDays()) {
                     int dayOfWeek = day.getDayOfWeek();
-                    Log.d(TAG, "Processing day " + dayOfWeek + " with " +
-                            (day.getExercises() != null ? day.getExercises().size() : 0) + " exercises");
+                    Log.d(TAG, "Đang xử lý ngày " + dayOfWeek + " với " +
+                            (day.getExercises() != null ? day.getExercises().size() : 0) + " bài tập");
 
                     // Mark this day as selected
                     selectedDaysOfWeek.put(dayOfWeek, true);
@@ -481,9 +481,9 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                             request.setWeight(exercise.getWeight());
                             exerciseRequests.add(request);
 
-                            Log.d(TAG, "Added exercise ID: " + exercise.getExerciseId() +
-                                    " to normalized week " + normalizedWeekNumber + ", day " + dayOfWeek +
-                                    " with sets=" + exercise.getSets() +
+                            Log.d(TAG, "Đã thêm bài tập ID: " + exercise.getExerciseId() +
+                                    " vào tuần chuẩn hóa " + normalizedWeekNumber + ", ngày " + dayOfWeek +
+                                    " với sets=" + exercise.getSets() +
                                     ", reps=" + exercise.getReps() +
                                     ", duration=" + exercise.getDuration() +
                                     ", weight=" + exercise.getWeight());
@@ -495,25 +495,25 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
 
                 // Store with normalized week number (starting from 1)
                 planScheduleData.put(normalizedWeekNumber, weekData);
-                Log.d(TAG, "Stored data for normalized week " + normalizedWeekNumber);
+                Log.d(TAG, "Đã lưu dữ liệu cho tuần chuẩn hóa " + normalizedWeekNumber);
             }
 
-            Log.d(TAG, "Total exercises loaded: " + allExercises.size());
-            Log.d(TAG, "planScheduleData now contains weeks: " + planScheduleData.keySet());
+            Log.d(TAG, "Tổng số bài tập đã tải: " + allExercises.size());
+            Log.d(TAG, "planScheduleData hiện chứa các tuần: " + planScheduleData.keySet());
 
             // Update checkboxes
             updateDayCheckboxes();
 
             // Always start from week 1 after normalization
             currentSelectedWeek = 1;
-            spinnerExerciseWeek.setSelection(0); // Select "Week 1" in spinner
-            Log.d(TAG, "Set current week to 1 after loading");
+            spinnerExerciseWeek.setSelection(0); // Select "Tuần 1" in spinner
+            Log.d(TAG, "Đặt tuần hiện tại thành 1 sau khi tải");
 
             // Generate schedule items for week 1
             generateCurrentWeekScheduleItems(currentSelectedWeek);
         }
 
-        Log.d(TAG, "=== Finished populating plan data ===");
+        Log.d(TAG, "=== Hoàn thành điền dữ liệu kế hoạch ===");
     }
 
     private void updateDayCheckboxes() {
@@ -543,7 +543,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
     private void updateExerciseWeekSpinner(int duration) {
         List<String> weeks = new ArrayList<>();
         for (int i = 1; i <= duration; i++) {
-            weeks.add("Week " + i);
+            weeks.add("Tuần " + i);
         }
         exerciseWeekAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_white_text, weeks);
         exerciseWeekAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_white_text);
@@ -709,9 +709,9 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
     @Override
     public void onDeleteExerciseClicked(int dayOfWeek, int exerciseIndex) {
         new AlertDialog.Builder(requireContext(), R.style.AlertDialogTheme)
-                .setTitle("Delete Exercise")
-                .setMessage("Are you sure you want to delete this exercise?")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setTitle("Xóa bài tập")
+                .setMessage("Bạn có chắc chắn muốn xóa bài tập này?")
+                .setPositiveButton("Xóa", (dialog, which) -> {
                     Map<Integer, List<PlanExerciseRequest>> weekData = planScheduleData.get(currentSelectedWeek);
                     if (weekData != null) {
                         List<PlanExerciseRequest> exercises = weekData.get(dayOfWeek);
@@ -721,7 +721,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Hủy", null)
                 .show();
     }
 
@@ -830,14 +830,14 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
     private String getDayName(int dayOfWeek) {
         // Maps 1=Monday, 2=Tuesday, ..., 7=Sunday
         switch (dayOfWeek) {
-            case 1: return "Monday";
-            case 2: return "Tuesday";
-            case 3: return "Wednesday";
-            case 4: return "Thursday";
-            case 5: return "Friday";
-            case 6: return "Saturday";
-            case 0: return "Sunday";
-            default: return "Invalid Day";
+            case 1: return "Thứ Hai";
+            case 2: return "Thứ Ba";
+            case 3: return "Thứ Tư";
+            case 4: return "Thứ Năm";
+            case 5: return "Thứ Sáu";
+            case 6: return "Thứ Bảy";
+            case 0: return "Chủ Nhật";
+            default: return "Ngày không hợp lệ";
         }
     }
 
@@ -846,30 +846,30 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
         String durationStr = etDuration.getText().toString().trim();
 
         if (planName.isEmpty()) {
-            etPlanName.setError("Plan name cannot be empty");
+            etPlanName.setError("Tên kế hoạch không được để trống");
             return;
         }
         if (selectedStartDate == null) {
-            Toast.makeText(getContext(), "Please select a start date.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Vui lòng chọn ngày bắt đầu.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (selectedLevel == null) {
-            Toast.makeText(getContext(), "Please select a difficulty level.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Vui lòng chọn cấp độ.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (selectedGoal == null) {
-            Toast.makeText(getContext(), "Please select a fitness goal.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Vui lòng chọn mục tiêu.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (durationStr.isEmpty() || Integer.parseInt(durationStr) <= 0) {
-            etDuration.setError("Duration must be a positive number.");
+            etDuration.setError("Thời lượng phải là số dương.");
             return;
         }
 
         // Check if at least one day is selected
         boolean anyDaySelected = selectedDaysOfWeek.values().stream().anyMatch(Boolean::booleanValue);
         if (!anyDaySelected) {
-            Toast.makeText(getContext(), "Please select at least one day for the plan.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Vui lòng chọn ít nhất một ngày cho kế hoạch.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -880,21 +880,21 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
         for (int weekNum = 1; weekNum <= planDurationWeeks; weekNum++) {  // Start from 1
             Map<Integer, List<PlanExerciseRequest>> weekData = planScheduleData.get(weekNum);
 
-            Log.d(TAG, "Processing week " + weekNum + " for save. Week data exists: " + (weekData != null));
+            Log.d(TAG, "Đang xử lý tuần " + weekNum + " để lưu. Dữ liệu tuần tồn tại: " + (weekData != null));
 
             if (weekData != null) {
                 for (int dayOfWeek = 0; dayOfWeek <= 6; dayOfWeek++) {
                     if (selectedDaysOfWeek.get(dayOfWeek) != null && selectedDaysOfWeek.get(dayOfWeek)) {
                         List<PlanExerciseRequest> exercisesForDay = weekData.get(dayOfWeek);
 
-                        Log.d(TAG, "Week " + weekNum + ", Day " + dayOfWeek + ": " +
-                                (exercisesForDay != null ? exercisesForDay.size() : 0) + " exercises");
+                        Log.d(TAG, "Tuần " + weekNum + ", Ngày " + dayOfWeek + ": " +
+                                (exercisesForDay != null ? exercisesForDay.size() : 0) + " bài tập");
 
                         if (exercisesForDay != null && !exercisesForDay.isEmpty()) {
                             List<PlanExerciseRequest> validatedExercises = new ArrayList<>();
                             for (PlanExerciseRequest exercise : exercisesForDay) {
                                 if (exercise.getExerciseId() == null) {
-                                    Toast.makeText(getContext(), "Please select an exercise for all slots.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Vui lòng chọn bài tập cho tất cả các ô.", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 // Validate that exercise has either (sets AND reps) OR (sets AND duration)
@@ -902,7 +902,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                                 boolean hasSetsAndDuration = exercise.getSets() != null && exercise.getDuration() != null;
 
                                 if (!hasSetsAndReps && !hasSetsAndDuration) {
-                                    Toast.makeText(getContext(), "Each exercise must have sets and either reps or duration.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Mỗi bài tập phải có sets và reps hoặc duration.", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 validatedExercises.add(exercise);
@@ -910,7 +910,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
 
                             // Use weekNum (which starts from 1)
                             finalSchedule.add(new PlanDayRequest(weekNum, dayOfWeek, validatedExercises));
-                            Log.d(TAG, "Added PlanDayRequest for week " + weekNum + ", day " + dayOfWeek);
+                            Log.d(TAG, "Đã thêm PlanDayRequest cho tuần " + weekNum + ", ngày " + dayOfWeek);
                         }
                     }
                 }
@@ -918,7 +918,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
         }
 
         if (finalSchedule.isEmpty()) {
-            Toast.makeText(getContext(), "Please add at least one exercise to your plan.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Vui lòng thêm ít nhất một bài tập vào kế hoạch của bạn.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -929,19 +929,19 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                 Integer.parseInt(durationStr),
                 (int) selectedDaysOfWeek.values().stream().filter(Boolean::booleanValue).count(),
                 selectedLevel,
-                "Default description",
+                "Mô tả mặc định",
                 finalSchedule
         );
 
-        Log.d(TAG, "=== Create Plan Request ===");
-        Log.d(TAG, "Plan name: " + planName);
-        Log.d(TAG, "Duration: " + durationStr + " weeks");
-        Log.d(TAG, "Total plan days: " + finalSchedule.size());
+        Log.d(TAG, "=== Yêu cầu tạo kế hoạch ===");
+        Log.d(TAG, "Tên kế hoạch: " + planName);
+        Log.d(TAG, "Thời lượng: " + durationStr + " tuần");
+        Log.d(TAG, "Tổng số ngày kế hoạch: " + finalSchedule.size());
         for (PlanDayRequest day : finalSchedule) {
-            Log.d(TAG, "Week " + day.getWeekNumber() + ", Day " + day.getDayOfWeek() +
-                    " with " + day.getExercises().size() + " exercises");
+            Log.d(TAG, "Tuần " + day.getWeekNumber() + ", Ngày " + day.getDayOfWeek() +
+                    " với " + day.getExercises().size() + " bài tập");
         }
-        Log.d(TAG, "Full JSON: " + new Gson().toJson(createPlanRequest));
+        Log.d(TAG, "JSON đầy đủ: " + new Gson().toJson(createPlanRequest));
 
         if (isEditing && editingPlanId != null) {
             callUpdatePlan(editingPlanId, createPlanRequest);
@@ -956,7 +956,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
 
         String accessToken = sessionManager.getAccessToken();
         if (accessToken == null || accessToken.isEmpty()) {
-            Toast.makeText(getContext(), "Authentication token unavailable.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token xác thực không khả dụng.", Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
             btnSavePlan.setEnabled(true);
             return;
@@ -971,18 +971,18 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                         btnSavePlan.setEnabled(true);
 
                         if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                            Toast.makeText(getContext(), "Plan created successfully!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Tạo kế hoạch thành công!", Toast.LENGTH_SHORT).show();
                             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                                 getParentFragmentManager().popBackStack();
                             }
                         } else {
-                            String errorMsg = "Failed to create plan: " + response.message();
+                            String errorMsg = "Tạo kế hoạch thất bại: " + response.message();
                             try {
                                 if (response.errorBody() != null) {
                                     errorMsg += " - " + response.errorBody().string();
                                 }
                             } catch (Exception e) {
-                                Log.e(TAG, "Error parsing error body", e);
+                                Log.e(TAG, "Lỗi phân tích error body", e);
                             }
                             Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
                             Log.e(TAG, errorMsg);
@@ -993,8 +993,8 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                     public void onFailure(@NonNull Call<ApiResponse<Long>> call, @NonNull Throwable t) {
                         progressBar.setVisibility(View.GONE);
                         btnSavePlan.setEnabled(true);
-                        Toast.makeText(getContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Error creating plan", t);
+                        Toast.makeText(getContext(), "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Lỗi tạo kế hoạch", t);
                     }
                 });
     }
@@ -1005,7 +1005,7 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
 
         String accessToken = sessionManager.getAccessToken();
         if (accessToken == null || accessToken.isEmpty()) {
-            Toast.makeText(getContext(), "Authentication token unavailable.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token xác thực không khả dụng.", Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
             btnSavePlan.setEnabled(true);
             return;
@@ -1020,18 +1020,18 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                         btnSavePlan.setEnabled(true);
 
                         if (response.isSuccessful() && response.body() != null && response.body().isStatus()) {
-                            Toast.makeText(getContext(), "Plan updated successfully!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Cập nhật kế hoạch thành công!", Toast.LENGTH_SHORT).show();
                             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                                 getParentFragmentManager().popBackStack();
                             }
                         } else {
-                            String errorMsg = "Failed to update plan: " + response.message();
+                            String errorMsg = "Cập nhật kế hoạch thất bại: " + response.message();
                             try {
                                 if (response.errorBody() != null) {
                                     errorMsg += " - " + response.errorBody().string();
                                 }
                             } catch (Exception e) {
-                                Log.e(TAG, "Error parsing error body", e);
+                                Log.e(TAG, "Lỗi phân tích error body", e);
                             }
                             Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
                             Log.e(TAG, errorMsg);
@@ -1042,8 +1042,8 @@ public class CreatePlanFragment extends Fragment implements CreatePlanScheduleAd
                     public void onFailure(@NonNull Call<ApiResponse<Long>> call, @NonNull Throwable t) {
                         progressBar.setVisibility(View.GONE);
                         btnSavePlan.setEnabled(true);
-                        Toast.makeText(getContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Error updating plan", t);
+                        Toast.makeText(getContext(), "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Lỗi cập nhật kế hoạch", t);
                     }
                 });
     }

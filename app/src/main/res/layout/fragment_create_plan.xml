@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:text="Create New Plan"
+            android:text="Tạo kế hoạch mới"
             android:textColor="@color/white85"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -66,17 +66,17 @@
 
             <!-- Plan Name -->
             <LinearLayout style="@style/CreatePlanInputRow">
-                <TextView style="@style/CreatePlanLabel" android:text="Plan name:" />
+                <TextView style="@style/CreatePlanLabel" android:text="Tên kế hoạch:" />
                 <EditText
                     android:id="@+id/et_plan_name"
                     style="@style/CreatePlanInputField"
-                    android:hint="Your plan 1"
+                    android:hint="Kế hoạch của bạn 1"
                     android:singleLine="true" />
             </LinearLayout>
 
             <!-- Start Date -->
             <LinearLayout style="@style/CreatePlanInputRow">
-                <TextView style="@style/CreatePlanLabel" android:text="Start date:" />
+                <TextView style="@style/CreatePlanLabel" android:text="Ngày bắt đầu:" />
                 <EditText
                     android:id="@+id/et_start_date"
                     style="@style/CreatePlanInputField"
@@ -90,25 +90,25 @@
 
             <!-- Level Spinner -->
             <LinearLayout style="@style/CreatePlanInputRow">
-                <TextView style="@style/CreatePlanLabel" android:text="Level:" />
+                <TextView style="@style/CreatePlanLabel" android:text="Cấp độ:" />
                 <Spinner
                     android:id="@+id/spinner_level"
                     style="@style/CreatePlanSpinnerField"
-                     />
+                    />
             </LinearLayout>
 
             <!-- Goal Spinner -->
             <LinearLayout style="@style/CreatePlanInputRow">
-                <TextView style="@style/CreatePlanLabel" android:text="Goal:" />
+                <TextView style="@style/CreatePlanLabel" android:text="Mục tiêu:" />
                 <Spinner
                     android:id="@+id/spinner_goal"
                     style="@style/CreatePlanSpinnerField"
-                     />
+                    />
             </LinearLayout>
 
             <!-- Duration -->
             <LinearLayout style="@style/CreatePlanInputRow">
-                <TextView style="@style/CreatePlanLabel" android:text="Duration:" />
+                <TextView style="@style/CreatePlanLabel" android:text="Thời lượng:" />
                 <EditText
                     android:id="@+id/et_duration"
                     style="@style/CreatePlanInputField"
@@ -128,7 +128,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
-                    android:text="Days:"
+                    android:text="Các ngày:"
                     android:textColor="@color/white85"
                     android:textSize="16sp" />
                 <LinearLayout
@@ -140,37 +140,37 @@
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
                         <CheckBox android:id="@+id/cb_mon" style="@style/DayCheckBoxVertical" android:tag="1" />
-                        <TextView style="@style/DayLabel" android:text="M" />
+                        <TextView style="@style/DayLabel" android:text="T2" />
                     </LinearLayout>
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
                         <CheckBox android:id="@+id/cb_tue" style="@style/DayCheckBoxVertical" android:tag="2" />
-                        <TextView style="@style/DayLabel" android:text="T" />
+                        <TextView style="@style/DayLabel" android:text="T3" />
                     </LinearLayout>
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
                         <CheckBox android:id="@+id/cb_wed" style="@style/DayCheckBoxVertical" android:tag="3" />
-                        <TextView style="@style/DayLabel" android:text="W" />
+                        <TextView style="@style/DayLabel" android:text="T4" />
                     </LinearLayout>
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
                         <CheckBox android:id="@+id/cb_thu" style="@style/DayCheckBoxVertical" android:tag="4" />
-                        <TextView style="@style/DayLabel" android:text="T" />
+                        <TextView style="@style/DayLabel" android:text="T5" />
                     </LinearLayout>
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
                         <CheckBox android:id="@+id/cb_fri" style="@style/DayCheckBoxVertical" android:tag="5" />
-                        <TextView style="@style/DayLabel" android:text="F" />
+                        <TextView style="@style/DayLabel" android:text="T6" />
                     </LinearLayout>
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
                         <CheckBox android:id="@+id/cb_sat" style="@style/DayCheckBoxVertical" android:tag="6" />
-                        <TextView style="@style/DayLabel" android:text="S" />
+                        <TextView style="@style/DayLabel" android:text="T7" />
                     </LinearLayout>
 
                     <LinearLayout style="@style/DayCheckBoxContainer" android:layout_weight="1">
                         <CheckBox android:id="@+id/cb_sun" style="@style/DayCheckBoxVertical" android:tag="0" />
-                        <TextView style="@style/DayLabel" android:text="S" />
+                        <TextView style="@style/DayLabel" android:text="CN" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -180,7 +180,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Edit exercises:"
+                android:text="Chỉnh sửa bài tập:"
                 android:textColor="@color/white85"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -189,11 +189,11 @@
 
             <!-- Week Selector for Exercises -->
             <LinearLayout style="@style/CreatePlanInputRow" android:layout_marginBottom="16dp">
-                <TextView style="@style/CreatePlanLabel" android:text="Week:" />
+                <TextView style="@style/CreatePlanLabel" android:text="Tuần:" />
                 <Spinner
                     android:id="@+id/spinner_exercise_week"
                     style="@style/CreatePlanSpinnerField"
-                     />
+                    />
             </LinearLayout>
 
             <!-- RecyclerView for Days and Exercises -->
@@ -211,7 +211,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:backgroundTint="#FFD700"
-                android:text="SAVE"
+                android:text="LƯU"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:layout_marginHorizontal="70dp"

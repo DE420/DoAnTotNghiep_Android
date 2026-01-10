@@ -96,9 +96,9 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.PlanViewHolder
             if (isMyPlanView) {
                 tvStartDate.setVisibility(View.VISIBLE);
                 if (plan.getStartDate() != null && !plan.getStartDate().isEmpty()) {
-                    tvStartDate.setText("Start from " + plan.getStartDate());
+                    tvStartDate.setText("Bắt đầu từ " + plan.getStartDate());
                 } else {
-                    tvStartDate.setText("Start date N/A");
+                    tvStartDate.setText("Chưa có ngày bắt đầu");
                 }
             } else {
                 tvStartDate.setVisibility(View.GONE);
@@ -142,14 +142,14 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.PlanViewHolder
 
             // Set Duration
             if (plan.getDurationWeek() != null) {
-                tvDuration.setText(plan.getDurationWeek() + " weeks");
+                tvDuration.setText(plan.getDurationWeek() + " tuần");
             } else {
                 tvDuration.setText("N/A");
             }
 
             // Set Days Per Week
             if (plan.getDaysPerWeek() != null) {
-                tvDaysPerWeek.setText(plan.getDaysPerWeek() + " days / week");
+                tvDaysPerWeek.setText(plan.getDaysPerWeek() + " ngày / tuần");
             } else {
                 tvDaysPerWeek.setText("N/A");
             }

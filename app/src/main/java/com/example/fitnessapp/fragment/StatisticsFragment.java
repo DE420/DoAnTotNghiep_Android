@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.fitnessapp.MainActivity;
 import com.example.fitnessapp.R;
 import com.example.fitnessapp.adapter.WorkoutDayLogAdapter;
 import com.example.fitnessapp.databinding.FragmentStatisticsBinding;
@@ -422,8 +423,31 @@ public class StatisticsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Hide AppBar when this fragment is visible
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(false);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Show AppBar when leaving this fragment
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(true);
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+
+        // Ensure AppBar is visible when fragment is destroyed
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setAppBarVisible(true);
+        }
     }
 }
