@@ -3,21 +3,21 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
-        android:title="Home" />
+        android:title="Trang chủ" />
     <item
         android:id="@+id/nav_plan"
         android:icon="@drawable/ic_plan"
-        android:title="Plan" />
+        android:title="Kế hoạch" />
     <item
         android:id="@+id/nav_practice"
         android:icon="@drawable/ic_practice"
-        android:title="Practice" />
+        android:title="Luyện tập" />
     <item
         android:id="@+id/nav_community"
         android:icon="@drawable/ic_community"
-        android:title="Community" />
+        android:title="Cộng đồng" />
     <item
         android:id="@+id/nav_other"
         android:icon="@drawable/ic_other"
-        android:title="Other" />
+        android:title="Khác" />
 </menu>

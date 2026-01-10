@@ -216,19 +216,19 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
-                title = getString(R.string.nav_title_home);
+                title = "Trang chủ";
             } else if (itemId == R.id.nav_plan) {
                 selectedFragment = new PlanFragment();
-                title = getString(R.string.nav_title_plan);
+                title = "Kế hoạch";
             } else if (itemId == R.id.nav_practice) {
                 selectedFragment = new PracticeFragment();
-                title = getString(R.string.nav_title_plan);
+                title = "Luyện tập";
             } else if (itemId == R.id.nav_community) {
                 selectedFragment = new CommunityFragment();
-                title = getString(R.string.nav_title_community);
+                title = "Cộng đồng";
             } else if (itemId == R.id.nav_other) {
                 selectedFragment = new OtherFragment();
-                title = getString(R.string.nav_title_other);
+                title = "Khác";
             }
 
             if (selectedFragment != null) {

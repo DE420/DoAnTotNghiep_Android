@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            tools:text="Back"
+            tools:text="Quay lại"
             android:textColor="@color/white85"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -69,7 +69,7 @@
                 android:id="@+id/tv_plan_detail_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Beginner workout plan"
+                tools:text="Kế hoạch tập luyện cho người mới bắt đầu"
                 android:textColor="@color/white85"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -86,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start date: "
+                    android:text="Ngày bắt đầu: "
                     android:textColor="@color/white85"
                     android:textSize="16sp" />
                 <TextView
@@ -107,14 +107,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Level: "
+                    android:text="Cấp độ: "
                     android:textColor="@color/white85"
                     android:textSize="16sp" />
                 <TextView
                     android:id="@+id/tv_plan_detail_level"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="Beginner"
+                    tools:text="Người mới bắt đầu"
                     android:textColor="#BDBDBD"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -128,14 +128,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Goal: "
+                    android:text="Mục tiêu: "
                     android:textColor="@color/white85"
                     android:textSize="16sp" />
                 <TextView
                     android:id="@+id/tv_plan_detail_goal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="Weight loss"
+                    tools:text="Giảm cân"
                     android:textColor="#BDBDBD"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -149,14 +149,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Duration: "
+                    android:text="Thời lượng: "
                     android:textColor="@color/white85"
                     android:textSize="16sp" />
                 <TextView
                     android:id="@+id/tv_plan_detail_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="4 weeks"
+                    tools:text="4 tuần"
                     android:textColor="#BDBDBD"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -170,14 +170,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Days: "
+                    android:text="Các ngày: "
                     android:textColor="@color/white85"
                     android:textSize="16sp" />
                 <TextView
                     android:id="@+id/tv_plan_detail_days"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="Saturday, Sunday"
+                    tools:text="Thứ Bảy, Chủ Nhật"
                     android:textColor="#BDBDBD"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -186,7 +186,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Exercises:"
+                android:text="Bài tập:"
                 android:textColor="@color/white85"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -202,7 +202,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Week:"
+                    android:text="Tuần:"
                     android:textColor="@color/white85"
                     android:textSize="16sp"
                     android:layout_marginEnd="8dp" />
@@ -238,7 +238,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#FFD700"
-                    android:text="COPY AND EDIT"
+                    android:text="SAO CHÉP VÀ CHỈNH SỬA"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginHorizontal="70dp"
@@ -252,7 +252,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#FFD700"
-                    android:text="EDIT"
+                    android:text="CHỈNH SỬA"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:layout_marginHorizontal="70dp"
@@ -266,7 +266,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#D32F2F"
-                    android:text="DELETE"
+                    android:text="XÓA"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     android:layout_marginHorizontal="70dp"

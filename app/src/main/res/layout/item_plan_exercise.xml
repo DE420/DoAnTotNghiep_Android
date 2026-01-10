@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingStart="16dp"
+    android:paddingEnd="16dp"
     android:paddingVertical="8dp"
     android:background="@android:color/black">
 
@@ -12,10 +13,8 @@
         android:id="@+id/tv_exercise_detail_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Push up - 5 sets x 5 reps"
+        tools:text="Chống đẩy - 5 sets x 5 reps"
         android:textColor="#BDBDBD"
         android:textSize="16sp" />
-
-    <!-- Bạn có thể thêm ImageView cho thumbnail bài tập ở đây nếu muốn -->
 
 </LinearLayout>

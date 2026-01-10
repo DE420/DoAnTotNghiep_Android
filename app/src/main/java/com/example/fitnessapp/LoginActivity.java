@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = binding.editTextPassword.getText().toString().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter both username and password.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Vui lòng nhập tên đăng nhập và mật khẩu.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                     navigateToMainApp();
                 } else {
                     // Handle API error (e.g., wrong password, user not found)
-                    String errorMessage = "Login failed. Please try again.";
+                    String errorMessage = "Đăng nhập thất bại. Vui lòng thử lại.";
                     if (response.errorBody() != null) {
                         try {
                             // Assuming error response is also in ApiResponse format but with a String data
@@ -161,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
                 setLoading(false);
                 Log.e("LoginActivity", "Network request failed", t);
-                Toast.makeText(LoginActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -185,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 // Đây là một lỗi nghiêm trọng
                 Log.e("GoogleSignIn", "Lỗi: ID Token bị null! Kiểm tra lại Web Client ID trong GSO.");
-                Toast.makeText(this, "Failed to get Google ID Token.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Không thể lấy Google ID Token.", Toast.LENGTH_SHORT).show();
             }
 
         } catch (ApiException e) {
@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
             // Mã 10: Lỗi cấu hình developer (thường là do sai SHA-1 hoặc package name).
             // Mã 12501: Người dùng hủy đăng nhập.
             // Mã 8: Lỗi mạng nội bộ.
-            Toast.makeText(this, "Google Sign-In failed. Error Code: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Đăng nhập Google thất bại. Mã lỗi: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -210,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
                     saveTokens(loginResponse.getAccessToken(), loginResponse.getRefreshToken());
                     navigateToMainApp();
                 } else {
-                    Toast.makeText(LoginActivity.this, "Google authentication with backend failed.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Xác thực Google với máy chủ thất bại.", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -218,7 +218,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<ApiResponse<LoginResponse>> call, Throwable t) {
                 setLoading(false);
                 Log.e("LoginActivity", "Google Auth Network request failed", t);
-                Toast.makeText(LoginActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

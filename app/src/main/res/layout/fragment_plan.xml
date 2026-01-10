@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Preset plan"
+            android:text="Kế hoạch mẫu"
             android:textStyle="bold"
             android:textColor="@color/white"
             app:backgroundTint="@drawable/bg_toggle_button_selector"
@@ -35,7 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Your plan"
+            android:text="Kế hoạch của tôi"
             android:textStyle="bold"
             android:textColor="@color/white"
             app:backgroundTint="@drawable/bg_toggle_button_selector"
@@ -87,7 +87,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.3"
-                            android:text="Name:"
+                            android:text="Tên:"
                             android:textColor="@color/white85"
                             android:textSize="16sp" />
                         <EditText
@@ -96,6 +96,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.7"
                             android:background="@drawable/bg_search_box"
+                            android:hint="Nhập tên kế hoạch"
                             android:padding="8dp"
                             android:singleLine="true"
                             android:textSize="14sp" />
@@ -112,7 +113,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.3"
-                            android:text="Goal:"
+                            android:text="Mục tiêu:"
                             android:textColor="@color/white85"
                             android:textSize="16sp" />
                         <Spinner
@@ -120,7 +121,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.7"
-                            android:background="@drawable/bg_search_box"                            android:padding="4dp"
+                            android:background="@drawable/bg_search_box"
+                            android:padding="4dp"
                             android:spinnerMode="dropdown"
                             tools:listitem="@layout/spinner_item_white_text" />
                     </LinearLayout>
@@ -136,7 +138,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.3"
-                            android:text="Level:"
+                            android:text="Cấp độ:"
                             android:textColor="@color/white85"
                             android:textSize="16sp" />
                         <Spinner
@@ -144,7 +146,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.7"
-                            android:background="@drawable/bg_search_box"                            android:padding="4dp"
+                            android:background="@drawable/bg_search_box"
+                            android:padding="4dp"
                             android:spinnerMode="dropdown"
                             tools:listitem="@layout/spinner_item_white_text" />
                     </LinearLayout>
@@ -160,7 +163,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.3"
-                            android:text="Duration:"
+                            android:text="Thời lượng:"
                             android:textColor="@color/white85"
                             android:textSize="16sp" />
                         <EditText
@@ -169,6 +172,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.7"
                             android:background="@drawable/bg_search_box"
+                            android:hint="Nhập số tuần"
                             android:padding="8dp"
                             android:inputType="number"
                             android:singleLine="true"
@@ -180,7 +184,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="#FFD700"
-                        android:text="SEARCH"
+                        android:text="TÌM KIẾM"
                         android:textColor="@android:color/black"
                         android:textStyle="bold"
                         android:layout_marginHorizontal="70dp"
@@ -204,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="#FFD700"
-                android:text="ADD MORE"
+                android:text="THÊM KẾ HOẠCH"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:visibility="gone" />

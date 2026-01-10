@@ -43,7 +43,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         String email = binding.editTextEmail.getText().toString().trim();
 
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.editTextEmail.setError("Please enter a valid email");
+            binding.editTextEmail.setError("Vui lòng nhập email hợp lệ");
             binding.editTextEmail.requestFocus();
             return;
         }
@@ -68,7 +68,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                 } else {
                     // Xử lý lỗi từ server (ví dụ: email không tồn tại)
-                    String errorMessage = "An error occurred. Please try again.";
+                    String errorMessage = "Đã xảy ra lỗi. Vui lòng thử lại.";
                     if (response.errorBody() != null) {
                         try {
                             ApiResponse<?> errorResponse = new Gson().fromJson(response.errorBody().charStream(), ApiResponse.class);
@@ -84,7 +84,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                 setLoading(false);
-                Toast.makeText(ForgotPasswordActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(ForgotPasswordActivity.this, "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -92,10 +92,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private void setLoading(boolean isLoading) {
         if (isLoading) {
             binding.buttonSendCode.setEnabled(false);
-            binding.buttonSendCode.setText("SENDING...");
+            binding.buttonSendCode.setText("ĐANG GỬI...");
         } else {
             binding.buttonSendCode.setEnabled(true);
-            binding.buttonSendCode.setText("SEND CODE");
+            binding.buttonSendCode.setText("GỬI MÃ");
         }
     }
 }

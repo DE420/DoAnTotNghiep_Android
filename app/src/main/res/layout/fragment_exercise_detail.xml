@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:text="Back"
+            android:text="Quay lại"
             android:textColor="@color/white85"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -65,7 +65,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    tools:text="Push Up"
+                    tools:text="Chống đẩy"
                     android:textColor="@color/white85"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -73,7 +73,7 @@
                     android:id="@+id/tv_exercise_level"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="Beginner"
+                    tools:text="Người mới bắt đầu"
                     android:background="@drawable/bg_level_default"
                     android:textColor="@android:color/black"
                     android:paddingStart="8dp"
@@ -89,7 +89,7 @@
                 android:id="@+id/tv_training_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Strength Training"
+                tools:text="Tập sức mạnh"
                 android:textColor="#BDBDBD"
                 android:textSize="16sp"
                 android:layout_marginBottom="16dp" />
@@ -98,13 +98,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Video Instruction"
+                android:text="Video hướng dẫn"
                 android:textColor="@color/white85"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Video Player Placeholder (e.g., using ImageView for thumbnail) -->
+            <!-- Video Player Placeholder -->
             <com.google.android.exoplayer2.ui.PlayerView
                 android:id="@+id/video_player_view"
                 android:layout_width="match_parent"
@@ -129,7 +129,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Guideline"
+                    android:text="Hướng dẫn"
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     app:backgroundTint="@drawable/bg_toggle_button_selector"
@@ -141,7 +141,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Note"
+                    android:text="Ghi chú"
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     app:backgroundTint="@drawable/bg_toggle_button_selector"
@@ -160,7 +160,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Necessary equipment"
+                    android:text="Thiết bị cần thiết"
                     android:textColor="@color/white85"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -179,7 +179,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="• Lorem ipsum"
+                        tools:text="• Không cần thiết bị"
                         android:textColor="#BDBDBD"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -187,7 +187,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Step"
+                    android:text="Các bước thực hiện"
                     android:textColor="@color/white85"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -206,7 +206,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="1. Lorem ipsum"
+                        tools:text="1. Bắt đầu ở tư thế chống đẩy"
                         android:textColor="#BDBDBD"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -224,7 +224,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Muscle group"
+                    android:text="Nhóm cơ"
                     android:textColor="@color/white85"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -244,7 +244,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tips"
+                    android:text="Mẹo hữu ích"
                     android:textColor="@color/white85"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -263,7 +263,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="• Lorem ipsum"
+                        tools:text="• Giữ lưng thẳng"
                         android:textColor="#BDBDBD"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -271,7 +271,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Common mistakes"
+                    android:text="Lỗi thường gặp"
                     android:textColor="@color/white85"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -290,7 +290,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="• Lorem ipsum"
+                        tools:text="• Cong lưng"
                         android:textColor="#BDBDBD"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -298,7 +298,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Health benefits"
+                    android:text="Lợi ích sức khỏe"
                     android:textColor="@color/white85"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -317,7 +317,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="• Lorem ipsum"
+                        tools:text="• Tăng cường cơ ngực"
                         android:textColor="#BDBDBD"
                         android:textSize="16sp" />
                 </LinearLayout>

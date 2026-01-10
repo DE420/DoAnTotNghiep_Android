@@ -95,21 +95,21 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         recyclerView.setAdapter(exerciseAdapter);
 
         // Level Spinner
-        List<String> levelOptions = new ArrayList<>(Arrays.asList("(Choose one)", "Beginner", "Intermediate", "Advanced"));
+        List<String> levelOptions = new ArrayList<>(Arrays.asList("(Chọn một)", "Cơ bản", "Trung cấp", "Nâng cao"));
         levelAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_white_text, levelOptions);
         levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_white_text);
         spinnerLevel.setAdapter(levelAdapter);
 
         // Muscle Type Spinner
         List<SelectOptions> initialMuscleOptions = new ArrayList<>();
-        initialMuscleOptions.add(new SelectOptions(null, "(Choose one)"));
+        initialMuscleOptions.add(new SelectOptions(null, "(Chọn một)"));
         muscleTypeAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_white_text, initialMuscleOptions);
         muscleTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_white_text);
         spinnerMuscleType.setAdapter(muscleTypeAdapter);
 
         // Training Type Spinner
         List<SelectOptions> initialTrainingOptions = new ArrayList<>();
-        initialTrainingOptions.add(new SelectOptions(null, "(Choose one)"));
+        initialTrainingOptions.add(new SelectOptions(null, "(Chọn một)"));
         trainingTypeAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item_white_text, initialTrainingOptions);
         trainingTypeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_white_text);
         spinnerTrainingType.setAdapter(trainingTypeAdapter);
@@ -119,12 +119,25 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedLevelString = (String) parent.getItemAtPosition(position);
-                if (selectedLevelString.equals("(Choose one)")) {
+                if (selectedLevelString.equals("(Chọn một)")) {
                     selectedLevel = null;
                 } else {
-                    selectedLevel = selectedLevelString;
+                    // Convert Vietnamese back to English for API
+                    switch (selectedLevelString) {
+                        case "Người mới bắt đầu":
+                            selectedLevel = "Beginner";
+                            break;
+                        case "Trung cấp":
+                            selectedLevel = "Intermediate";
+                            break;
+                        case "Nâng cao":
+                            selectedLevel = "Advanced";
+                            break;
+                        default:
+                            selectedLevel = null;
+                    }
                 }
-                Log.d(TAG, "Selected Level: " + selectedLevel);
+                Log.d(TAG, "Cấp độ đã chọn: " + selectedLevel);
             }
 
             @Override
@@ -139,7 +152,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SelectOptions selectedOption = (SelectOptions) parent.getItemAtPosition(position);
                 selectedMuscleTypeId = selectedOption.getId();
-                Log.d(TAG, "Selected Muscle Type ID: " + selectedMuscleTypeId);
+                Log.d(TAG, "ID nhóm cơ đã chọn: " + selectedMuscleTypeId);
             }
 
             @Override
@@ -154,7 +167,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SelectOptions selectedOption = (SelectOptions) parent.getItemAtPosition(position);
                 selectedTrainingTypeId = selectedOption.getId();
-                Log.d(TAG, "Selected Training Type ID: " + selectedTrainingTypeId);
+                Log.d(TAG, "ID loại tập đã chọn: " + selectedTrainingTypeId);
             }
 
             @Override
@@ -167,7 +180,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
             } else {
-                Toast.makeText(getContext(), "Previous page unavailable.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Không tìm thấy trang trước đó.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -210,7 +223,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token expired.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token đã hết hạn.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -226,24 +239,24 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                         List<SelectOptions> options = apiResponse.getData();
                         if (options != null) {
                             muscleTypeAdapter.clear();
-                            muscleTypeAdapter.add(new SelectOptions(null, "(Choose one)"));
+                            muscleTypeAdapter.add(new SelectOptions(null, "(Chọn một)"));
                             muscleTypeAdapter.addAll(options);
                             muscleTypeAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        Toast.makeText(getContext(), "API Error Muscle Types: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "API Error Muscle Types: " + apiResponse.getData());
+                        Toast.makeText(getContext(), "Lỗi API nhóm cơ: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Lỗi API nhóm cơ: " + apiResponse.getData());
                     }
                 } else {
-                    Toast.makeText(getContext(), "Server error Muscle Types: " + response.code(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Server error Muscle Types: " + response.code() + " " + response.message());
+                    Toast.makeText(getContext(), "Lỗi máy chủ nhóm cơ: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Lỗi máy chủ nhóm cơ: " + response.code() + " " + response.message());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<List<SelectOptions>>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Connection error Muscle Types: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Connection error Muscle Types: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Lỗi kết nối nhóm cơ: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Lỗi kết nối nhóm cơ: " + t.getMessage(), t);
             }
         });
     }
@@ -255,7 +268,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token expired.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token đã hết hạn.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -271,24 +284,24 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                         List<SelectOptions> options = apiResponse.getData();
                         if (options != null) {
                             trainingTypeAdapter.clear();
-                            trainingTypeAdapter.add(new SelectOptions(null, "(Choose one)"));
+                            trainingTypeAdapter.add(new SelectOptions(null, "(Chọn một)"));
                             trainingTypeAdapter.addAll(options);
                             trainingTypeAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        Toast.makeText(getContext(), "API Error Training Types: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "API Error Training Types: " + apiResponse.getData());
+                        Toast.makeText(getContext(), "Lỗi API loại tập: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Lỗi API loại tập: " + apiResponse.getData());
                     }
                 } else {
-                    Toast.makeText(getContext(), "Server error Training Types: " + response.code(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Server error Training Types: " + response.code() + " " + response.message());
+                    Toast.makeText(getContext(), "Lỗi máy chủ loại tập: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Lỗi máy chủ loại tập: " + response.code() + " " + response.message());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<List<SelectOptions>>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Connection error Training Types: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Connection error Training Types: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Lỗi kết nối loại tập: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Lỗi kết nối loại tập: " + t.getMessage(), t);
             }
         });
     }
@@ -304,7 +317,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token expired.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token đã hết hạn.", Toast.LENGTH_LONG).show();
             isLoading = false;
             progressBar.setVisibility(View.GONE);
             return;
@@ -314,7 +327,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
         Call<ApiResponse<List<ExerciseResponse>>> call = apiService.getAllExercises(
                 authorizationHeader,
                 currentSearchName != null && !currentSearchName.isEmpty() ? currentSearchName : null,
-                currentSearchLevel != null && !currentSearchLevel.isEmpty() ? currentSearchLevel : null, // <--- SỬ DỤNG selectedLevel
+                currentSearchLevel != null && !currentSearchLevel.isEmpty() ? currentSearchLevel : null,
                 selectedMuscleTypeId,
                 selectedTrainingTypeId,
                 currentPage,
@@ -347,20 +360,20 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                         }
 
                         if (exercises == null || exercises.isEmpty() && clearExisting) {
-                            Toast.makeText(getContext(), "No exercise found.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Không tìm thấy bài tập.", Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
-                        Toast.makeText(getContext(), "API Error: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "API Error: " + apiResponse.getData());
+                        Toast.makeText(getContext(), "Lỗi API: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Lỗi API: " + apiResponse.getData());
                     }
                 } else {
                     if (response.code() == 401) {
-                        Toast.makeText(getContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Phiên đã hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi máy chủ: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
-                    Log.e(TAG, "Server error: " + response.code() + " " + response.message());
+                    Log.e(TAG, "Lỗi máy chủ: " + response.code() + " " + response.message());
                 }
             }
 
@@ -368,8 +381,8 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
             public void onFailure(@NonNull Call<ApiResponse<List<ExerciseResponse>>> call, @NonNull Throwable t) {
                 isLoading = false;
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Connection error: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Lỗi kết nối: " + t.getMessage(), t);
             }
         });
     }
@@ -383,7 +396,7 @@ public class ExercisesFragment extends Fragment implements ExerciseAdapter.OnIte
                     .addToBackStack(null)
                     .commit();
         } else {
-            Toast.makeText(getContext(), "Exercise detail unavailable.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Chi tiết bài tập không khả dụng.", Toast.LENGTH_SHORT).show();
         }
     }
 

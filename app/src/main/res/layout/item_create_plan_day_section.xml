@@ -11,11 +11,12 @@
         android:id="@+id/tv_day_section_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Monday"
+        tools:text="Thứ Hai"
         android:textColor="@color/white85"
         android:textSize="18sp"
         android:textStyle="bold"
         android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp"
         android:background="#333333"
         android:layout_marginBottom="8dp" />
 
@@ -32,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="+ Add more exercises ..."
+        android:text="+ Thêm bài tập ..."
         android:textColor="#FFD700"
         android:textAllCaps="false"
         android:textSize="16sp" />

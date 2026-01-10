@@ -83,27 +83,22 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
 
         public void bind(ExerciseResponse exercise, OnItemClickListener listener) {
             nameTextView.setText(exercise.getName());
-            levelTextView.setText(exercise.getLevel());
 
-            // Đặt màu nền cho Level dựa trên giá trị (ví dụ: Beginner, Intermediate, Advanced)
-            if (exercise.getLevel() != null) {
-                switch (exercise.getLevel().toUpperCase()) {
-                    case "BEGINNER":
-                        levelTextView.setBackgroundResource(R.drawable.bg_level_beginner);
-                        break;
-                    case "INTERMEDIATE":
-                        levelTextView.setBackgroundResource(R.drawable.bg_level_intermediate);
-                        break;
-                    case "ADVANCED":
-                        levelTextView.setBackgroundResource(R.drawable.bg_level_advanced);
-                        break;
-                    default:
-                        levelTextView.setBackgroundResource(R.drawable.bg_level_default);
-                        break;
-                }
+            // Chuyển đổi level sang tiếng Việt
+            String levelText = exercise.getLevel();
+            if ("BEGINNER".equalsIgnoreCase(levelText)) {
+                levelText = "Cơ bản";
+                levelTextView.setBackgroundResource(R.drawable.bg_level_beginner);
+            } else if ("INTERMEDIATE".equalsIgnoreCase(levelText)) {
+                levelText = "Trung cấp";
+                levelTextView.setBackgroundResource(R.drawable.bg_level_intermediate);
+            } else if ("ADVANCED".equalsIgnoreCase(levelText)) {
+                levelText = "Nâng cao";
+                levelTextView.setBackgroundResource(R.drawable.bg_level_advanced);
             } else {
                 levelTextView.setBackgroundResource(R.drawable.bg_level_default);
             }
+            levelTextView.setText(levelText);
 
             trainingTypeTextView.setText(exercise.getTrainingType());
 

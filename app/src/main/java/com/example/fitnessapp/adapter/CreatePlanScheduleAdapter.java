@@ -98,7 +98,7 @@ public class CreatePlanScheduleAdapter extends RecyclerView.Adapter<RecyclerView
 
             // Add placeholder at the beginning
             List<String> spinnerItems = new ArrayList<>();
-            spinnerItems.add("Select Exercise");
+            spinnerItems.add("Chọn bài tập");
             spinnerItems.addAll(exerciseNames);
 
             ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context,
@@ -255,7 +255,7 @@ public class CreatePlanScheduleAdapter extends RecyclerView.Adapter<RecyclerView
                 break;
         }
 
-        Log.d(TAG, "Exercise: " + exercise.getName() + " | Display: " + fieldDisplay);
+        Log.d(TAG, "Bài tập: " + exercise.getName() + " | Hiển thị: " + fieldDisplay);
     }
 
     private void showSetsAndReps(ExerciseItemViewHolder holder) {
@@ -376,7 +376,7 @@ public class CreatePlanScheduleAdapter extends RecyclerView.Adapter<RecyclerView
             // Force notify the adapter to update
             notifyItemChanged(holder.getAdapterPosition());
 
-            Log.d(TAG, "Exercise selected: " + exercise.getName() + " (ID: " + exercise.getId() + ")");
+            Log.d(TAG, "Bài tập đã chọn: " + exercise.getName() + " (ID: " + exercise.getId() + ")");
 
             // Dismiss dialog
             dialog.dismiss();

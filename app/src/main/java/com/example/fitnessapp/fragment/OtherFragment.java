@@ -33,8 +33,6 @@ public class OtherFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        binding.buttonChallenge.setOnClickListener(v -> Toast.makeText(getContext(), "Challenge", Toast.LENGTH_SHORT).show());
-
         binding.buttonNutrition.setOnClickListener(v -> {
             loadFragmentOther(new com.example.fitnessapp.fragment.nutrition.NutritionMainFragment());
         });
@@ -46,8 +44,6 @@ public class OtherFragment extends Fragment {
         binding.buttonStatistics.setOnClickListener(v -> {
             loadFragmentOther(new StatisticsFragment());
         });
-
-        binding.buttonLeaderboard.setOnClickListener(v -> Toast.makeText(getContext(), "Leaderboard", Toast.LENGTH_SHORT).show());
     }
 
     private void loadFragmentOther(Fragment fragment) {

@@ -123,7 +123,7 @@ public class PlanDetailFragment extends Fragment {
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
             } else {
-                Toast.makeText(getContext(), "Previous page not found.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Không tìm thấy trang trước đó.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -131,7 +131,7 @@ public class PlanDetailFragment extends Fragment {
         if (planId != null) {
             fetchPlanDetail(planId);
         } else {
-            Toast.makeText(getContext(), "No plan found.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Không tìm thấy kế hoạch.", Toast.LENGTH_SHORT).show();
             if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                 getParentFragmentManager().popBackStack();
             }
@@ -141,7 +141,7 @@ public class PlanDetailFragment extends Fragment {
             if (currentPlanDetail != null) {
                 copyAndEditPlan(currentPlanDetail.getId());
             } else {
-                Toast.makeText(getContext(), "Plan data not available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Dữ liệu kế hoạch không khả dụng", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -154,7 +154,7 @@ public class PlanDetailFragment extends Fragment {
                         .addToBackStack(null)
                         .commit();
             } else {
-                Toast.makeText(getContext(), "Plan data not available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Dữ liệu kế hoạch không khả dụng", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -174,7 +174,7 @@ public class PlanDetailFragment extends Fragment {
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token unavailable. Please login again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token không khả dụng. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
             return;
         }
@@ -194,18 +194,18 @@ public class PlanDetailFragment extends Fragment {
                         if (currentPlanDetail != null) {
                             displayPlanDetail(currentPlanDetail);
                         } else {
-                            Toast.makeText(getContext(), "Plan detail not found.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Không tìm thấy chi tiết kế hoạch.", Toast.LENGTH_SHORT).show();
                             if (getParentFragmentManager().getBackStackEntryCount() > 0) getParentFragmentManager().popBackStack();
                         }
                     } else {
-                        Toast.makeText(getContext(), "API Error: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi API: " + apiResponse.getData(), Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "API Error: " + apiResponse.getData());
                     }
                 } else {
                     if (response.code() == 401) {
-                        Toast.makeText(getContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Phiên đã hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi máy chủ: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
                     Log.e(TAG, "Server error: " + response.code() + " " + response.message());
                 }
@@ -214,7 +214,7 @@ public class PlanDetailFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<ApiResponse<PlanDetailResponse>> call, @NonNull Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 Log.e(TAG, "Connection error: " + t.getMessage(), t);
             }
         });
@@ -245,22 +245,25 @@ public class PlanDetailFragment extends Fragment {
 
         tvLevel.setText(detail.getDifficultyLevel() != null ? getString(detail.getDifficultyLevel().getResId()) : "N/A");
         tvGoal.setText(detail.getTargetGoal() != null ? getString(detail.getTargetGoal().getResId()) : "N/A");
-        tvDuration.setText(detail.getDurationWeek() != null ? detail.getDurationWeek() + " weeks" : "N/A");
+        tvDuration.setText(detail.getDurationWeek() != null ? detail.getDurationWeek() + " tuần" : "N/A");
 
-        // Display Days (e.g., "Monday, Thursday, Friday")
+        // Display Days (e.g., "Thứ Hai, Thứ Ba, Thứ Năm") - Sắp xếp theo thứ tự
         if (detail.getDaysPerWeek() != null && detail.getWeeks() != null && !detail.getWeeks().isEmpty()) {
-            List<String> activeDays = detail.getWeeks().stream()
+            List<Integer> uniqueDayNumbers = detail.getWeeks().stream()
                     .flatMap(week -> week.getDays().stream())
                     .filter(day -> day.getExercises() != null && !day.getExercises().isEmpty())
-                    .map(day -> getDayName(day.getDayOfWeek()))
+                    .map(day -> normalizeDayOfWeek(day.getDayOfWeek()))
                     .distinct()
-                    .sorted()   // Sắp xếp theo thứ tự bảng chữ cái hoặc bạn có thể tự sắp xếp theo thứ tự ngày trong tuần
+                    .sorted() // Sắp xếp theo thứ tự
                     .collect(Collectors.toList());
 
-            if (!activeDays.isEmpty()) {
-                tvDays.setText(String.join(", ", activeDays));
+            if (!uniqueDayNumbers.isEmpty()) {
+                List<String> sortedDayNames = uniqueDayNumbers.stream()
+                        .map(this::getDayName)
+                        .collect(Collectors.toList());
+                tvDays.setText(String.join(", ", sortedDayNames));
             } else {
-                tvDays.setText("No active days");
+                tvDays.setText("Không có ngày hoạt động");
             }
         } else {
             tvDays.setText("N/A");
@@ -303,22 +306,29 @@ public class PlanDetailFragment extends Fragment {
         } else {
             // No weeks available
             spinnerWeek.setEnabled(false);
-            Toast.makeText(getContext(), "No week data found.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Không tìm thấy dữ liệu tuần.", Toast.LENGTH_SHORT).show();
             recyclerViewPlanDays.setAdapter(new PlanDayAdapter(new ArrayList<>())); // Empty adapter
         }
     }
 
-    private String getDayName(int dayOfWeek) {
-        // dayOfWeek từ backend thường là 1=Monday, 2=Tuesday, ..., 7=Sunday
-        switch (dayOfWeek) {
-            case 1: return "Monday";
-            case 2: return "Tuesday";
-            case 3: return "Wednesday";
-            case 4: return "Thursday";
-            case 5: return "Friday";
-            case 6: return "Saturday";
-            case 0: return "Sunday";
-            default: return "Day " + dayOfWeek;
+    private int normalizeDayOfWeek(int dayOfWeek) {
+        if (dayOfWeek == 0) {
+            return 7; // Chủ Nhật cuối tuần
+        }
+        return dayOfWeek;
+    }
+
+    private String getDayName(int normalizedDayOfWeek) {
+        // normalizedDayOfWeek: 1=Thứ Hai, ..., 6=Thứ Bảy, 7=Chủ Nhật
+        switch (normalizedDayOfWeek) {
+            case 1: return "Thứ Hai";
+            case 2: return "Thứ Ba";
+            case 3: return "Thứ Tư";
+            case 4: return "Thứ Năm";
+            case 5: return "Thứ Sáu";
+            case 6: return "Thứ Bảy";
+            case 7: return "Chủ Nhật";
+            default: return "Ngày " + normalizedDayOfWeek;
         }
     }
 
@@ -331,7 +341,7 @@ public class PlanDetailFragment extends Fragment {
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token unavailable. Please login again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token không khả dụng. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
             return;
         }
@@ -348,7 +358,7 @@ public class PlanDetailFragment extends Fragment {
                     ApiResponse<Long> apiResponse = response.body();
                     if (apiResponse.isStatus() && apiResponse.getData() != null) {
                         Long newPlanId = apiResponse.getData();
-                        Toast.makeText(getContext(), "Plan copied successfully!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Sao chép kế hoạch thành công!", Toast.LENGTH_SHORT).show();
 
                         // Navigate to edit screen with the new plan ID
                         CreatePlanFragment editFragment = CreatePlanFragment.newInstanceForEdit(newPlanId);
@@ -359,17 +369,17 @@ public class PlanDetailFragment extends Fragment {
 
                         Log.d(TAG, "Copied plan ID: " + newPlanId);
                     } else {
-                        String errorMessage = "Failed to copy plan";
+                        String errorMessage = "Không thể sao chép kế hoạch";
                         Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "Copy plan API returned false status or null data");
                     }
                 } else {
                     if (response.code() == 401) {
-                        Toast.makeText(getContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Phiên đã hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
                     } else if (response.code() == 403) {
-                        Toast.makeText(getContext(), "You don't have permission to copy this plan.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Bạn không có quyền sao chép kế hoạch này.", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi máy chủ: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
                     Log.e(TAG, "Server error on copy plan: " + response.code() + " " + response.message());
                 }
@@ -378,7 +388,7 @@ public class PlanDetailFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<ApiResponse<Long>> call, @NonNull Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 Log.e(TAG, "Network error on copy plan: " + t.getMessage(), t);
             }
         });
@@ -386,17 +396,17 @@ public class PlanDetailFragment extends Fragment {
 
     private void showDeleteConfirmationDialog() {
         if (currentPlanDetail == null || currentPlanDetail.getId() == null) {
-            Toast.makeText(getContext(), "Delete failed. Plan not found.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Xóa thất bại. Không tìm thấy kế hoạch.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         new AlertDialog.Builder(requireContext(), R.style.AlertDialogTheme)
-                .setTitle("Confirm delete plan")
-                .setMessage("Are you sure you want to delete the plan \"" + currentPlanDetail.getName() + "\"? This action cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setTitle("Xác nhận xóa kế hoạch")
+                .setMessage("Bạn có chắc chắn muốn xóa kế hoạch \"" + currentPlanDetail.getName() + "\"? Hành động này không thể hoàn tác.")
+                .setPositiveButton("Xóa", (dialog, which) -> {
                     deletePlan(currentPlanDetail.getId());
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Hủy", null)
                 .show();
     }
 
@@ -409,7 +419,7 @@ public class PlanDetailFragment extends Fragment {
         if (accessToken != null && !accessToken.isEmpty()) {
             authorizationHeader = "Bearer " + accessToken;
         } else {
-            Toast.makeText(getContext(), "Token unavailable. Please login again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Token không khả dụng. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
             return;
         }
@@ -424,21 +434,21 @@ public class PlanDetailFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     ApiResponse<Boolean> apiResponse = response.body();
                     if (apiResponse.isStatus() && apiResponse.getData() != null && apiResponse.getData()) {
-                        Toast.makeText(getContext(), "Plan \"" + currentPlanDetail.getName() + "\" deleted successfully!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Kế hoạch \"" + currentPlanDetail.getName() + "\" đã được xóa thành công!", Toast.LENGTH_SHORT).show();
                         // Navigate back to the previous fragment (PlanFragment)
                         if (getParentFragmentManager().getBackStackEntryCount() > 0) {
                             getParentFragmentManager().popBackStack();
                         }
                     } else {
-                        String errorMessage = apiResponse.getData() != null ? String.valueOf(apiResponse.getData()) : "Unknown error.";
-                        Toast.makeText(getContext(), "Plan delete failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        String errorMessage = apiResponse.getData() != null ? String.valueOf(apiResponse.getData()) : "Lỗi không xác định.";
+                        Toast.makeText(getContext(), "Xóa kế hoạch thất bại: " + errorMessage, Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "Delete plan API returned false status or null data: " + errorMessage);
                     }
                 } else {
                     if (response.code() == 401) {
-                        Toast.makeText(getContext(), "Session expired. Please login again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Phiên đã hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Lỗi máy chủ: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
                     Log.e(TAG, "Server error on delete plan: " + response.code() + " " + response.message());
                 }
@@ -447,7 +457,7 @@ public class PlanDetailFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<ApiResponse<Boolean>> call, @NonNull Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Network error on delete plan: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Lỗi mạng khi xóa kế hoạch: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 Log.e(TAG, "Network error on delete plan: " + t.getMessage(), t);
             }
         });
